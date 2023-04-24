@@ -1,6 +1,7 @@
 from typing import Tuple 
 import numpy as np
 from numpy.typing import NDArray
+import cv2
 
 def eyes_tracker(frame) -> Tuple(float, float):
     """

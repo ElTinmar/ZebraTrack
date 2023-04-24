@@ -1,6 +1,7 @@
 import typing 
 import numpy as np
 from numpy.typing import NDArray
+import cv2
 
 def tail_tracker(frame) -> NDArray:
     """
