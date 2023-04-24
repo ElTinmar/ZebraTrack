@@ -20,6 +20,7 @@ def body_tracker(frame, method) -> Tuple(NDArray,NDArray):
 
 
 def body_tracker_PCA(frame) -> Tuple(NDArray,NDArray):
+    
     pass
 
 def body_tracker_moments(frame) -> Tuple(NDArray,NDArray):
