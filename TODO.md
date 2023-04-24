@@ -1,1 +1,2 @@
-write the trackers in C/C++ ?
+- write the trackers in C/C++ ?
+- add toy data and tests
