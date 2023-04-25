@@ -78,7 +78,7 @@ class OpenCV_VideoReader:
 
         # check arguments value
         if not 0 <= index < self._number_of_frames:
-            raise(ValueError(f"index should be between 0 and {self._number_of_frames-1}"))
+            raise(ValueError(f"index should be between 0 and {self._number_of_frames-1}, got {index}"))
         
         if self._safe:
             # if you need to rewind, start from the beginning, otherwise keep going
@@ -114,9 +114,9 @@ class OpenCV_VideoReader:
         # preinitialize arrray. Be aware that this could take a lot of RAM depending on 
         # resolution and number of frames
         if self._num_channels > 1:
-            frames = np.zeros((self._height, self._width, self._num_channels, stop-start), dtype=self._type)
+            frames = np.empty((self._height, self._width, self._num_channels, stop-start), dtype=self._type)
         else:
-            frames = np.zeros((self._height, self._width, stop-start), dtype=self._type)
+            frames = np.empty((self._height, self._width, stop-start), dtype=self._type)
 
         # read frames
         counter = self._current_frame
