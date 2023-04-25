@@ -3,6 +3,8 @@ import numpy as np
 from numpy.typing import NDArray
 from scipy import stats
 from typing import Protocol, Tuple
+from utils.im2gray import im2gray
+from utils.im2float import im2single
 
 class VideoReader(Protocol):
     def next_frame(self) -> Tuple[bool,NDArray]:
@@ -28,10 +30,16 @@ class VideoReader(Protocol):
         """return data type"""
 
 def sample_frames_evenly(video_reader: VideoReader, k=500):
+    height = video_reader.get_height()
+    width = video_reader.get_width()
     numframes = video_reader.get_number_of_frame()
-    samples = np.linspace(0, numframes, k, dtype = np.int64)
-    for index in samples:
-        
+    sample_indices = np.linspace(0, numframes-1, k, dtype = np.int64)
+    sample_frames = np.empty((height, width, k), dtype=np.float32)
+    for i,index in enumerate(sample_indices):
+        video_reader.seek_to(index)
+        rval, frame = video_reader.next_frame()
+        sample_frames[:,:,i] = im2single(im2gray(frame))
+    return sample_frames
 
 def background_model_mode(sample_frames):
     """
@@ -42,4 +50,4 @@ def background_model_mode(sample_frames):
     Output:
         background: m x n numpy.float32 array
     """
-    return stats.mode(sample_frames,axis=2)
+    return stats.mode(sample_frames,axis=2,keepdims=False).mode
