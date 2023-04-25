@@ -9,11 +9,29 @@ class VideoReader(Protocol):
         """return the next frame in the movie, 
         and a boolean if the operation succeeded"""
 
-    def number_of_frames(self) -> int:
+    def get_number_of_frame(self) -> int:
         """return number of frames in the movie"""
 
-def select_k_sample_frames(video_reader: VideoReader, k=500):
-    pass
+    def seek_to(self, index) -> None:
+        """go to a specific frame retrieveable with a call to next_frame"""
+
+    def get_width(self) -> int:
+        """return width"""
+    
+    def get_height(self) -> int:
+        """return height"""
+
+    def get_num_channels(self) -> int:
+        """return number of channels"""
+
+    def get_type(self) -> np.dtype:
+        """return data type"""
+
+def sample_frames_evenly(video_reader: VideoReader, k=500):
+    numframes = video_reader.get_number_of_frame()
+    samples = np.linspace(0, numframes, k, dtype = np.int64)
+    for index in samples:
+        
 
 def background_model_mode(sample_frames):
     """
