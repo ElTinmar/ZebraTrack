@@ -100,7 +100,7 @@ class OpenCV_VideoReader:
     
     def read_frames(self, start: int, stop: int) -> NDArray:
         """
-        Read frames between indices start and stop
+        Read frames between indices start and stop and store them in a numpy array in RAM
         """
 
         # check arguments value
@@ -123,7 +123,7 @@ class OpenCV_VideoReader:
         while counter < stop:
             rval, frame = self.next_frame()
             if not rval:
-                raise(RuntimeError(f"movie ended while seekeing to frame {stop}"))
+                raise(RuntimeError(f"movie ended while seeking to frame {stop}"))
             frames[:,:,:,counter-start] = frame
             counter += 1
 
