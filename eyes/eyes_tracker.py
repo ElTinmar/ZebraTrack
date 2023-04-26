@@ -33,6 +33,9 @@ def eyes_tracker(
 
     eye_left = None
     for blob in regions:
+        # match x,y and image coordinates
+        centroid = np.asarray([blob.centroid[1], blob.centroid[0]])
         # project coordinates to principal component space
-        coord_pc = (blob.centroid - fish_centroid) @ principal_components
+        coord_pc = (centroid - fish_centroid) @ principal_components
+        print(coord_pc)
 
