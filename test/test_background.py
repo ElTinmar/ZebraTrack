@@ -11,37 +11,14 @@ import matplotlib.pyplot as plt
 from math import pi
 import numpy as np
 from body.body_tracker import body_tracker_PCA
+from prey.prey_tracker import prey_tracker
+from utils.conncomp_filter import bwareafilter
 
 mov = OpenCV_VideoReader('toy_data/behavior_2000.avi',safe=False)
 
 # Background model
 sample = bckg.sample_frames_evenly(mov,500)
 background = bckg.background_model_mode(sample)
-
-# plot background
-cv2.imshow('Background',background)
-cv2.waitKey(1)
-cv2.destroyAllWindows()
-
-# background substraction
-mov.reset_reader()
-while True:
-    rval, frame = mov.next_frame()
-    if not rval:
-        break
-    bckg_sub = abs(im2single(im2gray(frame)) - background)
-    bckg_sub_norm = imadjust(bckg_sub,bckg_sub.min(),bckg_sub.max(),0,1)
-    #bckg_sub_norm_filt = median_filter(bckg_sub_norm,size=(5,5))
-
-    # this is very good but slow
-    #fish = area_opening(bckg_sub_norm, area_threshold=est_fish_area_pixel)
-    cv2.imshow('Background Subtraction', bckg_sub_norm)
-    
-    key = cv2.waitKey(1)
-    if key == ord('q'):
-        break
-    
-cv2.destroyAllWindows()
 
 # estimate the area in pixel of the fish by an ellipse
 fish_length_mm = 6
@@ -55,35 +32,7 @@ est_fish_area_pixel = int(pi * fish_length_mm/2 * fish_width_mm/2 * pixel_per_mm
 #sorted_pixel_values.sort()
 #brightest_pixels = sorted_pixel_values[-est_fish_area_pixel:-1]
 
-alpha = 100
-threshold_intensity = 0.1
-threshold_area = est_fish_area_pixel
-mov.reset_reader()
-while True:
-    rval, frame = mov.next_frame()
-    if not rval:
-        break
-    bckg_sub = abs(im2single(im2gray(frame)) - background)
-    centroid, component, _ = body_tracker_PCA(bckg_sub, threshold_intensity, threshold_area)
-    heading = component[:,0]
-    if centroid is not None:
-        pt1 = centroid
-        pt2 = centroid + alpha*heading
-        tracking = cv2.line(
-            frame,
-            pt1.astype(np.int32),
-            pt2.astype(np.int32),
-            (0,0,255)
-        )
-        cv2.imshow('Tracking', tracking)
-        key = cv2.waitKey(1)
-        if key == ord('q'):
-            break
-    
-cv2.destroyAllWindows()
-
 # Paramecia tracking
-from utils.conncomp_filter import bwareafilter
 
 alpha = 100
 threshold_intensity = 0.1
@@ -103,20 +52,35 @@ while True:
     if not rval:
         break
     bckg_sub = abs(im2single(im2gray(frame)) - background)
-    centroid, component, _ = body_tracker_PCA(bckg_sub, threshold_intensity, threshold_area)
-    heading = component[:,0]
-    param_mask = bwareafilter(
-        bckg_sub >= threshold_intensity_param, 
-        min_size=threshold_area_param_min, 
-        max_size=threshold_area_param_max
+    
+    # track fish body
+    centroid, component, _ = body_tracker_PCA(
+        bckg_sub, 
+        threshold_intensity, 
+        threshold_area
     )
+    heading = component[:,0]
+    
+    # track paramecia
+    prey_centroids, prey_mask = prey_tracker(
+        bckg_sub,
+        threshold_intensity_param,
+        threshold_area_param_min,
+        threshold_area_param_max
+    )
+
+    # track eyes
     eye_mask = bwareafilter(
         bckg_sub >= threshold_intensity_eyes, 
         min_size=threshold_area_eye_min, 
         max_size=threshold_area_eye_max
     )
+
+    # track tail
+
+    # show tracking
     tracking = frame
-    tracking[:,:,2] =  255*param_mask
+
     if centroid is not None:
         pt1 = centroid
         pt2 = centroid + alpha*heading
@@ -126,6 +90,9 @@ while True:
             pt2.astype(np.int32),
             (0,0,255)
         )
+
+    for prey_loc in prey_centroids:
+        tracking = cv2.circle(tracking,prey_loc.astype(np.int32),10,(0,255,0))
 
     cv2.imshow('Tracking', tracking)
     key = cv2.waitKey(1)
