@@ -2,11 +2,14 @@ from typing import Tuple
 import numpy as np
 from numpy.typing import NDArray
 import cv2
+from utils.conncomp_filter import bwareafilter
 
 def eyes_tracker(
         frame: NDArray,
         threshold_eye_intensity: float,
-        threshold_eye_area: int,
+        threshold_eye_area_min: int,
+        threshold_eye_area_max: int,
+        principal_components: NDArray
         ) -> Tuple[float, float]:
     """
     Track the left and right eyes for a single fish
@@ -16,5 +19,11 @@ def eyes_tracker(
         (left,right): angle in radians for the left and right eye
         with respect to the anteroposterior axis 
     """
-    
+
+    eye_mask = bwareafilter(
+        frame >= threshold_eye_intensity, 
+        min_size = threshold_eye_area_min, 
+        max_size = threshold_eye_area_max
+    )
+
     pass
