@@ -56,8 +56,7 @@ def body_tracker_PCA(
         if np.linalg.det(principal_components) < 0:
             principal_components[:,1] = - principal_components[:,1]
 
-        return (centroid, principal_components, fish_mask)
-      
+        return (centroid, principal_components, fish_mask) 
 
 def body_tracker_moments(frame: NDArray) -> Tuple[NDArray,NDArray]:
     pass
