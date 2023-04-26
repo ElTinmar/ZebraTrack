@@ -31,6 +31,6 @@ def prey_tracker(
 
     prey_centroids = np.empty((len(regions),2),dtype=np.float32)
     for i,blob in enumerate(regions):
-        prey_centroids[i,:] = blob.centroid
+        prey_centroids[i,:] = [blob.centroid[1], blob.centroid[0]] 
 
     return (prey_centroids, prey_mask)
