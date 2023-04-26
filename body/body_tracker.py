@@ -31,7 +31,10 @@ def body_tracker_PCA(
     """
 
     # threshold and remove small objects 
-    fish_mask = bwareaopen(frame >= threshold_intensity, min_size=threshold_area)
+    fish_mask = bwareaopen(
+        frame >= threshold_intensity, 
+        min_size=threshold_area
+    )
     blob_coordinates = np.argwhere(fish_mask)
 
     if blob_coordinates.size == 0:
@@ -44,15 +47,16 @@ def body_tracker_PCA(
         # PCA
         pca = PCA()
         scores = pca.fit_transform(blob_coordinates)
-        components = pca.components_.T
-        heading = components[:,0]
+        principal_components = pca.components_.T
         centroid = pca.mean_
 
         # correct orientation
         if abs(max(scores[:,0])) > abs(min(scores[:,0])):
-            heading = -heading
+            principal_components[:,0] = - principal_components[:,0]
+        if np.linalg.det(principal_components) < 0:
+            principal_components[:,1] = - principal_components[:,1]
 
-        return (centroid, heading, fish_mask)
+        return (centroid, principal_components, fish_mask)
       
 
 def body_tracker_moments(frame: NDArray) -> Tuple[NDArray,NDArray]:
