@@ -64,7 +64,8 @@ while True:
     if not rval:
         break
     bckg_sub = abs(im2single(im2gray(frame)) - background)
-    centroid, heading, _ = body_tracker_PCA(bckg_sub, threshold_intensity, threshold_area)
+    centroid, component, _ = body_tracker_PCA(bckg_sub, threshold_intensity, threshold_area)
+    heading = component[:,0]
     if centroid is not None:
         pt1 = centroid
         pt2 = centroid + alpha*heading
@@ -86,8 +87,13 @@ from utils.conncomp_filter import bwareafilter
 
 alpha = 100
 threshold_intensity = 0.1
-threshold_intensity_param = 0.025
 threshold_area = est_fish_area_pixel
+
+threshold_intensity_eyes = 0.4
+threshold_area_eye_min = 100
+threshold_area_eye_max = 500
+
+threshold_intensity_param = 0.025
 threshold_area_param_min = 15
 threshold_area_param_max = est_fish_area_pixel
 
@@ -97,11 +103,17 @@ while True:
     if not rval:
         break
     bckg_sub = abs(im2single(im2gray(frame)) - background)
-    centroid, heading, _ = body_tracker_PCA(bckg_sub, threshold_intensity, threshold_area)
+    centroid, component, _ = body_tracker_PCA(bckg_sub, threshold_intensity, threshold_area)
+    heading = component[:,0]
     param_mask = bwareafilter(
         bckg_sub >= threshold_intensity_param, 
         min_size=threshold_area_param_min, 
         max_size=threshold_area_param_max
+    )
+    eye_mask = bwareafilter(
+        bckg_sub >= threshold_intensity_eyes, 
+        min_size=threshold_area_eye_min, 
+        max_size=threshold_area_eye_max
     )
     tracking = frame
     tracking[:,:,2] =  255*param_mask
