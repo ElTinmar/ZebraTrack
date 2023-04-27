@@ -35,18 +35,19 @@ def body_tracker_PCA(
         frame >= threshold_intensity, 
         min_size=threshold_area
     )
-    blob_coordinates = np.argwhere(fish_mask)
+    blob_coordinates = np.argwhere(fish_mask) #  (row, col) coordinates
 
     if blob_coordinates.size == 0:
         # nothing was detected above threshold
         return (None, None, None)
     else:
-        # match x,y and image coordinates
+        # (row,col) to (x,y) coordinates
         blob_coordinates = blob_coordinates[:,[1, 0]]
 
         # PCA
         pca = PCA()
         scores = pca.fit_transform(blob_coordinates)
+        # PCs are organized in rows, transform to columns
         principal_components = pca.components_.T
         centroid = pca.mean_
 
