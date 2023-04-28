@@ -10,6 +10,7 @@ import numpy as np
 from body.body_tracker import body_tracker_PCA
 from prey.prey_tracker import prey_tracker
 from eyes.eyes_tracker import eyes_tracker
+from tail.tail_tracker import tail_tracker
 
 mov = OpenCV_VideoReader('toy_data/behavior_2000.avi',safe=False)
 
@@ -76,6 +77,19 @@ while True:
     )
 
     # track tail
+    ksize = 5
+    tail_length = 160
+    n_tail_points = 12
+    arc_angle = 150
+    tail_skeleton, tail_skeleton_interp  = tail_tracker(
+        bckg_sub,
+        principal_components,
+        fish_centroid,
+        tail_length,
+        n_tail_points,
+        ksize,
+        arc_angle
+    )
 
     # show tracking
     tracking = frame
@@ -132,6 +146,15 @@ while True:
             pt1.astype(np.int32),
             pt2.astype(np.int32),
             (255,255,0)
+        )
+
+    # tail tracking
+    for pt1, pt2 in zip(tail_skeleton_interp[:-1,],tail_skeleton_interp[1:,]):
+        tracking = cv2.line(
+            tracking,
+            pt1.astype(np.int32),
+            pt2.astype(np.int32),
+            (255,0,255)
         )
 
     # prey tracking
