@@ -12,8 +12,7 @@ def tail_tracker(frame: NDArray,
         tail_length: float,
         n_tail_points: int = 10,
         ksize: int = 10,
-        arc_angle_deg: float = 150,
-        smoothing: float = 0.1
+        arc_angle_deg: float = 150
     ) -> Tuple[NDArray,NDArray]:
 
     """
@@ -28,6 +27,7 @@ def tail_tracker(frame: NDArray,
     arc_rad = math.radians(arc_angle_deg)/2
     frame_blurred = cv2.boxFilter(frame, -1, (ksize, ksize))
     spacing = float(tail_length) / n_tail_points
+    # why ?
     start_angle = math.pi + np.arctan2(-principal_components[1,0],principal_components[0,0]) 
     arc = np.linspace(-arc_rad, arc_rad, 20) + start_angle
     x, y = fish_centroid
@@ -41,8 +41,8 @@ def tail_tracker(frame: NDArray,
             xs, ys = xs.astype(int), ys.astype(int)
             # Find the index of the minimum or maximum pixel intensity along arc
             idx = np.argmax(frame_blurred[ys, xs])
-            # Update new x, y points
-
+            
+            """
             # debug
             if j==0:
                 frame_display = frame_blurred.copy()
@@ -51,8 +51,9 @@ def tail_tracker(frame: NDArray,
                     frame_display = cv2.line(frame_display,pt1.astype(np.int32),pt2.astype(np.int32),255)
                 cv2.imshow('debug',frame_display)
                 cv2.waitKey(1)
-
-
+            """
+            
+            # Update new x, y points
             x = xs[idx]
             y = ys[idx]
             # Create a new 180 arc centered around current angle
@@ -64,7 +65,7 @@ def tail_tracker(frame: NDArray,
 
     # interpolate
     skeleton = np.array(points)
-    tck, u = splprep(skeleton.T, s=smoothing)
+    tck, u = splprep(skeleton.T)
     new_points = splev(np.linspace(0,1,40), tck)
     skeleton_interp = np.array([new_points[0],new_points[1]])
 
