@@ -11,6 +11,7 @@ from body.body_tracker import body_tracker_PCA
 from prey.prey_tracker import prey_tracker
 from eyes.eyes_tracker import eyes_tracker
 from tail.tail_tracker import tail_tracker
+from prey.hungarian_assignment import ID_tracker
 
 mov = OpenCV_VideoReader('toy_data/behavior_2000.avi',safe=False)
 
@@ -44,6 +45,17 @@ threshold_intensity_param = 0.025
 threshold_area_param_min = 15
 threshold_area_param_max = est_fish_area_pixel
 
+dist_thresh = 20 
+max_frames_to_skip = 50
+max_trace_length = 10
+trackIdCount = 100
+tracker = ID_tracker(
+    dist_thresh,
+    max_frames_to_skip,
+    max_trace_length,
+    trackIdCount
+)
+
 mov.reset_reader()
 while True:
     rval, frame = mov.next_frame()
@@ -66,6 +78,9 @@ while True:
         threshold_area_param_max
     )
 
+    # hungarian assignment + kalman filter
+    tracker.track(prey_centroids)
+
     # track eyes
     left_eye, right_eye, eye_mask = eyes_tracker(
         bckg_sub,
@@ -81,6 +96,7 @@ while True:
     tail_length = 160
     n_tail_points = 12
     arc_angle = 150
+    n_pts_interp = 40
     tail_skeleton, tail_skeleton_interp  = tail_tracker(
         bckg_sub,
         principal_components,
@@ -88,7 +104,8 @@ while True:
         tail_length,
         n_tail_points,
         ksize,
-        arc_angle
+        arc_angle,
+        n_pts_interp
     )
 
     # show tracking
@@ -158,8 +175,9 @@ while True:
         )
 
     # prey tracking
-    for prey_loc in prey_centroids:
-        tracking = cv2.circle(tracking,prey_loc.astype(np.int32),10,(0,255,0))
+    tracking = tracker.show_tracks(tracking)
+    #for prey_loc in prey_centroids:
+    #    tracking = cv2.circle(tracking,prey_loc.astype(np.int32),10,(0,255,0))
 
     cv2.imshow('Tracking', tracking)
     key = cv2.waitKey(1)
