@@ -12,7 +12,9 @@ def tail_tracker(frame: NDArray,
         tail_length: float,
         n_tail_points: int = 10,
         ksize: int = 10,
-        arc_angle_deg: float = 150
+        arc_angle_deg: float = 150,
+        n_pts_interp = 40,
+        n_pts_arc = 20
     ) -> Tuple[NDArray,NDArray]:
 
     """
@@ -29,7 +31,7 @@ def tail_tracker(frame: NDArray,
     spacing = float(tail_length) / n_tail_points
     # why ?
     start_angle = math.pi + np.arctan2(-principal_components[1,0],principal_components[0,0]) 
-    arc = np.linspace(-arc_rad, arc_rad, 20) + start_angle
+    arc = np.linspace(-arc_rad, arc_rad, n_pts_arc) + start_angle
     x, y = fish_centroid
     points = [[x, y]]
     for j in range(n_tail_points):
@@ -52,12 +54,12 @@ def tail_tracker(frame: NDArray,
                 cv2.imshow('debug',frame_display)
                 cv2.waitKey(1)
             """
-            
+
             # Update new x, y points
             x = xs[idx]
             y = ys[idx]
             # Create a new 180 arc centered around current angle
-            arc = np.linspace(arc[idx] - arc_rad, arc[idx] + arc_rad, 20)
+            arc = np.linspace(arc[idx] - arc_rad, arc[idx] + arc_rad, n_pts_arc)
             # Add point to list
             points.append([x, y])
         except IndexError:
@@ -66,7 +68,7 @@ def tail_tracker(frame: NDArray,
     # interpolate
     skeleton = np.array(points)
     tck, u = splprep(skeleton.T)
-    new_points = splev(np.linspace(0,1,40), tck)
+    new_points = splev(np.linspace(0,1,n_pts_interp), tck)
     skeleton_interp = np.array([new_points[0],new_points[1]])
 
     return (skeleton, skeleton_interp.T)
