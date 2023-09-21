@@ -8,6 +8,27 @@ import numpy as np
 from numpy.typing import NDArray
 from typing import Optional
 
+#TODO create my own widget with a label and a spinbox / double spinbox aligned horizontally
+class LabeledSpinBox(QWidget):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.label = QLabel()
+        self.spinbox = QSpinBox()
+        layout = QHBoxLayout()
+        layout.addWidget(self.label)
+        layout.addWidget(self.spinbox)
+        self.setLayout(layout)
+    
+class LabeledDoubleSpinBox(QWidget):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.label = QLabel()
+        self.spinbox = QDoubleSpinBox()
+        layout = QHBoxLayout()
+        layout.addWidget(self.label)
+        layout.addWidget(self.spinbox)
+        self.setLayout(layout)
+
 def NDarray_to_QPixmap(img: NDArray) -> QPixmap:
     if len(img.shape) == 2:
         img = np.dstack((img,img,img))
