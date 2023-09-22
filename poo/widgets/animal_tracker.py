@@ -1,11 +1,10 @@
 from PyQt5.QtWidgets import QWidget, QLabel, QHBoxLayout, QVBoxLayout
-from ..tracker.body import BodyTracker, BodyTrackerParamOverlay, BodyTrackerParamTracking
+from ..tracker.animal import AnimalTracker, AnimalTrackerParamOverlay, AnimalTrackerParamTracking
 from numpy.typing import NDArray
-from typing import Optional
 from .helper.ndarray_to_qpixmap import NDarray_to_QPixmap
 from .custom_widgets.labeled_doublespinbox import LabeledDoubleSpinBox
 
-class BodyTrackerWidget(QWidget):
+class AnimalTrackerWidget(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.tracker = None
@@ -34,7 +33,7 @@ class BodyTrackerWidget(QWidget):
         # body size
         self.min_body_size_mm = LabeledDoubleSpinBox(self)
         self.min_body_size_mm.setText('min body size (mm)')
-        self.min_body_size_mm.setRange(0,1000)
+        self.min_body_size_mm.setRange(0,10000)
         self.min_body_size_mm.setValue(8)
         self.min_body_size_mm.valueChanged.connect(self.update_tracker)
 
@@ -73,6 +72,14 @@ class BodyTrackerWidget(QWidget):
         self.max_body_width_mm.setValue(1.2)
         self.max_body_width_mm.valueChanged.connect(self.update_tracker)
 
+
+        # pad value  
+        self.pad_value_mm = LabeledDoubleSpinBox(self)
+        self.pad_value_mm.setText('Bbox size (mm)')
+        self.pad_value_mm.setRange(0,10)
+        self.pad_value_mm.setValue(2.5)
+        self.pad_value_mm.valueChanged.connect(self.update_tracker)
+
     def layout_components(self):
 
         parameters = QVBoxLayout()
@@ -84,6 +91,7 @@ class BodyTrackerWidget(QWidget):
         parameters.addWidget(self.max_body_length_mm)
         parameters.addWidget(self.min_body_width_mm)
         parameters.addWidget(self.max_body_width_mm)
+        parameters.addWidget(self.pad_value_mm)    
 
         mainlayout = QHBoxLayout()
         mainlayout.addWidget(self.image)
@@ -94,13 +102,10 @@ class BodyTrackerWidget(QWidget):
         self.setLayout(mainlayout)
 
     def update_tracker(self):
-        overlay_param = BodyTrackerParamOverlay(
-            pix_per_mm = self.pix_per_mm.value(),
-            heading_len_mm = 1,
-            heading_color = (255,0,255),
-            thickness = 2
+        overlay_param = AnimalTrackerParamOverlay(
+
         )
-        tracker_param = BodyTrackerParamTracking(
+        tracker_param = AnimalTrackerParamTracking(
             pix_per_mm = self.pix_per_mm.value(),
             body_intensity = self.body_intensity.value(),
             min_body_size_mm = self.min_body_size_mm.value(),
@@ -108,13 +113,14 @@ class BodyTrackerWidget(QWidget):
             min_body_length_mm = self.min_body_length_mm.value(),
             max_body_length_mm = self.max_body_length_mm.value(),
             min_body_width_mm = self.min_body_width_mm.value(),
-            max_body_width_mm = self.max_body_width_mm.value()
+            max_body_width_mm = self.max_body_width_mm.value(),
+            pad_value_mm = self.pad_value_mm.value(),
         )
-        self.tracker = BodyTracker(tracker_param, overlay_param)
+        self.tracker = AnimalTracker(tracker_param, overlay_param)
 
-    def set_image(self, image: NDArray, offset = Optional[NDArray]):
-        tracking = self.tracker.track(image, offset)
-        overlay = self.tracker.overlay(image, tracking, offset)
+    def set_image(self, image: NDArray):
+        tracking = self.tracker.track(image)
+        overlay = self.tracker.overlay(image, tracking)
         self.image.setPixmap(NDarray_to_QPixmap(image))
         self.mask.setPixmap(NDarray_to_QPixmap(tracking.mask))
         self.image_overlay.setPixmap(NDarray_to_QPixmap(overlay))

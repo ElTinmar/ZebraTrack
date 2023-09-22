@@ -1,12 +1,11 @@
-from morphology import bwareafilter_centroids
+from .helper.morphology import bwareafilter_centroids
 import numpy as np
 from numpy.typing import NDArray
 from dataclasses import dataclass
 import cv2
-from typing import List
 
 @dataclass
-class MultiAnimalTrackerParamTracking:
+class AnimalTrackerParamTracking:
     pix_per_mm: float = 30.0
     body_intensity: float = 0.1
     min_body_size_mm: float = 10.0
@@ -50,7 +49,7 @@ class MultiAnimalTrackerParamTracking:
         return self.mm2px(self.pad_value_mm)
 
 @dataclass
-class MultiAnimalTrackerParamOverlay:
+class AnimalTrackerParamOverlay:
     pix_per_mm: float = 30.0
     radius_mm: float = 0.1
     centroid_color: tuple = (255, 128, 128)
@@ -67,7 +66,7 @@ class MultiAnimalTrackerParamOverlay:
         return self.mm2px(self.radius_mm)
 
 @dataclass
-class MultiAnimalTracking:
+class AnimalTracking:
     centroids: NDArray # nx2 vector. (x,y) coordinates of the n fish centroid ~ swim bladder location
     bounding_boxes: NDArray
     bb_centroids = NDArray
@@ -79,16 +78,16 @@ class MultiAnimalTracking:
         '''
         pass    
 
-class MultiAnimalTracker:
+class AnimalTracker:
     def __init__(
             self, 
-            tracking_param: MultiAnimalTrackerParamTracking, 
-            overlay_param: MultiAnimalTrackerParamOverlay
+            tracking_param: AnimalTrackerParamTracking, 
+            overlay_param: AnimalTrackerParamOverlay
         ) -> None:
         self.tracking_param = tracking_param
         self.overlay_param = overlay_param
 
-    def track(self, image: NDArray) -> MultiAnimalTracking:
+    def track(self, image: NDArray) -> AnimalTracking:
         
         height, width = image.shape
         mask = (image >= self.tracking_param.body_intensity)
@@ -112,7 +111,7 @@ class MultiAnimalTracker:
             bboxes[idx,:] = [left,bottom,right,top]
             bb_centroids[idx,:] = [x-left, y-bottom] 
 
-        res = MultiAnimalTracking(
+        res = AnimalTracking(
             centroids = centroids,
             bounding_boxes=bboxes,
             bb_centroids = bb_centroids,
@@ -120,7 +119,7 @@ class MultiAnimalTracker:
         )
         return res
 
-    def overlay(self, image: NDArray, tracking: MultiAnimalTracking) -> NDArray:
+    def overlay(self, image: NDArray, tracking: AnimalTracking) -> NDArray:
         if tracking is not None:
             # draw centroid
             for (x,y) in tracking.centroids:

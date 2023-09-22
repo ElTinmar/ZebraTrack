@@ -1,12 +1,12 @@
-import numpy as np
-from numpy.typing import NDArray
-from diagonal_imcrop import diagonal_crop, rotation_matrix
 from dataclasses import dataclass
-from rect import Rect
 import math
 from scipy.interpolate import splprep, splev
 import cv2
+import numpy as np
+from numpy.typing import NDArray
 from typing import Optional
+from .helper.crop import diagonal_crop, rotation_matrix
+from .helper.rect import Rect
 
 @dataclass
 class TailTrackerParamTracking:

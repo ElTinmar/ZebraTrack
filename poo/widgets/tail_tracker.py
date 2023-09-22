@@ -1,10 +1,10 @@
-from PyQt5.QtWidgets import QWidget, QDoubleSpinBox, QLabel, QSpinBox, QHBoxLayout, QVBoxLayout
-from tail import TailTracker, TailTrackerParamOverlay, TailTrackerParamTracking
+from PyQt5.QtWidgets import QWidget, QLabel, QHBoxLayout, QVBoxLayout
+from ..tracker.tail  import TailTracker, TailTrackerParamOverlay, TailTrackerParamTracking
 from numpy.typing import NDArray
 from typing import Optional
-from ndarray_to_qpixmap import NDarray_to_QPixmap
-from labeled_doublespinbox import LabeledDoubleSpinBox
-from labeled_spinbox import LabeledSpinBox
+from .helper.ndarray_to_qpixmap import NDarray_to_QPixmap
+from .custom_widgets.labeled_doublespinbox import LabeledDoubleSpinBox
+from .custom_widgets.labeled_spinbox import LabeledSpinBox
     
 class TailTrackerWidget(QWidget):
     def __init__(self, *args, **kwargs):
@@ -18,106 +18,63 @@ class TailTrackerWidget(QWidget):
         self.image_overlay = QLabel(self)
     
         # arc angle deg
-        self.arc_angle_deg_label = QLabel(self)
-        self.arc_angle_deg_label.setText('tail max angle (deg)')
-
-        self.arc_angle_deg_spinbox = QDoubleSpinBox(self)
-        self.arc_angle_deg_spinbox.setRange(0,360)
-        self.arc_angle_deg_spinbox.setValue(120)
-        self.arc_angle_deg_spinbox.valueChanged.connect(self.update_tracker) 
+        self.arc_angle_deg = LabeledDoubleSpinBox(self)
+        self.arc_angle_deg.setText('tail max angle (deg)')
+        self.arc_angle_deg.setRange(0,360)
+        self.arc_angle_deg.setValue(120)
+        self.arc_angle_deg.valueChanged.connect(self.update_tracker) 
 
         #ksize_blur_mm 
-        self.ksize_blur_mm_label = QLabel(self)
-        self.ksize_blur_mm_label.setText('blur size (mm)')
-
-        self.ksize_blur_mm_spinbox = QDoubleSpinBox(self)
-        self.ksize_blur_mm_spinbox.setRange(0,2)
-        self.ksize_blur_mm_spinbox.setValue(0.06)
-        self.ksize_blur_mm_spinbox.valueChanged.connect(self.update_tracker)
+        self.ksize_blur_mm = LabeledDoubleSpinBox(self)
+        self.ksize_blur_mm.setText('blur size (mm)')
+        self.ksize_blur_mm.setRange(0,2)
+        self.ksize_blur_mm.setValue(0.06)
+        self.ksize_blur_mm.valueChanged.connect(self.update_tracker)
         
         # n_tail_points
-        self.n_tail_points_label = QLabel(self)
-        self.n_tail_points_label.setText('#tail points')
-
-        self.n_tail_points_spinbox = QSpinBox(self)
-        self.n_tail_points_spinbox.setRange(0,100)
-        self.n_tail_points_spinbox.setValue(12)
-        self.n_tail_points_spinbox.valueChanged.connect(self.update_tracker)
+        self.n_tail_points = LabeledSpinBox(self)
+        self.n_tail_points.setText('#tail points')
+        self.n_tail_points.setRange(0,100)
+        self.n_tail_points.setValue(12)
+        self.n_tail_points.valueChanged.connect(self.update_tracker)
 
         # tail_length_mm 
-        self.tail_length_mm_label = QLabel(self)
-        self.tail_length_mm_label.setText('tail_length_mm')
-
-        self.tail_length_mm_spinbox = QDoubleSpinBox(self)
-        self.tail_length_mm_spinbox.setRange(0,10)
-        self.tail_length_mm_spinbox.setValue(2.4)
-        self.tail_length_mm_spinbox.valueChanged.connect(self.update_tracker)
+        self.tail_length_mm = LabeledDoubleSpinBox(self)
+        self.tail_length_mm.setText('tail_length_mm')
+        self.tail_length_mm.setRange(0,10)
+        self.tail_length_mm.setValue(2.4)
+        self.tail_length_mm.valueChanged.connect(self.update_tracker)
 
         # n_pts_arc
-        self.n_pts_arc_label = QLabel(self)
-        self.n_pts_arc_label.setText('angle res.')
-
-        self.n_pts_arc_spinbox = QSpinBox(self)
-        self.n_pts_arc_spinbox.setRange(0,100)
-        self.n_pts_arc_spinbox.setValue(20)
-        self.n_pts_arc_spinbox.valueChanged.connect(self.update_tracker)
+        self.n_pts_arc = LabeledSpinBox(self)
+        self.n_pts_arc.setText('angle res.')
+        self.n_pts_arc.setRange(0,100)
+        self.n_pts_arc.setValue(20)
+        self.n_pts_arc.valueChanged.connect(self.update_tracker)
 
         # n_pts_interp  
-        self.n_pts_interp_label = QLabel(self)
-        self.n_pts_interp_label.setText('n_pts_interp')
+        self.n_pts_interp = LabeledSpinBox(self)
+        self.n_pts_interp.setText('n_pts_interp')
+        self.n_pts_interp.setRange(0,200)
+        self.n_pts_interp.setValue(40)
+        self.n_pts_interp.valueChanged.connect(self.update_tracker)
 
-        self.n_pts_interp_spinbox = QSpinBox(self)
-        self.n_pts_interp_spinbox.setRange(0,200)
-        self.n_pts_interp_spinbox.setValue(40)
-        self.n_pts_interp_spinbox.valueChanged.connect(self.update_tracker)
-
-        # dist_swim_bladder_mm_label  
-        self.dist_swim_bladder_mm_label = QLabel(self)
-        self.dist_swim_bladder_mm_label.setText('Offset tail Y (mm)')
-
-        self.dist_swim_bladder_mm_spinbox = QDoubleSpinBox(self)
-        self.dist_swim_bladder_mm_spinbox.setRange(0,3)
-        self.dist_swim_bladder_mm_spinbox.setValue(0.4)
-        self.dist_swim_bladder_mm_spinbox.valueChanged.connect(self.update_tracker)
+        # dist_swim_bladder_mm  
+        self.dist_swim_bladder_mm = LabeledDoubleSpinBox(self)
+        self.dist_swim_bladder_mm.setText('Offset tail Y (mm)')
+        self.dist_swim_bladder_mm.setRange(0,3)
+        self.dist_swim_bladder_mm.setValue(0.4)
+        self.dist_swim_bladder_mm.valueChanged.connect(self.update_tracker)
         
-
     def layout_components(self):
-        row00 = QHBoxLayout()
-        row00.addWidget(self.arc_angle_deg_label)
-        row00.addWidget(self.arc_angle_deg_spinbox)
-
-        row01 = QHBoxLayout()
-        row01.addWidget(self.ksize_blur_mm_label)
-        row01.addWidget(self.ksize_blur_mm_spinbox)
-
-        row02 = QHBoxLayout()
-        row02.addWidget(self.n_tail_points_label)
-        row02.addWidget(self.n_tail_points_spinbox)
-
-        row03 = QHBoxLayout()
-        row03.addWidget(self.tail_length_mm_label)
-        row03.addWidget(self.tail_length_mm_spinbox)
-
-        row04 = QHBoxLayout()
-        row04.addWidget(self.n_pts_arc_label)
-        row04.addWidget(self.n_pts_arc_spinbox)
-
-        row05 = QHBoxLayout()
-        row05.addWidget(self.n_pts_interp_label)
-        row05.addWidget(self.n_pts_interp_spinbox)
-
-        row06 = QHBoxLayout()
-        row06.addWidget(self.dist_swim_bladder_mm_label)
-        row06.addWidget(self.dist_swim_bladder_mm_spinbox)    
-
         parameters = QVBoxLayout()
-        parameters.addLayout(row00)
-        parameters.addLayout(row01)
-        parameters.addLayout(row02)
-        parameters.addLayout(row03)
-        parameters.addLayout(row04)
-        parameters.addLayout(row05)
-        parameters.addLayout(row06)
+        parameters.addWidget(self.arc_angle_deg)
+        parameters.addWidget(self.ksize_blur_mm)
+        parameters.addWidget(self.n_tail_points)
+        parameters.addWidget(self.tail_length_mm)
+        parameters.addWidget(self.n_pts_arc)
+        parameters.addWidget(self.n_pts_interp)
+        parameters.addWidget(self.dist_swim_bladder_mm)    
 
         mainlayout = QHBoxLayout()
         mainlayout.addWidget(self.image)
@@ -132,13 +89,13 @@ class TailTrackerWidget(QWidget):
             thickness = 2
         )
         tracker_param = TailTrackerParamTracking(
-            arc_angle_deg = self.arc_angle_deg_spinbox.value(),
-            ksize_blur_mm = self.ksize_blur_mm_spinbox.value(),
-            n_tail_points = self.n_tail_points_spinbox.value(),
-            tail_length_mm = self.tail_length_mm_spinbox.value(),
-            n_pts_arc = self.n_pts_arc_spinbox.value(),
-            n_pts_interp = self.n_pts_interp_spinbox.value(), 
-            dist_swim_bladder_mm = self.dist_swim_bladder_mm_spinbox.value()
+            arc_angle_deg = self.arc_angle_deg.value(),
+            ksize_blur_mm = self.ksize_blur_mm.value(),
+            n_tail_points = self.n_tail_points.value(),
+            tail_length_mm = self.tail_length_mm.value(),
+            n_pts_arc = self.n_pts_arc.value(),
+            n_pts_interp = self.n_pts_interp.value(), 
+            dist_swim_bladder_mm = self.dist_swim_bladder_mm.value()
         )
         self.tracker = TailTracker(tracker_param, overlay_param)
 
