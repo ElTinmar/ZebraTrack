@@ -1,13 +1,15 @@
 import os
 import pandas as pd
+import cv2
 from video.video_reader import OpenCV_VideoReader
 from video.background import StaticBackground, DynamicBackground, DynamicBackgroundMP
-from trackers.animal import AnimalTracker
-from trackers.body import BodyTracker
-from trackers.eyes import EyesTracker
-from trackers.tail import TailTracker
+from trackers.animal import AnimalTracker, AnimalTrackerParamTracking, AnimalTrackerParamOverlay
+from trackers.body import BodyTracker, BodyTrackerParamTracking, BodyTrackerParamOverlay
+from trackers.eyes import EyesTracker, EyesTrackerParamTracking, EyesTrackerParamOverlay
+from trackers.tail import TailTracker, TailTrackerParamTracking, TailTrackerParamOverlay
 from trackers.tracker import Tracker
 from trackers.assignment import LinearSumAssignment
+from helper.imconvert import im2gray, im2single
 
 BASEFOLDER = '/home/martin/Documents/Escapes/'
 FISHDATA = os.path.join(BASEFOLDER, 'fish.csv')
@@ -41,13 +43,25 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     )
 
     # tracking 
-    animal_tracker = AnimalTracker()
-    body_tracker = BodyTracker()
-    eyes_tracker = EyesTracker()
-    tail_tracker = TailTracker()
+    animal_tracker = AnimalTracker(
+        AnimalTrackerParamTracking(),
+        AnimalTrackerParamOverlay()
+    )
+    body_tracker = BodyTracker(
+        BodyTrackerParamTracking(),
+        BodyTrackerParamOverlay()
+    )
+    eyes_tracker = EyesTracker(
+        EyesTrackerParamTracking(),
+        EyesTrackerParamOverlay()
+    )
+    tail_tracker = TailTracker(
+        TailTrackerParamTracking(),
+        TailTrackerParamOverlay()
+    )
     assignment = LinearSumAssignment()
     accumulator = None
-    Tracker(            
+    tracker = Tracker(            
         assignment,
         accumulator,
         animal_tracker,
@@ -55,3 +69,17 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
         eyes_tracker, 
         tail_tracker
     )
+
+
+    cv2.namedWindow('tracking')
+    while True:
+        ret, image = reader.next_frame()
+        if not ret:
+            break
+
+        img = im2single(im2gray(image))
+        image_sub = background.subtract_background(img)
+        tracking = tracker.track()
+        overlay = tracker.overlay(image, tracking)
+        cv2.imshow('tracking', overlay)
+        cv2.waitKey(1)

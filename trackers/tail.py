@@ -5,8 +5,8 @@ import cv2
 import numpy as np
 from numpy.typing import NDArray
 from typing import Optional
-from .helper.crop import diagonal_crop, rotation_matrix
-from .helper.rect import Rect
+from helper.crop import diagonal_crop, rotation_matrix
+from helper.rect import Rect
 
 @dataclass
 class TailTrackerParamTracking:
