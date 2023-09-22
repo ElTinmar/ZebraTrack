@@ -2,7 +2,7 @@ import numpy as np
 from numpy.typing import NDArray
 from scipy import stats
 from typing import Protocol, Tuple
-from imconv import im2gray, im2single
+from helper.imconvert import im2gray, im2single
     
 class VideoReader(Protocol):
     def next_frame(self) -> Tuple[bool,NDArray]:
@@ -39,7 +39,7 @@ class StaticBackground:
 
     def sample_frames_evenly(self) -> NDArray:
         '''
-        Sample frames evenly from the whole video
+        Sample frames evenly from the whole video and add to collection
         '''
         height = self.video_reader.get_height()
         width = self.video_reader.get_width()
@@ -90,3 +90,5 @@ class DynamicBackground:
     def subtract_background(self, image: NDArray) -> NDArray: 
         pass
         
+class DynamicBackgroundMP:
+    pass
