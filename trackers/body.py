@@ -8,7 +8,7 @@ from typing import Optional
         
 @dataclass
 class BodyTrackerParamTracking:
-    pix_per_mm: float = 30.0
+    pix_per_mm: float = 45.0
     body_intensity: float = 0.1
     min_body_size_mm: float = 10.0
     max_body_size_mm: float = 100.0
@@ -47,10 +47,10 @@ class BodyTrackerParamTracking:
 
 @dataclass
 class BodyTrackerParamOverlay:
-    pix_per_mm: float
-    heading_len_mm: float
-    heading_color: tuple
-    thickness: int
+    pix_per_mm: float = 45.0
+    heading_len_mm: float = 1.0
+    heading_color: tuple = (0,128,255)
+    thickness: int = 2
 
 @dataclass 
 class BodyTracking:

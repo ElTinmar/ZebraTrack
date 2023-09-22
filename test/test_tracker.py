@@ -70,7 +70,6 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
         tail_tracker
     )
 
-
     cv2.namedWindow('tracking')
     while True:
         ret, image = reader.next_frame()
