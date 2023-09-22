@@ -4,6 +4,9 @@ from scipy import stats
 from typing import Protocol, Tuple
 from collections import deque
 from helper.imconvert import im2gray, im2single
+from multiprocessing import Process, Event
+from multiprocessing.sharedctypes import RawArray, Value
+import ctypes
     
 class VideoReader(Protocol):
     def next_frame(self) -> Tuple[bool,NDArray]:
@@ -109,6 +112,90 @@ class DynamicBackground:
             self.compute_background()
         self.curr_image += 1
         return image - self.background
+
+class BoundedQueue:
+    def __init__(self, size, maxlen):
+        self.size = size
+        self.maxlen = maxlen
+        self.itemsize = np.prod(size)
+
+        self.numel = Value('i',0)
+        self.insert_ind = Value('i',0)
+        self.data = RawArray(ctypes.c_float, int(self.itemsize*maxlen))
     
+    def append(self, item) -> None:
+        data_np = np.frombuffer(self.data, dtype=np.float32).reshape((self.maxlen, *self.size))
+        np.copyto(data_np[self.insert_ind.value,:,:], item)
+        self.numel.value = min(self.numel.value+1, self.maxlen) 
+        self.insert_ind.value = (self.insert_ind.value + 1) % self.maxlen
+
+    def get_data(self):
+        if self.numel.value == 0:
+            return None
+        else:
+            data_np = np.frombuffer(self.data, dtype=np.float32).reshape((self.maxlen, *self.size))
+            return data_np[0:self.numel.value,:,:]
+
 class DynamicBackgroundMP:
-    pass
+    '''
+    Use this if you want to extract background from a streaming source 
+    (images arriving continuously) or if the background is changing 
+    with time. Recomputes the background in a different process
+    for time sensitive applications.
+    '''
+    def __init__(
+        self, 
+        width,
+        height,
+        num_images = 500, 
+        every_n_image = 100,
+    ) -> None:
+
+        self.width = width
+        self.height = height
+        self.num_images = num_images
+        self.every_n_image = every_n_image
+        self.counter = 0
+        
+        self.stop_flag = Event()
+        self.background = RawArray(ctypes.c_float, width*height)
+        self.image_store = BoundedQueue((width,height),maxlen=num_images)
+
+    def start(self):
+        self.proc_compute = Process(
+            target=self.compute_background, 
+            args=(self.stop_flag, self.image_store, self.background)
+        )
+        self.proc_compute.start()
+        
+    def stop(self):
+        self.stop_flag.set()
+        self.proc_compute.join()
+
+    @staticmethod
+    def compute_background(
+        stop_flag: Event, 
+        image_store: BoundedQueue, 
+        background: RawArray
+    ):
+
+        while not stop_flag.is_set():
+            data = image_store.get_data()
+            if data is not None:
+                bckg_img = stats.mode(data, axis=0, keepdims=False).mode
+                background[:] = bckg_img.flatten()
+
+    def get_background(self) -> NDArray:
+        return np.frombuffer(self.background, dtype=np.float32).reshape((self.width,self.height))
+    
+    def subtract_background(self, image : NDArray) -> NDArray:
+        """
+        Input an image and update the background model
+        """
+        if self.counter % self.every_n_image == 0:
+            self.image_store.append(image)
+            if self.counter == 0:
+                self.background[:] = image.flatten()
+        self.counter += 1
+        bckg = self.get_background()
+        return image - bckg
