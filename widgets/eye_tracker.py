@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QWidget, QLabel, QHBoxLayout, QVBoxLayout
-from ..tracker.eyes import EyesTracker, EyesTrackerParamOverlay, EyesTrackerParamTracking
+from ..trackers.eyes import EyesTracker, EyesTrackerParamOverlay, EyesTrackerParamTracking
 from numpy.typing import NDArray
 from typing import Optional
 from .helper.ndarray_to_qpixmap import NDarray_to_QPixmap

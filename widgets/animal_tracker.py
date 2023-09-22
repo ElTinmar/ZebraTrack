@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QWidget, QLabel, QHBoxLayout, QVBoxLayout
-from ..tracker.animal import AnimalTracker, AnimalTrackerParamOverlay, AnimalTrackerParamTracking
+from ..trackers.animal import AnimalTracker, AnimalTrackerParamOverlay, AnimalTrackerParamTracking
 from numpy.typing import NDArray
 from .helper.ndarray_to_qpixmap import NDarray_to_QPixmap
 from .custom_widgets.labeled_doublespinbox import LabeledDoubleSpinBox
