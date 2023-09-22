@@ -2,6 +2,7 @@ import numpy as np
 from numpy.typing import NDArray
 from scipy import stats
 from typing import Protocol, Tuple
+from collections import deque
 from helper.imconvert import im2gray, im2single
     
 class VideoReader(Protocol):
@@ -74,21 +75,28 @@ class StaticBackground:
         return image - self.background 
 
 class DynamicBackground:
-    def __init__(self) -> None:
-        pass
+    def __init__(
+        self, 
+        num_sample_frames: int, 
+        sample_every_n_frames: int
+        ) -> None:
 
-    def update_policy(self) -> bool:
-        '''
-        returns True if next image should be added to the background model, 
-        returns False otherwise 
-        '''
-        pass
+        self.num_sample_frames = num_sample_frames
+        self.sample_every_n_frames = sample_every_n_frames
+        self.frame_collection = deque(maxlen=num_sample_frames)
+        self.curr_image = 0
+        self.background = None
 
-    def update_background(self, image: NDArray) -> NDArray:
-        pass
+    def compute_background(self):
+        self.background = stats.mode(
+            np.asarray(self.frame_collection), 
+            axis=2, 
+            keepdims=False).mode
 
     def subtract_background(self, image: NDArray) -> NDArray: 
-        pass
+        if self.curr_image % self.sample_every_n_frames == 0:
+            self.frame_collection.append(image)
+        
         
 class DynamicBackgroundMP:
     pass
