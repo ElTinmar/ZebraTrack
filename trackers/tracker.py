@@ -1,7 +1,7 @@
 from body import BodyTracker
 from eyes import EyesTracker
 from tail import TailTracker
-from multi_animal import MultiAnimalTracker
+from animal import AnimalTracker
 import numpy as np
 import cv2
 from typing import Protocol
@@ -22,20 +22,20 @@ class Tracker:
             self, 
             assignment: Assignment,
             accumulator: Accumulator,
-            multi_animal: MultiAnimalTracker,
+            animal_tracker: AnimalTracker,
             body_tracker: BodyTracker, 
             eyes_tracker: EyesTracker, 
             tail_tracker: TailTracker
         ):
         self.assignment = assignment
         self.accumulator = accumulator
-        self.multi_animal_tracker = multi_animal
+        self.animal_tracker = animal_tracker
         self.body_tracker = body_tracker
         self.eyes_tracker = eyes_tracker
         self.tail_tracker = tail_tracker
         
     def track(self, image):
-        animals = self.multi_animal_tracker.track(image)
+        animals = self.animal_tracker.track(image)
         self.assignment.update(animals.centroids)
         identities = self.assignment.get_ID()
         data = zip(identities, animals.bb_centroids, animals.bounding_boxes)
@@ -49,7 +49,8 @@ class Tracker:
             if body is not None:
                 eyes[id] = self.eyes_tracker.track(image, body.heading, body.centroid)
                 tail[id] = self.tail_tracker.track(image, body.heading, body.centroid)
-            self.accumulator.update(id,body[id],eyes[id],tail[id])
+            if self.accumulator is not None:
+                self.accumulator.update(id,body[id],eyes[id],tail[id])
 
         res = {
             'identities': identities, 
@@ -62,7 +63,7 @@ class Tracker:
         return res 
  
     def overlay(self, image, tracking):
-        image = self.multi_animal_tracker.overlay(image, tracking['animals'])
+        image = self.animal_tracker.overlay(image, tracking['animals'])
         for idx, id in enumerate(tracking['identities']):
             offset = tracking['animals'].bounding_boxes[idx,:2]
             image = self.body_tracker.overlay(image,tracking['body'][id], offset)

@@ -2,6 +2,12 @@ import os
 import pandas as pd
 from video.video_reader import OpenCV_VideoReader
 from video.background import StaticBackground, DynamicBackground, DynamicBackgroundMP
+from trackers.animal import AnimalTracker
+from trackers.body import BodyTracker
+from trackers.eyes import EyesTracker
+from trackers.tail import TailTracker
+from trackers.tracker import Tracker
+from trackers.assignment import LinearSumAssignment
 
 BASEFOLDER = '/home/martin/Documents/Escapes/'
 FISHDATA = os.path.join(BASEFOLDER, 'fish.csv')
@@ -21,7 +27,7 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
 
     # video reader
     reader = OpenCV_VideoReader()
-    reader.open_file(video_file, safe=True)
+    reader.open_file(video_file, safe=False)
     num_frames = reader.get_number_of_frame()
     height = reader.get_height()
     width = reader.get_width()
@@ -35,3 +41,17 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     )
 
     # tracking 
+    animal_tracker = AnimalTracker()
+    body_tracker = BodyTracker()
+    eyes_tracker = EyesTracker()
+    tail_tracker = TailTracker()
+    assignment = LinearSumAssignment()
+    accumulator = None
+    Tracker(            
+        assignment,
+        accumulator,
+        animal_tracker,
+        body_tracker, 
+        eyes_tracker, 
+        tail_tracker
+    )
