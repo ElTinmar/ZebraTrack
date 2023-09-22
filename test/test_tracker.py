@@ -1,5 +1,7 @@
 import os
 import pandas as pd
+from video.video_reader import OpenCV_VideoReader
+from video.background import StaticBackground, DynamicBackground, DynamicBackgroundMP
 
 BASEFOLDER = '/home/martin/Documents/Escapes/'
 FISHDATA = os.path.join(BASEFOLDER, 'fish.csv')
@@ -18,7 +20,18 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     print(f'Processing {fish}...')
 
     # video reader
+    reader = OpenCV_VideoReader()
+    reader.open_file(video_file, safe=True)
+    num_frames = reader.get_number_of_frame()
+    height = reader.get_height()
+    width = reader.get_width()
 
     # background subtraction
+    background = DynamicBackgroundMP(
+        height=height,
+        width=width,
+        num_images = 500,
+        every_n_image = 200
+    )
 
     # tracking 
