@@ -29,6 +29,10 @@ class VideoReader(Protocol):
         """return data type"""
 
 class StaticBackground:
+    '''
+    Use this if you want to track if you already have the full video
+    and the background doesn't change with time
+    '''
     def __init__(
             self,
             video_reader: VideoReader, 
@@ -75,6 +79,12 @@ class StaticBackground:
         return image - self.background 
 
 class DynamicBackground:
+    '''
+    Use this if you want to extract background from a streaming source 
+    (images arriving continuously) or if the background is changing 
+    with time. Recomputing the background takes time, do not use 
+    for time sensitive applications 
+    '''
     def __init__(
         self, 
         num_sample_frames: int, 
@@ -96,7 +106,9 @@ class DynamicBackground:
     def subtract_background(self, image: NDArray) -> NDArray: 
         if self.curr_image % self.sample_every_n_frames == 0:
             self.frame_collection.append(image)
-        
-        
+            self.compute_background()
+        self.curr_image += 1
+        return image - self.background
+    
 class DynamicBackgroundMP:
     pass
