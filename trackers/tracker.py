@@ -1,7 +1,7 @@
-from body import BodyTracker
-from eyes import EyesTracker
-from tail import TailTracker
-from animal import AnimalTracker
+from .body import BodyTracker
+from .eyes import EyesTracker
+from .tail import TailTracker
+from .animal import AnimalTracker
 import numpy as np
 import cv2
 from typing import Protocol
