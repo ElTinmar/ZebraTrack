@@ -168,8 +168,8 @@ class EyesTracker:
             heading_after_rot = np.array([0, 1], dtype=np.float32)
             left_eye = self.get_eye_prop(props[left_idx], heading_after_rot)
             right_eye = self.get_eye_prop(props[right_idx], heading_after_rot)
-            new_heading = (props[left_idx].centroid + props[right_idx].centroid)/2 - props[sb_idx].centroid
-            new_heading = new_heading / np.linalg.norm(new_heading)
+            #new_heading = (props[left_idx].centroid + props[right_idx].centroid)/2 - props[sb_idx].centroid
+            #new_heading = new_heading / np.linalg.norm(new_heading)
 
         res = EyesTracking(
             heading = heading,
@@ -233,7 +233,7 @@ class EyesTracker:
             angle = np.arctan2(tracking.heading[1,1],tracking.heading[0,1]) 
             w, h = self.tracking_param.crop_dimension_px
             corner = tracking.centroid - w//2 * tracking.heading[:,1] + (h+self.tracking_param.crop_offset_px) * tracking.heading[:,0] 
-            R = rotation_matrix(np.rad2deg(angle))
+            R = rotation_matrix(np.rad2deg(angle))[:2,:2]
 
             image = process_eye(
                 image, 
