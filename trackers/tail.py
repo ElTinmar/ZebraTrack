@@ -10,7 +10,7 @@ from helper.rect import Rect
 
 @dataclass
 class TailTrackerParamTracking:
-    pix_per_mm: float = 30.0
+    pix_per_mm: float = 45.0
     arc_angle_deg: float = 120.0
     n_tail_points: int = 12
     n_pts_arc: int = 20
