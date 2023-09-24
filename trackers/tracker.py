@@ -47,13 +47,13 @@ class Tracker:
         body = {}
         eyes = {}
         tail = {}
-        for (id, bb_x, bb_y, left, bottom, right, top) in data: # problem with zip if only one blob detected
+        for (id, bb_x, bb_y, left, bottom, right, top) in data.astype(np.int64): # problem with zip if only one blob detected
             image_cropped = image[bottom:top, left:right]
             offset = np.array([bb_x, bb_y])
             body[id] = self.body_tracker.track(image_cropped, offset)
             if body is not None:
-                eyes[id] = self.eyes_tracker.track(image, body.heading, body.centroid)
-                tail[id] = self.tail_tracker.track(image, body.heading, body.centroid)
+                eyes[id] = self.eyes_tracker.track(image, body[id].heading, body[id].centroid)
+                tail[id] = self.tail_tracker.track(image, body[id].heading, body[id].centroid)
             if self.accumulator is not None:
                 self.accumulator.update(id,body[id],eyes[id],tail[id])
 

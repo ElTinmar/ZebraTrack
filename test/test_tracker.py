@@ -36,18 +36,18 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     width = reader.get_width()
 
     # background subtraction
+    '''
     background = StaticBackground(
         video_reader=reader
     )
-
     '''
+
     background = DynamicBackgroundMP(
         height=height,
         width=width,
         num_images = 500,
         every_n_image = 200
-    )
-    '''    
+    )    
 
     # tracking 
     animal_tracker = AnimalTracker(
