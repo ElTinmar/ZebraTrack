@@ -59,7 +59,7 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
         TailTrackerParamTracking(),
         TailTrackerParamOverlay()
     )
-    assignment = LinearSumAssignment()
+    assignment = LinearSumAssignment(distance_threshold=50)
     accumulator = None
     tracker = Tracker(            
         assignment,
