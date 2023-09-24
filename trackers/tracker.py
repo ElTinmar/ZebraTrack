@@ -77,7 +77,7 @@ class Tracker:
         image = self.animal_tracker.overlay(image, tracking['animals'])
         for idx, id in enumerate(tracking['identities']):
             offset = tracking['animals'].bounding_boxes[idx,:2]
-            image = self.body_tracker.overlay(image,tracking['body'][id], offset)
+            image = self.body_tracker.overlay(image, tracking['body'][id], offset)
             image = self.eyes_tracker.overlay(image, tracking['eyes'][id], offset)
             image = self.tail_tracker.overlay(image, tracking['tail'][id], offset)
             cv2.putText(image, str(id), offset.astype(int), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0,0,255), 2, cv2.LINE_AA)
