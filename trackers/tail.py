@@ -124,7 +124,7 @@ class TailTracker:
 
         if tracking is not None:
             angle = np.arctan2(tracking.heading[1,1],tracking.heading[0,1]) 
-            R = rotation_matrix(np.rad2deg(angle))
+            R = rotation_matrix(np.rad2deg(angle))[:2,:2]
             w = int(1.5*self.tracking_param.tail_length_px)
             corner = tracking.centroid - w//2 * tracking.heading[:,1]
 
