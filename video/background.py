@@ -31,6 +31,9 @@ class VideoReader(Protocol):
     def get_type(self) -> np.dtype:
         """return data type"""
 
+    def reset_reader(self) -> None:
+        """reset reader to video beginning"""
+        
 class StaticBackground:
     '''
     Use this if you want to track if you already have the full video
@@ -78,6 +81,7 @@ class StaticBackground:
     def initialize_background_model(self):
         frame_collection = self.sample_frames_evenly()
         self.compute_background(frame_collection)
+        self.video_reader.reset_reader()
 
     def subtract_background(self, image: NDArray) -> NDArray:
         return image - self.background 
