@@ -195,6 +195,9 @@ class EyesTracker:
                 thickness: int
             ) -> NDArray:
 
+            if eye is None:
+                return image
+            
             eye_centroid = R @ eye['centroid'] + corner
             if offset is not None:
                 eye_centroid += offset
