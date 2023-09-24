@@ -57,6 +57,9 @@ class LinearSumAssignment:
             # - they get out of the frame
             # - there is a crossing
 
+        if centroids.size == 0:
+            return
+        
         if self.previous_centroids is None:
             self.ID = np.arange(centroids.shape[0])
             self.ID_max = np.max(self.ID)

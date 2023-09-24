@@ -36,7 +36,12 @@ class Tracker:
         
     def track(self, image):
         animals = self.animal_tracker.track(image)
-        self.assignment.update(animals.centroids)
+        centroids = animals.centroids
+
+        if centroids.size == 0:
+            return
+        
+        self.assignment.update(centroids)
         identities = self.assignment.get_ID()
         data = zip(identities, animals.bb_centroids, animals.bounding_boxes)
         body = {}
@@ -63,6 +68,9 @@ class Tracker:
         return res 
  
     def overlay(self, image, tracking):
+        if tracking is None:
+            return None
+        
         image = self.animal_tracker.overlay(image, tracking['animals'])
         for idx, id in enumerate(tracking['identities']):
             offset = tracking['animals'].bounding_boxes[idx,:2]
