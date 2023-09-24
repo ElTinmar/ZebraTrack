@@ -52,6 +52,14 @@ class BodyTrackerParamOverlay:
     heading_color: tuple = (0,128,255)
     thickness: int = 2
 
+    def mm2px(self, val_mm):
+        val_px = int(val_mm * self.pix_per_mm) 
+        return val_px
+
+    @property
+    def heading_len_px(self):
+        return self.mm2px(self.heading_len_mm)
+    
 @dataclass 
 class BodyTracking:
     heading: NDArray # 2x2 matrix, column 1 = fish heading, column 2 = fish right direction

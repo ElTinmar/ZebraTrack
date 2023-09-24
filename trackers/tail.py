@@ -68,7 +68,7 @@ class TailTracker:
         corner = centroid - w//2 * heading[:,1]
         image_crop = diagonal_crop(
             image, 
-            Rect(corner[0],corner[1],w,h),
+            Rect(int(corner[0]),int(corner[1]),w,h),
             np.rad2deg(angle)
         )
 

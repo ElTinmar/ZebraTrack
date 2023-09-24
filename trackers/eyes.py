@@ -128,7 +128,7 @@ class EyesTracker:
         corner = centroid - w//2 * heading[:,1] + (h+self.tracking_param.crop_offset_px) * heading[:,0] 
         image_crop = diagonal_crop(
             image, 
-            Rect(corner[0],corner[1],w,h),
+            Rect(int(corner[0]),int(corner[1]),w,h),
             np.rad2deg(angle)
         )
         image_crop = cv2.boxFilter(image_crop, -1, 
