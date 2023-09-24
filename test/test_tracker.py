@@ -78,7 +78,7 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
 
         img = im2single(im2gray(image))
         image_sub = background.subtract_background(img)
-        tracking = tracker.track()
+        tracking = tracker.track(image_sub)
         overlay = tracker.overlay(image, tracking)
         cv2.imshow('tracking', overlay)
         cv2.waitKey(1)

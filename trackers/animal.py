@@ -69,7 +69,7 @@ class AnimalTrackerParamOverlay:
 class AnimalTracking:
     centroids: NDArray # nx2 vector. (x,y) coordinates of the n fish centroid ~ swim bladder location
     bounding_boxes: NDArray
-    bb_centroids = NDArray
+    bb_centroids: NDArray
     mask: NDArray
 
     def to_csv(self):
@@ -101,8 +101,8 @@ class AnimalTracker:
             max_width = self.tracking_param.max_body_width_px
         )
 
-        bboxes = np.zeros(centroids.shape[0],4, dtype=int)
-        bb_centroids = np.zeros(centroids.shape[0],2, dtype=float)
+        bboxes = np.zeros((centroids.shape[0],4), dtype=int)
+        bb_centroids = np.zeros((centroids.shape[0],2), dtype=float)
         for idx, (x,y) in enumerate(centroids):
             left = max(int(x - self.tracking_param.pad_value_px), 0) 
             bottom = max(int(y - self.tracking_param.pad_value_px), 0) 
@@ -113,7 +113,7 @@ class AnimalTracker:
 
         res = AnimalTracking(
             centroids = centroids,
-            bounding_boxes=bboxes,
+            bounding_boxes = bboxes,
             bb_centroids = bb_centroids,
             mask = mask
         )
