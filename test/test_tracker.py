@@ -80,12 +80,6 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
         image_sub = background.subtract_background(img)
         tracking = tracker.track(image_sub)
         overlay = tracker.overlay(image, tracking)
-        if overlay is not None:res = {
-                'identities': None, 
-                'animals': None,
-                'body': None,
-                'eyes': None,
-                'tail': None
-            }
+        if overlay is not None:
             cv2.imshow('tracking', overlay)
             cv2.waitKey(1)

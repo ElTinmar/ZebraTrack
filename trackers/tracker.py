@@ -43,10 +43,13 @@ class Tracker:
         
         self.assignment.update(centroids)
         identities = self.assignment.get_ID()
-        data = zip(identities, animals.bb_centroids, animals.bounding_boxes)
+        data = zip(identities, animals.bb_centroids, animals.bounding_boxes) 
         body = {}
         eyes = {}
         tail = {}
+        print(identities)
+        print(animals.bb_centroids)
+        print(animals.bounding_boxes)
         for (id, bb_x, bb_y, left, bottom, right, top) in data:
             image_cropped = image[bottom:top, left:right]
             offset = np.array([bb_x, bb_y])
