@@ -50,7 +50,7 @@ class Tracker:
         print(identities)
         print(animals.bb_centroids)
         print(animals.bounding_boxes)
-        for (id, bb_x, bb_y, left, bottom, right, top) in data:
+        for (id, bb_x, bb_y, left, bottom, right, top) in data: # problem with zip if only one blob detected
             image_cropped = image[bottom:top, left:right]
             offset = np.array([bb_x, bb_y])
             body[id] = self.body_tracker.track(image_cropped, offset)

@@ -27,7 +27,8 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     fov_size_mm = experiment['fov_size_mm'] 
     print(f'Processing {fish}...')
 
-    # video reader
+    # video reader    
+
     reader = OpenCV_VideoReader()
     reader.open_file(video_file, safe=False)
     num_frames = reader.get_number_of_frame()
@@ -35,12 +36,18 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     width = reader.get_width()
 
     # background subtraction
+    background = StaticBackground(
+        video_reader=reader
+    )
+
+    '''
     background = DynamicBackgroundMP(
         height=height,
         width=width,
         num_images = 500,
         every_n_image = 200
     )
+    '''    
 
     # tracking 
     animal_tracker = AnimalTracker(

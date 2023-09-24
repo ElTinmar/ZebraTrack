@@ -44,6 +44,7 @@ class StaticBackground:
         self.video_reader = video_reader
         self.num_sample_frames = num_sample_frames
         self.background = None
+        self.initialize_background_model()
 
     def sample_frames_evenly(self) -> NDArray:
         '''
