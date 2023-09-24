@@ -65,15 +65,46 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
         AnimalTrackerParamOverlay()
     )
     body_tracker = BodyTracker(
-        BodyTrackerParamTracking(),
+        BodyTrackerParamTracking(
+            pix_per_mm=45,
+            body_intensity=0.08,
+            min_body_size_mm=2,
+            max_body_size_mm=40,
+            min_body_length_mm=0.2,
+            max_body_length_mm=10,
+            min_body_width_mm=0.1,
+            max_body_width_mm=3
+        ),
         BodyTrackerParamOverlay()
     )
     eyes_tracker = EyesTracker(
-        EyesTrackerParamTracking(),
+        EyesTrackerParamTracking(
+            pix_per_mm=45,
+            eye_norm=0.2,
+            eye_gamma=0.5,
+            eye_dyntresh_res=20,
+            eye_contrast=1.5,
+            eye_size_lo_mm=0.1,
+            eye_size_hi_mm=10,
+            blur_sz_mm=0.05,
+            median_filter_sz_mm=0.05,
+            dist_eye_midline_mm=0.1,
+            crop_dimension_mm=(1.2,1.2),
+            crop_offset_mm=0.2
+        ),
         EyesTrackerParamOverlay()
     )
     tail_tracker = TailTracker(
-        TailTrackerParamTracking(),
+        TailTrackerParamTracking(
+            pix_per_mm=45,
+            arc_angle_deg=120,
+            n_tail_points=12,
+            n_pts_arc=20,
+            n_pts_interp=40,
+            tail_length_mm=3,
+            dist_swim_bladder_mm=0.4,
+            blur_sz_mm=0.1
+        ),
         TailTrackerParamOverlay()
     )
     assignment = LinearSumAssignment(distance_threshold=50)
@@ -98,5 +129,6 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
         tracking = tracker.track(image_sub)
         overlay = tracker.overlay(image, tracking)
         if overlay is not None:
+            overlay = cv2.resize(overlay,None,None,0.5,0.5)
             cv2.imshow('tracking', overlay)
             cv2.waitKey(1)
