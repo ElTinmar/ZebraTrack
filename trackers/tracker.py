@@ -51,7 +51,7 @@ class Tracker:
             image_cropped = image[bottom:top, left:right]
             offset = np.array([bb_x, bb_y])
             body[id] = self.body_tracker.track(image_cropped, offset)
-            if body is not None:
+            if body[id] is not None:
                 eyes[id] = self.eyes_tracker.track(image, body[id].heading, body[id].centroid)
                 tail[id] = self.tail_tracker.track(image, body[id].heading, body[id].centroid)
             if self.accumulator is not None:
