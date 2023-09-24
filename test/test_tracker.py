@@ -51,7 +51,17 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
 
     # tracking 
     animal_tracker = AnimalTracker(
-        AnimalTrackerParamTracking(),
+        AnimalTrackerParamTracking(
+            pix_per_mm=45,
+            body_intensity=0.08,
+            min_body_size_mm=2,
+            max_body_size_mm=40,
+            min_body_length_mm=0.2,
+            max_body_length_mm=10,
+            min_body_width_mm=0.1,
+            max_body_width_mm=3,
+            pad_value_mm=3
+        ),
         AnimalTrackerParamOverlay()
     )
     body_tracker = BodyTracker(
