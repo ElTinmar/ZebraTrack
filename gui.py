@@ -3,10 +3,27 @@ from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout
 import os 
 from background import *
+from typing import Protocol
+
+class VideoReader(Protocol):
+    pass
+
+class Background(Protocol):
+    pass
+
+class Assignment(Protocol):
+    pass
 
 class TrackerThreshold(QMainWindow):
 
-    def __init__(self, reader: VideoReader, backgroundfile: str, *args, **kwargs):
+    def __init__(
+            self, 
+            reader: VideoReader, 
+            background: Background, 
+            assignment: Assignment, 
+            *args, **kwargs
+        ) > None:
+
         super().__init__(*args, **kwargs)
         self.reader = reader
         self.backgroundfile = backgroundfile

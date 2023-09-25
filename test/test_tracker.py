@@ -60,6 +60,11 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     )    
     '''
 
+    #assignment = LinearSumAssignment(distance_threshold=50)
+    LUT = np.zeros((600,600))
+    assignment = GridAssignment(LUT)
+    accumulator = None
+
     # tracking 
     animal_tracker = AnimalTracker(
         AnimalTrackerParamTracking(
@@ -128,10 +133,7 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
         ),
         TailTrackerParamOverlay()
     )
-    #assignment = LinearSumAssignment(distance_threshold=50)
-    LUT = np.zeros((600,600))
-    assignment = GridAssignment(LUT)
-    accumulator = None
+
     tracker = Tracker(            
         assignment,
         accumulator,
