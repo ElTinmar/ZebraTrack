@@ -18,7 +18,7 @@ BASEFOLDER = '/home/martin/ownCloud - martin.privat@bi.mpg.de@owncloud.gwdg.de/E
 if host == 'O1-619':
     BASEFOLDER = '/home/martin/Documents/Escapes/'
 if host == 'L-O1-620':
-    BASEFOLDER = '/home/martin/ownCloud/Escapes/'
+    BASEFOLDER = '/home/martinprivat/ownCloud/Escapes/'
 FISHDATA = os.path.join(BASEFOLDER, 'fish.csv')
 SELECT = [25]
 DISPLAY = True
