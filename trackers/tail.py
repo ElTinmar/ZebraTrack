@@ -96,7 +96,6 @@ class TailTracker:
             )
 
         arc_rad = math.radians(self.tracking_param.arc_angle_deg)/2
-        frame_blurred = cv2.boxFilter(image_crop, -1, (self.tracking_param.blur_sz_px, self.tracking_param.blur_sz_px))
         spacing = float(self.tracking_param.tail_length_px) / self.tracking_param.n_tail_points
         start_angle = -np.pi/2
         arc = np.linspace(-arc_rad, arc_rad, self.tracking_param.n_pts_arc) + start_angle
@@ -111,7 +110,7 @@ class TailTracker:
                 # Convert them to integer, because of definite pixels
                 xs, ys = xs.astype(int), ys.astype(int)
                 # Find the index of the minimum or maximum pixel intensity along arc
-                idx = np.argmax(frame_blurred[ys, xs])
+                idx = np.argmax(image_crop[ys, xs])
                 # Update new x, y points
                 x = xs[idx]
                 y = ys[idx]
@@ -137,7 +136,7 @@ class TailTracker:
             centroid = centroid,
             skeleton = skeleton,
             skeleton_interp = skeleton_interp,
-            image = frame_blurred
+            image = (255*image_crop).astype(np.uint8)
         )    
 
         return res
