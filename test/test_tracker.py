@@ -1,6 +1,7 @@
 import os
 import socket
 import pandas as pd
+import numpy as np
 import cv2
 from video.video_reader import OpenCV_VideoReader
 from video.background import StaticBackground, DynamicBackground, DynamicBackgroundMP
@@ -9,7 +10,7 @@ from trackers.body import BodyTracker, BodyTrackerParamTracking, BodyTrackerPara
 from trackers.eyes import EyesTracker, EyesTrackerParamTracking, EyesTrackerParamOverlay
 from trackers.tail import TailTracker, TailTrackerParamTracking, TailTrackerParamOverlay
 from trackers.tracker import Tracker
-from trackers.assignment import LinearSumAssignment
+from trackers.assignment import LinearSumAssignment, GridAssignment
 from image.imconvert import im2gray, im2single
 from tqdm import tqdm
 
@@ -126,7 +127,11 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
         ),
         TailTrackerParamOverlay()
     )
-    assignment = LinearSumAssignment(distance_threshold=50)
+    #assignment = LinearSumAssignment(distance_threshold=50)
+    LUT = np.empty((height,width))
+    LUT[:] = np.nan
+    LUT[0:600,0:600] = 1
+    assignment = GridAssignment(LUT)
     accumulator = None
     tracker = Tracker(            
         assignment,
