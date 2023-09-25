@@ -37,9 +37,8 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     print(f'Processing {fish}...')
 
     # video reader    
-
     reader = OpenCV_VideoReader()
-    reader.open_file(video_file, safe=False)
+    reader.open_file(video_file, safe=False, crop=(0,0,1000,1000))
     num_frames = reader.get_number_of_frame()
     height = reader.get_height()
     width = reader.get_width()
@@ -128,9 +127,7 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
         TailTrackerParamOverlay()
     )
     #assignment = LinearSumAssignment(distance_threshold=50)
-    LUT = np.empty((height,width))
-    LUT[:] = np.nan
-    LUT[0:600,0:600] = 1
+    LUT = np.zeros((600,600))
     assignment = GridAssignment(LUT)
     accumulator = None
     tracker = Tracker(            
