@@ -148,6 +148,7 @@ class TailTracker:
 
         # interpolate
         skeleton = np.array(points).astype('float')
+        skeleton = skeleton/self.tracking_param.resize
         try:
             tck, _ = splprep(skeleton.T)
             new_points = splev(np.linspace(0,1,self.tracking_param.n_pts_interp), tck)
@@ -159,8 +160,8 @@ class TailTracker:
         res = TailTracking(
             heading = heading,
             centroid = centroid,
-            skeleton = skeleton/self.tracking_param.resize,
-            skeleton_interp = skeleton_interp/self.tracking_param.resize,
+            skeleton = skeleton,
+            skeleton_interp = skeleton_interp,
             image = (255*image_crop).astype(np.uint8)
         )    
 
