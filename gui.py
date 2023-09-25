@@ -63,6 +63,7 @@ class TrackerThreshold(QMainWindow):
         bckg_sub = image_gray - self.bckg
 
         # TODO add a mouse callback to select which fish you want to show for body/eye/tail
+        # TODO switch on/off overlay for different trackers on the global image
 
         self.animal_tracker_widget.set_image(bckg_sub)
         self.body_tracker_widget.set_image(bckg_sub)
