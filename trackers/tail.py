@@ -12,6 +12,7 @@ from helper.rect import Rect
 @dataclass
 class TailTrackerParamTracking:
     pix_per_mm: float = 40.0
+    target_pix_per_mm: float = 20.0
     tail_contrast: float = 1.0,
     tail_gamma: float = 1.0,
     tail_norm: float = 0.2,
@@ -23,13 +24,16 @@ class TailTrackerParamTracking:
     dist_swim_bladder_mm: float = 0.4
     blur_sz_mm: float = 0.10
     median_filter_sz_mm: float = 0.110
-    crop_dimension_mm: Tuple[float, float]= (1.5, 1.5) 
+    crop_dimension_mm: Tuple[float, float] = (1.5, 1.5) 
     crop_offset_tail_mm: float = 2.0
     
-    def mm2px(self, val_mm):
-        val_px = int(val_mm * self.pix_per_mm) 
-        return val_px
-   
+    def mm2px(self, val_mm: float) -> int:
+        return int(val_mm * self.target_pix_per_mm) 
+
+    @property
+    def resize(self):
+        return self.target_pix_per_mm/self.pix_per_mm
+       
     @property
     def tail_length_px(self):
         return self.mm2px(self.tail_length_mm)
@@ -85,10 +89,20 @@ class TailTracker:
 
     def track(self, image: NDArray, heading: NDArray, centroid: NDArray):
 
+        if self.tracking_param.resize != 1:
+            image = cv2.resize(
+                image, 
+                None, 
+                None,
+                self.tracking_param.resize,
+                self.tracking_param.resize,
+                cv2.INTER_AREA
+            )
+
         # diagonal crop
         angle = np.arctan2(heading[1,1],heading[0,1]) 
         w, h = self.tracking_param.crop_dimension_px
-        corner = centroid - w//2 * heading[:,1] + (-h//2 + self.tracking_param.crop_offset_tail_px) * heading[:,0] 
+        corner = centroid*self.tracking_param.resize - w//2 * heading[:,1] + (-h//2 + self.tracking_param.crop_offset_tail_px) * heading[:,0] 
         image_crop = diagonal_crop(
             image, 
             Rect(int(corner[0]),int(corner[1]),w,h),
@@ -145,8 +159,8 @@ class TailTracker:
         res = TailTracking(
             heading = heading,
             centroid = centroid,
-            skeleton = skeleton,
-            skeleton_interp = skeleton_interp,
+            skeleton = skeleton/self.tracking_param.resize,
+            skeleton_interp = skeleton_interp/self.tracking_param.resize,
             image = (255*image_crop).astype(np.uint8)
         )    
 
@@ -158,8 +172,9 @@ class TailTracker:
         if tracking is not None:
             angle = np.arctan2(tracking.heading[1,1],tracking.heading[0,1]) 
             R = rotation_matrix(np.rad2deg(angle))[:2,:2]
-            w, h = self.tracking_param.crop_dimension_px
-            corner = tracking.centroid - w//2 * tracking.heading[:,1] + (-h//2 + self.tracking_param.crop_offset_tail_px) * tracking.heading[:,0] 
+            w = self.tracking_param.crop_dimension_px[0] / self.tracking_param.resize
+            h = self.tracking_param.crop_dimension_px[1] / self.tracking_param.resize
+            corner = tracking.centroid - w//2 * tracking.heading[:,1] + (-h//2 + self.tracking_param.crop_offset_tail_px / self.tracking_param.resize) * tracking.heading[:,0] 
 
             if tracking.skeleton_interp is not None:
                 transformed_coord = (R @ tracking.skeleton_interp.T).T + corner

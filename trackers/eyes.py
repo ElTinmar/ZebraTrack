@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 import cv2
-from scipy import ndimage
 from scipy.spatial.distance import pdist
 import numpy as np
 from numpy.typing import NDArray
@@ -14,6 +13,7 @@ from helper.rect import Rect
 @dataclass
 class EyesTrackerParamTracking:
     pix_per_mm: float = 40.0
+    target_pix_per_mm: float = 20.0
     eye_norm: float = 0.2
     eye_gamma: float = 1.0
     eye_dyntresh_res: int = 20
@@ -23,13 +23,16 @@ class EyesTrackerParamTracking:
     blur_sz_mm: float = 0.05
     median_filter_sz_mm: float = 0.15
     dist_eye_midline_mm: float = 0.1
-    crop_dimension_mm: Tuple[float, float]= (1.2, 1.2) 
+    crop_dimension_mm: Tuple[float, float] = (1.2, 1.2) 
     crop_offset_mm: float = 0.2
 
     def mm2px(self, val_mm):
-        val_px = int(val_mm * self.pix_per_mm) 
-        return val_px
-
+        return int(val_mm * self.target_pix_per_mm) 
+    
+    @property
+    def resize(self):
+        return self.target_pix_per_mm/self.pix_per_mm
+    
     @property
     def eye_size_lo_px(self):
         return self.mm2px(self.eye_size_lo_mm)
@@ -100,13 +103,13 @@ class EyesTracker:
         self.overlay_param = overlay_param
     
     @staticmethod
-    def get_eye_prop(blob, heading):
+    def get_eye_prop(blob, heading, resize):
         eye_dir = ellipse_direction(blob.inertia_tensor, heading)
         eye_angle = angle_between_vectors(eye_dir, heading)
         # (row,col) to (x,y) coordinates 
         y, x = blob.centroid
         eye_centroid = np.array([x, y],dtype = np.float32)
-        return {'direction': eye_dir, 'angle': eye_angle, 'centroid': eye_centroid}
+        return {'direction': eye_dir, 'angle': eye_angle, 'centroid': eye_centroid/resize}
     
     @staticmethod
     def assign_features(blob_centroids):
@@ -144,6 +147,16 @@ class EyesTracker:
         return (found_eyes_and_sb, props, mask)
     
     def track(self, image: NDArray, heading: NDArray, centroid: NDArray):
+        
+        if self.tracking_param.resize != 1:
+            image = cv2.resize(
+                image, 
+                None, 
+                None,
+                self.tracking_param.resize,
+                self.tracking_param.resize,
+                cv2.INTER_AREA
+            )
 
         left_eye = None
         right_eye = None
@@ -152,7 +165,7 @@ class EyesTracker:
         # diagonal crop
         angle = np.arctan2(heading[1,1],heading[0,1]) 
         w, h = self.tracking_param.crop_dimension_px
-        corner = centroid - w//2 * heading[:,1] + (-h//2 + self.tracking_param.crop_offset_px) * heading[:,0] 
+        corner = centroid*self.tracking_param.resize - w//2 * heading[:,1] + (-h//2 + self.tracking_param.crop_offset_px) * heading[:,0] 
         image_crop = diagonal_crop(
             image, 
             Rect(int(corner[0]),int(corner[1]),w,h),
@@ -182,8 +195,8 @@ class EyesTracker:
             blob_centroids = np.array([blob.centroid for blob in props])
             sb_idx, left_idx, right_idx = self.assign_features(blob_centroids)
             heading_after_rot = np.array([0, 1], dtype=np.float32)
-            left_eye = self.get_eye_prop(props[left_idx], heading_after_rot)
-            right_eye = self.get_eye_prop(props[right_idx], heading_after_rot)
+            left_eye = self.get_eye_prop(props[left_idx], heading_after_rot, self.tracking_param.resize)
+            right_eye = self.get_eye_prop(props[right_idx], heading_after_rot, self.tracking_param.resize)
             #new_heading = (props[left_idx].centroid + props[right_idx].centroid)/2 - props[sb_idx].centroid
             #new_heading = new_heading / np.linalg.norm(new_heading)
 
@@ -247,8 +260,9 @@ class EyesTracker:
         
         if tracking is not None:
             angle = np.arctan2(tracking.heading[1,1],tracking.heading[0,1]) 
-            w, h = self.tracking_param.crop_dimension_px
-            corner = tracking.centroid - w//2 * tracking.heading[:,1] + (-h//2 + self.tracking_param.crop_offset_px) * tracking.heading[:,0] 
+            w = self.tracking_param.crop_dimension_px[0] / self.tracking_param.resize
+            h = self.tracking_param.crop_dimension_px[1] / self.tracking_param.resize
+            corner = tracking.centroid - w//2 * tracking.heading[:,1] + (-h//2 + self.tracking_param.crop_offset_px / self.tracking_param.resize) * tracking.heading[:,0] 
             R = rotation_matrix(np.rad2deg(angle))[:2,:2]
 
             image = process_eye(

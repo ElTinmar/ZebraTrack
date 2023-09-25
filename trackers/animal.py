@@ -6,7 +6,8 @@ import cv2
 
 @dataclass
 class AnimalTrackerParamTracking:
-    pix_per_mm: float = 45.0
+    pix_per_mm: float = 40.0
+    target_pix_per_mm: float = 20.0
     body_intensity: float = 0.1
     min_body_size_mm: float = 10.0
     max_body_size_mm: float = 100.0
@@ -17,9 +18,13 @@ class AnimalTrackerParamTracking:
     pad_value_mm: float = 3.0
 
     def mm2px(self, val_mm):
-        val_px = int(val_mm * self.pix_per_mm) 
+        val_px = int(val_mm * self.target_pix_per_mm) 
         return val_px
 
+    @property
+    def resize(self):
+        return self.target_pix_per_mm/self.pix_per_mm
+    
     @property
     def min_body_size_px(self):
         return self.mm2px(self.min_body_size_mm)
@@ -50,7 +55,7 @@ class AnimalTrackerParamTracking:
 
 @dataclass
 class AnimalTrackerParamOverlay:
-    pix_per_mm: float = 30.0
+    pix_per_mm: float = 40.0
     radius_mm: float = 0.1
     centroid_color: tuple = (255, 128, 128)
     bbox_color:tuple = (255, 255, 255) 
@@ -58,8 +63,7 @@ class AnimalTrackerParamOverlay:
     bbox_thickness: int = 2
 
     def mm2px(self, val_mm):
-        val_px = int(val_mm * self.pix_per_mm) 
-        return val_px
+        return int(val_mm * self.pix_per_mm) 
 
     @property
     def radius_px(self):
@@ -89,6 +93,16 @@ class AnimalTracker:
 
     def track(self, image: NDArray) -> AnimalTracking:
         
+        if self.tracking_param.resize != 1:
+            image = cv2.resize(
+                image, 
+                None, 
+                None,
+                self.tracking_param.resize,
+                self.tracking_param.resize,
+                cv2.INTER_AREA
+            )
+
         height, width = image.shape
         mask = (image >= self.tracking_param.body_intensity)
         centroids = bwareafilter_centroids(
@@ -112,9 +126,9 @@ class AnimalTracker:
             bb_centroids[idx,:] = [x-left, y-bottom] 
 
         res = AnimalTracking(
-            centroids = centroids,
-            bounding_boxes = bboxes,
-            bb_centroids = bb_centroids,
+            centroids = centroids/self.tracking_param.resize,
+            bounding_boxes = bboxes/self.tracking_param.resize,
+            bb_centroids = bb_centroids/self.tracking_param.resize,
             mask = mask
         )
         return res
@@ -135,8 +149,8 @@ class AnimalTracker:
             for (left, bottom, right, top) in tracking.bounding_boxes:
                 image = cv2.rectangle(
                     image, 
-                    (left, top),
-                    (right, bottom), 
+                    (int(left), int(top)),
+                    (int(right), int(bottom)), 
                     self.overlay_param.bbox_color, 
                     self.overlay_param.bbox_thickness
                 )

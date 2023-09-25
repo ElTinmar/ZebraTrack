@@ -60,6 +60,7 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     animal_tracker = AnimalTracker(
         AnimalTrackerParamTracking(
             pix_per_mm=40,
+            target_pix_per_mm=10,
             body_intensity=0.06,
             min_body_size_mm=5.0,
             max_body_size_mm=40.0,
@@ -74,6 +75,7 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     body_tracker = BodyTracker(
         BodyTrackerParamTracking(
             pix_per_mm=40,
+            target_pix_per_mm=20,
             body_intensity=0.06,
             min_body_size_mm=5.0,
             max_body_size_mm=40.0,
@@ -87,6 +89,7 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     eyes_tracker = EyesTracker(
         EyesTrackerParamTracking(
             pix_per_mm=40,
+            target_pix_per_mm=40,
             eye_norm=0.2,
             eye_gamma=3.0,
             eye_dyntresh_res=20,
@@ -104,6 +107,7 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     tail_tracker = TailTracker(
         TailTrackerParamTracking(
             pix_per_mm=40,
+            target_pix_per_mm=20,
             arc_angle_deg=120,
             n_tail_points=12,
             n_pts_arc=20,
@@ -115,7 +119,7 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
             tail_norm=0.15,
             tail_contrast=1.0,
             tail_gamma=0.75,
-            crop_dimension_mm=(1.5,1.5),
+            crop_dimension_mm=(3.5,3.5),
             crop_offset_tail_mm=2.0
         ),
         TailTrackerParamOverlay()

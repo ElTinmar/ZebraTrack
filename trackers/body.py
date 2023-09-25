@@ -9,6 +9,7 @@ from typing import Optional
 @dataclass
 class BodyTrackerParamTracking:
     pix_per_mm: float = 40.0
+    target_pix_per_mm: float = 20.0
     body_intensity: float = 0.1
     min_body_size_mm: float = 10.0
     max_body_size_mm: float = 100.0
@@ -18,9 +19,12 @@ class BodyTrackerParamTracking:
     max_body_width_mm: float = 3.0
 
     def mm2px(self, val_mm):
-        val_px = int(val_mm * self.pix_per_mm) 
-        return val_px
+        return int(val_mm * self.target_pix_per_mm) 
 
+    @property
+    def resize(self):
+        return self.target_pix_per_mm/self.pix_per_mm
+    
     @property
     def min_body_size_px(self):
         return self.mm2px(self.min_body_size_mm)
@@ -103,6 +107,16 @@ class BodyTracker:
         Useful when tracking multiple fish to discriminate between nearby blobs
         '''
 
+        if self.tracking_param.resize != 1:
+            image = cv2.resize(
+                image, 
+                None, 
+                None,
+                self.tracking_param.resize,
+                self.tracking_param.resize,
+                cv2.INTER_AREA
+            )
+
         mask = (image >= self.tracking_param.body_intensity)
         props = bwareafilter_props(
             mask, 
@@ -125,7 +139,7 @@ class BodyTracker:
                     row, col = blob.centroid
                     fish_centroid = np.array([col, row])
                     fish_coords = np.fliplr(blob.coords)
-                    dist = np.linalg.norm(fish_centroid - coord_centroid)
+                    dist = np.linalg.norm(fish_centroid/self.tracking_param.resize - coord_centroid)
                     if (min_dist is None) or (dist < min_dist): 
                         closest_coords = fish_coords
                         min_dist = dist
@@ -137,7 +151,7 @@ class BodyTracker:
 
             res = BodyTracking(
                 heading = principal_components,
-                centroid = centroid,
+                centroid = centroid/self.tracking_param.resize,
                 mask = (255*mask).astype(np.uint8)
             )
             return res
