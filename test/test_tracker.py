@@ -115,6 +115,7 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
             tail_norm=0.15,
             tail_contrast=1.0,
             tail_gamma=0.75,
+            crop_dimension_mm=(1.5,1.5),
             crop_offset_tail_mm=2.0
         ),
         TailTrackerParamOverlay()

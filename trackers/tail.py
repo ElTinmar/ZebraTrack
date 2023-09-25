@@ -4,7 +4,7 @@ from scipy.interpolate import splprep, splev
 import cv2
 import numpy as np
 from numpy.typing import NDArray
-from typing import Optional
+from typing import Optional, Tuple
 from image.crop import diagonal_crop, rotation_matrix
 from image.imcontrast import imcontrast
 from helper.rect import Rect
@@ -23,6 +23,7 @@ class TailTrackerParamTracking:
     dist_swim_bladder_mm: float = 0.4
     blur_sz_mm: float = 0.10
     median_filter_sz_mm: float = 0.110
+    crop_dimension_mm: Tuple[float, float]= (1.5, 1.5) 
     crop_offset_tail_mm: float = 2.0
     
     def mm2px(self, val_mm):
@@ -48,6 +49,13 @@ class TailTrackerParamTracking:
     @property
     def crop_offset_tail_px(self):
         return self.mm2px(self.crop_offset_tail_mm) 
+    
+    @property
+    def crop_dimension_px(self):
+        return (
+            self.mm2px(self.crop_dimension_mm[0]),
+            self.mm2px(self.crop_dimension_mm[1])
+        ) 
     
 @dataclass
 class TailTrackerParamOverlay:
@@ -77,8 +85,9 @@ class TailTracker:
 
     def track(self, image: NDArray, heading: NDArray, centroid: NDArray):
 
+        # diagonal crop
         angle = np.arctan2(heading[1,1],heading[0,1]) 
-        w, h = (int(1.5*self.tracking_param.tail_length_px), int(1.5*self.tracking_param.tail_length_px))
+        w, h = self.tracking_param.crop_dimension_px
         corner = centroid - w//2 * heading[:,1] + (-h//2 + self.tracking_param.crop_offset_tail_px) * heading[:,0] 
         image_crop = diagonal_crop(
             image, 
@@ -86,6 +95,7 @@ class TailTracker:
             np.rad2deg(angle)
         )
 
+        # tune image contrast and gamma
         imcontrast(
             image_crop,
             self.tracking_param.tail_contrast,
@@ -95,6 +105,7 @@ class TailTracker:
             self.tracking_param.median_filter_sz_px
             )
 
+        # track max intensity along tail
         arc_rad = math.radians(self.tracking_param.arc_angle_deg)/2
         spacing = float(self.tracking_param.tail_length_px) / self.tracking_param.n_tail_points
         start_angle = -np.pi/2
@@ -147,7 +158,7 @@ class TailTracker:
         if tracking is not None:
             angle = np.arctan2(tracking.heading[1,1],tracking.heading[0,1]) 
             R = rotation_matrix(np.rad2deg(angle))[:2,:2]
-            w, h = (int(1.5*self.tracking_param.tail_length_px), int(1.5*self.tracking_param.tail_length_px))
+            w, h = self.tracking_param.crop_dimension_px
             corner = tracking.centroid - w//2 * tracking.heading[:,1] + (-h//2 + self.tracking_param.crop_offset_tail_px) * tracking.heading[:,0] 
 
             if tracking.skeleton_interp is not None:

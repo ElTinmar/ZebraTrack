@@ -122,8 +122,34 @@ class EyesTracker:
             left_idx, right_idx = eye_idxs
             return sb_idx, left_idx, right_idx
     
+    @staticmethod 
+    def find_eyes_and_swimbladder(image, eye_dyntresh_res, eye_size_lo_px, eye_size_hi_px):
+        thresholds = np.linspace(0,1,eye_dyntresh_res)
+        found_eyes_and_sb = False
+        for t in thresholds:
+            mask = 1.0*(image >= t)
+            props = bwareafilter_props(
+                mask, 
+                min_size = eye_size_lo_px, 
+                max_size = eye_size_hi_px
+            )
+            if len(props) == 3:
+                found_eyes_and_sb = True
+                mask = bwareafilter(
+                    mask, 
+                    min_size = eye_size_lo_px, 
+                    max_size = eye_size_hi_px
+                )
+                break
+        return (found_eyes_and_sb, props, mask)
+    
     def track(self, image: NDArray, heading: NDArray, centroid: NDArray):
 
+        left_eye = None
+        right_eye = None
+        new_heading = None
+    
+        # diagonal crop
         angle = np.arctan2(heading[1,1],heading[0,1]) 
         w, h = self.tracking_param.crop_dimension_px
         corner = centroid - w//2 * heading[:,1] + (-h//2 + self.tracking_param.crop_offset_px) * heading[:,0] 
@@ -133,6 +159,7 @@ class EyesTracker:
             np.rad2deg(angle)
         )
 
+        # tune image contrast and gamma
         imcontrast(
             image_crop,
             self.tracking_param.eye_contrast,
@@ -143,27 +170,14 @@ class EyesTracker:
             )
 
         # sweep threshold to obtain 3 connected component within size range (include SB)
-        thresholds = np.linspace(0,1,self.tracking_param.eye_dyntresh_res)
-        found_eyes_and_sb = False
-        for t in thresholds:
-            mask = 1.0*(image_crop >= t)
-            props = bwareafilter_props(
-                mask, 
-                min_size = self.tracking_param.eye_size_lo_px, 
-                max_size = self.tracking_param.eye_size_hi_px
-            )
-            if len(props) == 3:
-                found_eyes_and_sb = True
-                mask = bwareafilter(
-                    mask, 
-                    min_size = self.tracking_param.eye_size_lo_px, 
-                    max_size = self.tracking_param.eye_size_hi_px
-                )
-                break
+        found_eyes_and_sb, props, mask = self.find_eyes_and_swimbladder(
+            image_crop, 
+            self.tracking_param.eye_dyntresh_res, 
+            self.tracking_param.eye_size_lo_px, 
+            self.tracking_param.eye_size_hi_px
+        )
 
-        left_eye = None
-        right_eye = None
-        new_heading = None
+        # identify left eye, right eye and swimbladder
         if found_eyes_and_sb: 
             blob_centroids = np.array([blob.centroid for blob in props])
             sb_idx, left_idx, right_idx = self.assign_features(blob_centroids)
