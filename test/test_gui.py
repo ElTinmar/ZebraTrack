@@ -46,7 +46,6 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     width = reader.get_width()
 
     # background subtraction
-    
     background = StaticBackground(
         video_reader=reader
     )
