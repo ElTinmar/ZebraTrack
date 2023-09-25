@@ -75,7 +75,7 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     body_tracker = BodyTracker(
         BodyTrackerParamTracking(
             pix_per_mm=40,
-            target_pix_per_mm=20,
+            target_pix_per_mm=10,
             body_intensity=0.06,
             min_body_size_mm=5.0,
             max_body_size_mm=40.0,
@@ -112,7 +112,7 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
             n_tail_points=12,
             n_pts_arc=20,
             n_pts_interp=40,
-            tail_length_mm=2.3,
+            tail_length_mm=2.6,
             dist_swim_bladder_mm=0.6,
             blur_sz_mm=0.15,
             median_filter_sz_mm=0.15,
