@@ -13,7 +13,7 @@ from helper.rect import Rect
 
 @dataclass
 class EyesTrackerParamTracking:
-    pix_per_mm: float = 45.0
+    pix_per_mm: float = 40.0
     eye_norm: float = 0.2
     eye_gamma: float = 1.0
     eye_dyntresh_res: int = 20
@@ -63,8 +63,8 @@ class EyesTrackerParamTracking:
     
 @dataclass
 class EyesTrackerParamOverlay:
-    pix_per_mm: float = 30.0
-    eye_len_mm: float = 0.4
+    pix_per_mm: float = 40.0
+    eye_len_mm: float = 0.2
     color_eye_left: tuple = (255, 255, 128)
     color_eye_right: tuple = (128, 255, 255)
     thickness: int = 2

@@ -11,7 +11,7 @@ from helper.rect import Rect
 
 @dataclass
 class TailTrackerParamTracking:
-    pix_per_mm: float = 45.0
+    pix_per_mm: float = 40.0
     tail_contrast: float = 1.0,
     tail_gamma: float = 1.0,
     tail_norm: float = 0.2,
