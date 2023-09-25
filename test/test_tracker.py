@@ -11,6 +11,7 @@ from trackers.tail import TailTracker, TailTrackerParamTracking, TailTrackerPara
 from trackers.tracker import Tracker
 from trackers.assignment import LinearSumAssignment
 from image.imconvert import im2gray, im2single
+from tqdm import tqdm
 
 host = socket.gethostname()
 BASEFOLDER = '/home/martin/ownCloud - martin.privat@bi.mpg.de@owncloud.gwdg.de/Escapes/'
@@ -18,6 +19,7 @@ if host == 'O1-619':
     BASEFOLDER = '/home/martin/Documents/Escapes/'
 FISHDATA = os.path.join(BASEFOLDER, 'fish.csv')
 SELECT = [25]
+DISPLAY = True
 
 fish_data = pd.read_csv(
     FISHDATA, 
@@ -128,8 +130,10 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
         tail_tracker
     )
 
-    cv2.namedWindow('tracking')
-    while True:
+    if DISPLAY:
+        cv2.namedWindow('tracking')
+
+    for i in tqdm(range(num_frames)):
         ret, image = reader.next_frame()
         if not ret:
             break
@@ -137,8 +141,12 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
         img = im2single(im2gray(image))
         image_sub = background.subtract_background(img)
         tracking = tracker.track(image_sub)
-        overlay = tracker.overlay(image, tracking)
-        if overlay is not None:
-            overlay = cv2.resize(overlay,None,None,0.5,0.5)
-            cv2.imshow('tracking', overlay)
-            cv2.waitKey(1)
+        if DISPLAY:
+            overlay = tracker.overlay(image, tracking)
+            if overlay is not None:
+                overlay = cv2.resize(overlay,None,None,0.5,0.5)
+                cv2.imshow('tracking', overlay)
+                cv2.waitKey(1)
+
+    if DISPLAY:
+        cv2.destroyAllWindows()
