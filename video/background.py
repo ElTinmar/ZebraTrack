@@ -80,9 +80,12 @@ class StaticBackground:
         self.background = stats.mode(frame_collection, axis=2, keepdims=False).mode
 
     def initialize_background_model(self):
+        print('Getting sample frames from video...')
         frame_collection = self.sample_frames_evenly()
+        print('Compute background...')
         self.compute_background(frame_collection)
         self.video_reader.reset_reader()
+        print('...done')
 
     def subtract_background(self, image: NDArray) -> NDArray:
         return image - self.background 
