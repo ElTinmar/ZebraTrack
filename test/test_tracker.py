@@ -16,6 +16,8 @@ from tqdm import tqdm
 
 host = socket.gethostname()
 BASEFOLDER = '/home/martin/ownCloud - martin.privat@bi.mpg.de@owncloud.gwdg.de/Escapes/'
+if host == 'hplaptop':
+    BASEFOLDER = '/home/martin/Downloads/Escapes/'
 if host == 'O1-619':
     BASEFOLDER = '/home/martin/Documents/Escapes/'
 if host == 'L-O1-620':
