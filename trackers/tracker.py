@@ -4,7 +4,7 @@ from .tail import TailTracker
 from .animal import AnimalTracker
 import numpy as np
 import cv2
-from typing import Protocol
+from typing import Protocol, Optional
 
 class Accumulator(Protocol):
     def update(self):
@@ -23,9 +23,9 @@ class Tracker:
             assignment: Assignment,
             accumulator: Accumulator,
             animal_tracker: AnimalTracker,
-            body_tracker: BodyTracker, 
-            eyes_tracker: EyesTracker, 
-            tail_tracker: TailTracker
+            body_tracker: Optional[BodyTracker], 
+            eyes_tracker: Optional[EyesTracker], 
+            tail_tracker: Optional[TailTracker]
         ):
         self.assignment = assignment
         self.accumulator = accumulator
@@ -53,12 +53,15 @@ class Tracker:
             body[id] = None
             image_cropped = image[bottom:top, left:right]
             offset = np.array([bb_x, bb_y])
-            body[id] = self.body_tracker.track(image_cropped, offset)
-            if body[id] is not None:
-                eyes[id] = self.eyes_tracker.track(image_cropped, body[id].heading, body[id].centroid)
-                tail[id] = self.tail_tracker.track(image_cropped, body[id].heading, body[id].centroid)
-            if self.accumulator is not None:
-                self.accumulator.update(id,body[id],eyes[id],tail[id])
+            if self.body_tracker is not None:
+                body[id] = self.body_tracker.track(image_cropped, offset)
+                if body[id] is not None:
+                    if self.eyes_tracker is not None:
+                        eyes[id] = self.eyes_tracker.track(image_cropped, body[id].heading, body[id].centroid)
+                    if self.tail_tracker is not None:
+                        tail[id] = self.tail_tracker.track(image_cropped, body[id].heading, body[id].centroid)
+                if self.accumulator is not None:
+                    self.accumulator.update(id,body[id],eyes[id],tail[id])
 
         res = {
             'identities': identities, 
@@ -77,9 +80,12 @@ class Tracker:
         image = self.animal_tracker.overlay(image, tracking['animals'])
         for idx, id in enumerate(tracking['identities']):
             offset = tracking['animals'].bounding_boxes[idx,:2]
-            image = self.body_tracker.overlay(image, tracking['body'][id], offset)
-            image = self.eyes_tracker.overlay(image, tracking['eyes'][id], None)
-            image = self.tail_tracker.overlay(image, tracking['tail'][id], None)
+            if self.body_tracker is not None:
+                image = self.body_tracker.overlay(image, tracking['body'][id], offset)
+                if self.eyes_tracker is not None:
+                    image = self.eyes_tracker.overlay(image, tracking['eyes'][id], None)
+                if self.tail_tracker is not None:
+                    image = self.tail_tracker.overlay(image, tracking['tail'][id], None)
             cv2.putText(image, str(id), offset.astype(int), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0,0,255), 2, cv2.LINE_AA)
         return image
     
