@@ -10,7 +10,7 @@ from trackers.eyes import EyesTracker, EyesTrackerParamTracking, EyesTrackerPara
 from trackers.tail import TailTracker, TailTrackerParamTracking, TailTrackerParamOverlay
 from trackers.tracker import Tracker
 from trackers.assignment import LinearSumAssignment
-from helper.imconvert import im2gray, im2single
+from image.imconvert import im2gray, im2single
 
 host = socket.gethostname()
 BASEFOLDER = '/home/martin/ownCloud - martin.privat@bi.mpg.de@owncloud.gwdg.de/Escapes/'
@@ -40,19 +40,20 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     width = reader.get_width()
 
     # background subtraction
-    '''
+    
     background = StaticBackground(
         video_reader=reader
     )
+    
     '''
-
     background = DynamicBackgroundMP(
         height=height,
         width=width,
         num_images = 500,
         every_n_image = 200
     )    
-
+    '''
+    
     # tracking 
     animal_tracker = AnimalTracker(
         AnimalTrackerParamTracking(

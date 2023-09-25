@@ -5,12 +5,16 @@ import cv2
 import numpy as np
 from numpy.typing import NDArray
 from typing import Optional
-from helper.crop import diagonal_crop, rotation_matrix
+from image.crop import diagonal_crop, rotation_matrix
+from image.imcontrast import imcontrast
 from helper.rect import Rect
 
 @dataclass
 class TailTrackerParamTracking:
     pix_per_mm: float = 45.0
+    tail_contrast: float = 1.0,
+    tail_gamma: float = 1.0,
+    tail_norm: float = 0.2,
     arc_angle_deg: float = 120.0
     n_tail_points: int = 12
     n_pts_arc: int = 20
@@ -18,6 +22,7 @@ class TailTrackerParamTracking:
     tail_length_mm: float = 2.5
     dist_swim_bladder_mm: float = 0.4
     blur_sz_mm: float = 0.10
+    median_filter_sz_mm: float = 0.110
     
     def mm2px(self, val_mm):
         val_px = int(val_mm * self.pix_per_mm) 
@@ -34,6 +39,10 @@ class TailTrackerParamTracking:
     @property
     def blur_sz_px(self):
         return self.mm2px(self.blur_sz_mm) 
+
+    @property
+    def median_filter_sz_px(self):
+        return self.mm2px(self.median_filter_sz_mm) 
 
 @dataclass
 class TailTrackerParamOverlay:
@@ -71,6 +80,15 @@ class TailTracker:
             Rect(int(corner[0]),int(corner[1]),w,h),
             np.rad2deg(angle)
         )
+
+        imcontrast(
+            image_crop,
+            self.tracking_param.tail_contrast,
+            self.tracking_param.tail_gamma,
+            self.tracking_param.tail_norm,
+            self.tracking_param.blur_sz_px,
+            self.tracking_param.median_filter_sz_px
+            )
 
         arc_rad = math.radians(self.tracking_param.arc_angle_deg)/2
         frame_blurred = cv2.boxFilter(image_crop, -1, (self.tracking_param.blur_sz_px, self.tracking_param.blur_sz_px))

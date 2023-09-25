@@ -1,4 +1,4 @@
-from helper.morphology import bwareafilter_props
+from image.morphology import bwareafilter_props
 from sklearn.decomposition import PCA
 import numpy as np
 from numpy.typing import NDArray

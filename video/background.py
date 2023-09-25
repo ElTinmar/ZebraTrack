@@ -3,10 +3,11 @@ from numpy.typing import NDArray
 from scipy import stats
 from typing import Protocol, Tuple
 from collections import deque
-from helper.imconvert import im2gray, im2single
+from image.imconvert import im2gray, im2single
 from multiprocessing import Process, Event
 from multiprocessing.sharedctypes import RawArray, Value
 import ctypes
+from tqdm import tqdm
     
 class VideoReader(Protocol):
     def next_frame(self) -> Tuple[bool,NDArray]:
@@ -58,7 +59,7 @@ class StaticBackground:
         numframes = self.video_reader.get_number_of_frame()
         sample_indices = np.linspace(0, numframes-1, self.num_sample_frames, dtype = np.int64)
         sample_frames = np.empty((height, width, self.num_sample_frames), dtype=np.float32)
-        for i,index in enumerate(sample_indices):
+        for i,index in enumerate(tqdm(sample_indices)):
             self.video_reader.seek_to(index)
             rval, frame = self.video_reader.next_frame()
             if rval:

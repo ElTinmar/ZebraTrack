@@ -1,4 +1,4 @@
-from helper.morphology import bwareafilter_centroids
+from image.morphology import bwareafilter_centroids
 import numpy as np
 from numpy.typing import NDArray
 from dataclasses import dataclass

@@ -5,8 +5,9 @@ from scipy.spatial.distance import pdist
 import numpy as np
 from numpy.typing import NDArray
 from typing import Optional, Tuple
-from helper.morphology import bwareafilter_props, bwareafilter
-from helper.crop import diagonal_crop, rotation_matrix
+from image.morphology import bwareafilter_props, bwareafilter
+from image.crop import diagonal_crop, rotation_matrix
+from image.imcontrast import imcontrast
 from helper.geometry import ellipse_direction, angle_between_vectors
 from helper.rect import Rect
 
@@ -131,14 +132,15 @@ class EyesTracker:
             Rect(int(corner[0]),int(corner[1]),w,h),
             np.rad2deg(angle)
         )
-        image_crop = cv2.boxFilter(image_crop, -1, 
-            (self.tracking_param.blur_sz_px, self.tracking_param.blur_sz_px)
-        )
-        image_crop[image_crop<0] = 0
-        image_crop = image_crop/self.tracking_param.eye_norm 
-        image_crop = ndimage.median_filter(image_crop, size = self.tracking_param.median_filter_sz_px)
-        image_crop = self.tracking_param.eye_contrast*image_crop**self.tracking_param.eye_gamma
-        image_crop[image_crop>1] = 1
+
+        imcontrast(
+            image_crop,
+            self.tracking_param.eye_contrast,
+            self.tracking_param.eye_gamma,
+            self.tracking_param.eye_norm,
+            self.tracking_param.blur_sz_px,
+            self.tracking_param.median_filter_sz_px
+            )
 
         # sweep threshold to obtain 3 connected component within size range (include SB)
         thresholds = np.linspace(0,1,self.tracking_param.eye_dyntresh_res)
