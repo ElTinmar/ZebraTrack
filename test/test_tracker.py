@@ -1,4 +1,5 @@
 import os
+import socket
 import pandas as pd
 import cv2
 from video.video_reader import OpenCV_VideoReader
@@ -11,7 +12,10 @@ from trackers.tracker import Tracker
 from trackers.assignment import LinearSumAssignment
 from helper.imconvert import im2gray, im2single
 
-BASEFOLDER = '/home/martin/Documents/Escapes/'
+host = socket.gethostname()
+BASEFOLDER = '/home/martin/ownCloud - martin.privat@bi.mpg.de@owncloud.gwdg.de/Escapes/'
+if host == 'O1-619':
+    BASEFOLDER = '/home/martin/Documents/Escapes/'
 FISHDATA = os.path.join(BASEFOLDER, 'fish.csv')
 SELECT = [25]
 
