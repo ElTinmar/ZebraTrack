@@ -23,6 +23,7 @@ class TailTrackerParamTracking:
     dist_swim_bladder_mm: float = 0.4
     blur_sz_mm: float = 0.10
     median_filter_sz_mm: float = 0.110
+    crop_offset_tail_mm: float = 2.0
     
     def mm2px(self, val_mm):
         val_px = int(val_mm * self.pix_per_mm) 
@@ -44,6 +45,10 @@ class TailTrackerParamTracking:
     def median_filter_sz_px(self):
         return self.mm2px(self.median_filter_sz_mm) 
 
+    @property
+    def crop_offset_tail_px(self):
+        return self.mm2px(self.crop_offset_tail_mm) 
+    
 @dataclass
 class TailTrackerParamOverlay:
     color_tail: tuple = (255, 128, 128)
@@ -74,7 +79,7 @@ class TailTracker:
 
         angle = np.arctan2(heading[1,1],heading[0,1]) 
         w, h = (int(1.5*self.tracking_param.tail_length_px), int(1.5*self.tracking_param.tail_length_px))
-        corner = centroid - w//2 * heading[:,1]
+        corner = centroid - w//2 * heading[:,1] + (-h//2 + self.tracking_param.crop_offset_tail_px) * heading[:,0] 
         image_crop = diagonal_crop(
             image, 
             Rect(int(corner[0]),int(corner[1]),w,h),
@@ -143,8 +148,8 @@ class TailTracker:
         if tracking is not None:
             angle = np.arctan2(tracking.heading[1,1],tracking.heading[0,1]) 
             R = rotation_matrix(np.rad2deg(angle))[:2,:2]
-            w = int(1.5*self.tracking_param.tail_length_px)
-            corner = tracking.centroid - w//2 * tracking.heading[:,1]
+            w, h = (int(1.5*self.tracking_param.tail_length_px), int(1.5*self.tracking_param.tail_length_px))
+            corner = tracking.centroid - w//2 * tracking.heading[:,1] + (-h//2 + self.tracking_param.crop_offset_tail_px) * tracking.heading[:,0] 
 
             if tracking.skeleton_interp is not None:
                 transformed_coord = (R @ tracking.skeleton_interp.T).T + corner

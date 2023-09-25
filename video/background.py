@@ -9,6 +9,7 @@ from multiprocessing.sharedctypes import RawArray, Value
 import ctypes
 from tqdm import tqdm
     
+# TODO : stats.mode is single threaded, you can do better    
 class VideoReader(Protocol):
     def next_frame(self) -> Tuple[bool,NDArray]:
         """return the next frame in the movie, 
@@ -80,6 +81,7 @@ class StaticBackground:
         self.background = stats.mode(frame_collection, axis=2, keepdims=False).mode
 
     def initialize_background_model(self):
+        print('Static background')
         print('Getting sample frames from video...')
         frame_collection = self.sample_frames_evenly()
         print('Compute background...')

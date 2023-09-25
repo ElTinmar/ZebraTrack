@@ -126,7 +126,7 @@ class EyesTracker:
 
         angle = np.arctan2(heading[1,1],heading[0,1]) 
         w, h = self.tracking_param.crop_dimension_px
-        corner = centroid - w//2 * heading[:,1] + (h+self.tracking_param.crop_offset_px) * heading[:,0] 
+        corner = centroid - w//2 * heading[:,1] + (-h//2 + self.tracking_param.crop_offset_px) * heading[:,0] 
         image_crop = diagonal_crop(
             image, 
             Rect(int(corner[0]),int(corner[1]),w,h),
@@ -234,7 +234,7 @@ class EyesTracker:
         if tracking is not None:
             angle = np.arctan2(tracking.heading[1,1],tracking.heading[0,1]) 
             w, h = self.tracking_param.crop_dimension_px
-            corner = tracking.centroid - w//2 * tracking.heading[:,1] + (h+self.tracking_param.crop_offset_px) * tracking.heading[:,0] 
+            corner = tracking.centroid - w//2 * tracking.heading[:,1] + (-h//2 + self.tracking_param.crop_offset_px) * tracking.heading[:,0] 
             R = rotation_matrix(np.rad2deg(angle))[:2,:2]
 
             image = process_eye(
