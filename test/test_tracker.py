@@ -38,7 +38,7 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
 
     # video reader    
     reader = OpenCV_VideoReader()
-    reader.open_file(video_file, safe=False, crop=(0,0,1000,1000))
+    reader.open_file(video_file, safe=False, crop=(0,0,600,600))
     num_frames = reader.get_number_of_frame()
     height = reader.get_height()
     width = reader.get_width()
