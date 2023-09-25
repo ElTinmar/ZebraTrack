@@ -48,18 +48,17 @@ class Tracker:
         eyes = {}
         tail = {}
         for (id, bb_x, bb_y, left, bottom, right, top) in data.astype(np.int64): 
-            if not np.isnan(id):
-                eyes[id] = None
-                tail[id] = None
-                body[id] = None
-                image_cropped = image[bottom:top, left:right]
-                offset = np.array([bb_x, bb_y])
-                body[id] = self.body_tracker.track(image_cropped, offset)
-                if body[id] is not None:
-                    eyes[id] = self.eyes_tracker.track(image_cropped, body[id].heading, body[id].centroid)
-                    tail[id] = self.tail_tracker.track(image_cropped, body[id].heading, body[id].centroid)
-                if self.accumulator is not None:
-                    self.accumulator.update(id,body[id],eyes[id],tail[id])
+            eyes[id] = None
+            tail[id] = None
+            body[id] = None
+            image_cropped = image[bottom:top, left:right]
+            offset = np.array([bb_x, bb_y])
+            body[id] = self.body_tracker.track(image_cropped, offset)
+            if body[id] is not None:
+                eyes[id] = self.eyes_tracker.track(image_cropped, body[id].heading, body[id].centroid)
+                tail[id] = self.tail_tracker.track(image_cropped, body[id].heading, body[id].centroid)
+            if self.accumulator is not None:
+                self.accumulator.update(id,body[id],eyes[id],tail[id])
 
         res = {
             'identities': identities, 
