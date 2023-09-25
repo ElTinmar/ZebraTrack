@@ -1,12 +1,12 @@
 import cv2
 from numpy.typing import NDArray
 import numpy as np
-from typing import Tuple
+from typing import Tuple, Optional
 
 # TODO: Check index error (+-1). Make sure that number of frames is correct (end index valid)
 class OpenCV_VideoReader:
 
-    def open_file(self, filename: str, safe: bool = False):
+    def open_file(self, filename: str, safe: bool = False, crop: Optional[Tuple[int,int,int,int]] = None):
             
         self._filename = filename
         self._capture = cv2.VideoCapture(filename)
@@ -16,6 +16,7 @@ class OpenCV_VideoReader:
         self._height = 0
         self._num_channels = 0
         self._safe = safe
+        self._crop = crop # [left,bottom,width,height]
             
         # count number of frames
         if safe:
@@ -41,8 +42,12 @@ class OpenCV_VideoReader:
         if not rval:
             raise(RuntimeError(f"Error while reading the first frame")) 
         
-        self._width = frame.shape[1]
-        self._height = frame.shape[0]
+        if self._crop is not None:
+            self._width = self._crop[2]
+            self._height = self._crop[3]
+        else:
+            self._width = frame.shape[1]
+            self._height = frame.shape[0]
         if len(frame.shape) > 2:
             self._num_channels = frame.shape[2]
         else:
@@ -66,6 +71,11 @@ class OpenCV_VideoReader:
         rval, frame = self._capture.read()
         if rval:
             self._current_frame += 1
+            if self._crop is not None:
+                frame = frame[
+                    self._crop[1]:self._crop[1]+self._crop[3],
+                    self._crop[0]:self._crop[0]+self._crop[2]
+                ]
         return (rval, frame)
     
     def previous_frame(self) -> Tuple[bool,NDArray]:
@@ -73,6 +83,11 @@ class OpenCV_VideoReader:
         rval, frame = self._capture.read()
         if rval:
             self._current_frame += 1
+            if self._crop is not None:
+                frame = frame[
+                    self._crop[1]:self._crop[1]+self._crop[3],
+                    self._crop[0]:self._crop[0]+self._crop[2]
+                ]
         return (rval, frame)
     
     def seek_to(self, index):
@@ -125,6 +140,11 @@ class OpenCV_VideoReader:
             rval, frame = self.next_frame()
             if not rval:
                 raise(RuntimeError(f"movie ended while seeking to frame {stop}"))
+            if self._crop is not None:
+                frame = frame[
+                    self._crop[1]:self._crop[1]+self._crop[3],
+                    self._crop[0]:self._crop[0]+self._crop[2]
+                ]
             frames[:,:,:,counter-start] = frame
             counter += 1
 
