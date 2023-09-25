@@ -40,7 +40,7 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
 
     # video reader    
     reader = OpenCV_VideoReader()
-    reader.open_file(video_file, safe=False, crop=(0,0,600,600))
+    reader.open_file(video_file, safe=False, crop=(600,600,600,600))
     num_frames = reader.get_number_of_frame()
     height = reader.get_height()
     width = reader.get_width()
@@ -155,7 +155,7 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
         if DISPLAY:
             overlay = tracker.overlay(image, tracking)
             if overlay is not None:
-                overlay = cv2.resize(overlay,None,None,0.5,0.5)
+                #overlay = cv2.resize(overlay,None,None,0.5,0.5)
                 cv2.imshow('tracking', overlay)
                 cv2.waitKey(1)
 
