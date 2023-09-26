@@ -279,6 +279,17 @@ class EyesTracker:
     def overlay_local(self, tracking: EyesTracking):
         if tracking is not None:
             image = tracking.image.copy()
+
+            if self.tracking_param.resize != 1:
+                image = cv2.resize(
+                    image, 
+                    None, 
+                    None,
+                    self.tracking_param.resize,
+                    self.tracking_param.resize,
+                    cv2.INTER_AREA
+                )
+
             if tracking.left_eye is not None:
                 image = self.disp_eye(
                     image, 
