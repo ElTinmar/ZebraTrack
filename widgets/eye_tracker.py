@@ -3,6 +3,7 @@ from trackers.eyes import EyesTracker, EyesTrackerParamOverlay, EyesTrackerParam
 from numpy.typing import NDArray
 from .helper.ndarray_to_qpixmap import NDarray_to_QPixmap
 from .custom_widgets.labeled_doublespinbox import LabeledDoubleSpinBox
+from .custom_widgets.labeled_spinbox import LabeledSpinBox
 
 class EyesTrackerWidget(QWidget):
     def __init__(self, *args, **kwargs):
@@ -51,6 +52,13 @@ class EyesTrackerWidget(QWidget):
         self.eye_norm.setValue(0.2)
         self.eye_norm.valueChanged.connect(self.update_tracker) 
 
+        # eye dynthresh
+        self.eye_dyntresh_res = LabeledSpinBox(self)
+        self.eye_dyntresh_res.setText('dyntresh res')
+        self.eye_dyntresh_res.setRange(0,100)
+        self.eye_dyntresh_res.setValue(20)
+        self.eye_dyntresh_res.valueChanged.connect(self.update_tracker) 
+
         # eye size
         self.eye_size_lo_mm = LabeledDoubleSpinBox(self)
         self.eye_size_lo_mm.setText('min. eye size')
@@ -81,15 +89,22 @@ class EyesTrackerWidget(QWidget):
         self.crop_offset_mm = LabeledDoubleSpinBox(self)
         self.crop_offset_mm.setText('Y offset eyes')
         self.crop_offset_mm.setRange(-5,5)
-        self.crop_offset_mm.setValue(-0.5)
+        self.crop_offset_mm.setValue(1.75)
         self.crop_offset_mm.valueChanged.connect(self.update_tracker) 
 
-        # ditance eye - midline
-        self.dist_eye_midline_mm = LabeledDoubleSpinBox(self)
-        self.dist_eye_midline_mm.setText('eye - midline (mm)')
-        self.dist_eye_midline_mm.setRange(0,3)
-        self.dist_eye_midline_mm.setValue(0.1)
-        self.dist_eye_midline_mm.valueChanged.connect(self.update_tracker)
+        #ksize_blur_mm 
+        self.blur_sz_mm = LabeledDoubleSpinBox(self)
+        self.blur_sz_mm.setText('blur size (mm)')
+        self.blur_sz_mm.setRange(0,2)
+        self.blur_sz_mm.setValue(0.06)
+        self.blur_sz_mm.valueChanged.connect(self.update_tracker)
+                
+        # median filter size
+        self.median_filter_sz_mm = LabeledDoubleSpinBox(self)
+        self.median_filter_sz_mm.setText('medfilt size (mm)')
+        self.median_filter_sz_mm.setRange(0,2)
+        self.median_filter_sz_mm.setValue(0.06)
+        self.median_filter_sz_mm.valueChanged.connect(self.update_tracker)
 
     def layout_components(self):
         parameters = QVBoxLayout()
@@ -98,12 +113,14 @@ class EyesTrackerWidget(QWidget):
         parameters.addWidget(self.eye_gamma)
         parameters.addWidget(self.eye_contrast)
         parameters.addWidget(self.eye_norm)
+        parameters.addWidget(self.eye_dyntresh_res)
         parameters.addWidget(self.eye_size_lo_mm)
         parameters.addWidget(self.eye_size_hi_mm)
         parameters.addWidget(self.crop_dimension_x_mm)
         parameters.addWidget(self.crop_dimension_y_mm)
         parameters.addWidget(self.crop_offset_mm)
-        parameters.addWidget(self.dist_eye_midline_mm)    
+        parameters.addWidget(self.blur_sz_mm)
+        parameters.addWidget(self.median_filter_sz_mm)
 
         mainlayout = QHBoxLayout()
         mainlayout.addWidget(self.image)
@@ -127,11 +144,13 @@ class EyesTrackerWidget(QWidget):
             eye_gamma = self.eye_gamma.value(),
             eye_contrast = self.eye_contrast.value(),
             eye_norm = self.eye_norm.value(),
+            eye_dyntresh_res = self.eye_dyntresh_res.value(),
             eye_size_lo_mm = self.eye_size_lo_mm.value(),
             eye_size_hi_mm = self.eye_size_hi_mm.value(),
             crop_offset_mm = self.crop_offset_mm.value(),
-            dist_eye_midline_mm = self.dist_eye_midline_mm.value(), 
             crop_dimension_mm = (self.crop_dimension_x_mm.value(), self.crop_dimension_y_mm.value()),
+            blur_sz_mm = self.blur_sz_mm.value(),
+            median_filter_sz_mm = self.median_filter_sz_mm.value(),
         )
         self.tracker = EyesTracker(tracker_param, overlay_param)
 

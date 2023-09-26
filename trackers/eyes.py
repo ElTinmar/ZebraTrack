@@ -22,7 +22,6 @@ class EyesTrackerParamTracking:
     eye_size_hi_mm: float = 10.0
     blur_sz_mm: float = 0.05
     median_filter_sz_mm: float = 0.15
-    dist_eye_midline_mm: float = 0.1
     crop_dimension_mm: Tuple[float, float] = (1.2, 1.2) 
     crop_offset_mm: float = 0.2
 
@@ -40,10 +39,6 @@ class EyesTrackerParamTracking:
     @property
     def eye_size_hi_px(self):
         return self.mm2px(self.eye_size_hi_mm)
-    
-    @property
-    def dist_eye_midline_px(self):
-        return self.mm2px(self.dist_eye_midline_mm)
     
     @property
     def blur_sz_px(self):
