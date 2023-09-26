@@ -40,14 +40,14 @@ class AnimalTrackerWidget(QWidget):
         # body size
         self.min_body_size_mm = LabeledDoubleSpinBox(self)
         self.min_body_size_mm.setText('min body size (mm)')
-        self.min_body_size_mm.setRange(0,10000)
-        self.min_body_size_mm.setValue(8)
+        self.min_body_size_mm.setRange(0,1000)
+        self.min_body_size_mm.setValue(5)
         self.min_body_size_mm.valueChanged.connect(self.update_tracker)
 
         #
         self.max_body_size_mm = LabeledDoubleSpinBox(self)
         self.max_body_size_mm.setText('max body size (mm)')
-        self.max_body_size_mm.setRange(0,10000)
+        self.max_body_size_mm.setRange(0,1000)
         self.max_body_size_mm.setValue(30)
         self.max_body_size_mm.valueChanged.connect(self.update_tracker)
 
