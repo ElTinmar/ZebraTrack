@@ -1,11 +1,9 @@
-from collections.abc import Callable, Iterable, Mapping
-from multiprocessing import Process, Queue, Value
-from typing import Any
+from multiprocessing import Process, Queue
 import cv2
 import time
 from numpy.typing import NDArray
 
-# TODO check that is compatible with windows multiprocesssing
+# TODO test that it works on windows
 
 class VideoDisplay(Process):
     def __init__(
