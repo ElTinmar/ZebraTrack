@@ -4,7 +4,7 @@ from widgets.eye_tracker import EyesTrackerWidget
 from widgets.tail_tracker import TailTrackerWidget 
 from trackers.tracker import Tracker
 from PyQt5.QtCore import QTimer, Qt
-from PyQt5.QtWidgets import QMainWindow, QHBoxLayout, QStackedLayout, QDockWidget
+from PyQt5.QtWidgets import QMainWindow, QHBoxLayout, QTabWidget, QDockWidget
 from typing import Protocol
 from image.imconvert import im2gray, im2single
 
@@ -52,15 +52,11 @@ class TrackerThreshold(QMainWindow):
 
     def layout_components(self):
         dock_widget = QDockWidget('Single Animal', self)
-        stackedlayout = QStackedLayout()
-        stackedlayout.addWidget(self.body_tracker_widget)
-        stackedlayout.addWidget(self.eyes_tracker_widget)
-        stackedlayout.addWidget(self.tail_tracker_widget)      
-        dock_widget.setLayout(stackedlayout)  
-        
-        mainlayout = QHBoxLayout()
-        mainlayout.addWidget(self.animal_tracker_widget)
-        mainlayout.addLayout(stackedlayout)
+        tabs = QTabWidget()
+        tabs.addTab(self.body_tracker_widget, 'body')
+        tabs.addTab(self.eyes_tracker_widget, 'eyes')
+        tabs.addTab(self.tail_tracker_widget, 'tail')      
+        dock_widget.setWidget(tabs)  
 
         self.setCentralWidget(self.animal_tracker_widget)
         self.addDockWidget(Qt.RightDockWidgetArea, dock_widget)
