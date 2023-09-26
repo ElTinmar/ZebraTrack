@@ -1,0 +1,17 @@
+name: ZebraTrack
+channels:
+- conda-forge
+dependencies:
+- python == 3.8.16
+- pip
+- pip:
+  - PyQt5
+- pandas
+- numpy
+- opencv
+- matplotlib
+- ipython
+- scipy
+- scikit-image
+- scikit-learn
+- tqdm
