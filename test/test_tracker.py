@@ -68,7 +68,7 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     assignment = GridAssignment(LUT)
     accumulator = None
 
-    display = VideoDisplay()
+    display = VideoDisplay(fps=10)
     display.start()
 
     # tracking 
