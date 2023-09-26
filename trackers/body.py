@@ -188,19 +188,10 @@ class BodyTracker:
         return image
     
     def overlay_local(self, tracking: BodyTracking):
+        image = None
         if tracking is not None:
             image = tracking.image.copy()
 
-            if self.tracking_param.resize != 1:
-                image = cv2.resize(
-                    image, 
-                    None, 
-                    None,
-                    self.tracking_param.resize,
-                    self.tracking_param.resize,
-                    cv2.INTER_AREA
-                )
-                
             pt1 = tracking.centroid
             pt2 = pt1 + self.overlay_param.heading_len_px*tracking.heading[:,0]
             image = cv2.line(

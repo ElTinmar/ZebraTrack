@@ -8,7 +8,7 @@ import cv2
 @dataclass
 class AnimalTrackerParamTracking:
     pix_per_mm: float = 40.0
-    target_pix_per_mm: float = 20.0
+    target_pix_per_mm: float = 10.0
     body_intensity: float = 0.1
     min_body_size_mm: float = 10.0
     max_body_size_mm: float = 100.0
@@ -164,21 +164,12 @@ class AnimalTracker:
         return image
     
     def overlay_local(self, tracking: AnimalTracking):
+        image = None
         if tracking is not None:
             image = tracking.image.copy()
 
-            if self.tracking_param.resize != 1:
-                image = cv2.resize(
-                    image, 
-                    None, 
-                    None,
-                    self.tracking_param.resize,
-                    self.tracking_param.resize,
-                    cv2.INTER_AREA
-                )
-
             # draw centroid
-            for (x,y) in tracking.centroids:
+            for (x,y) in tracking.centroids*self.tracking_param.resize:
                 image = cv2.circle(
                     image,
                     (int(x),int(y)), 
@@ -188,7 +179,7 @@ class AnimalTracker:
                 )
 
             # draw bounding boxes
-            for (left, bottom, right, top) in tracking.bounding_boxes:
+            for (left, bottom, right, top) in tracking.bounding_boxes*self.tracking_param.resize:
                 image = cv2.rectangle(
                     image, 
                     (int(left), int(top)),
