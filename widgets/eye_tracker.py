@@ -16,6 +16,13 @@ class EyesTrackerWidget(QWidget):
         self.image = QLabel(self)
         self.mask = QLabel(self)
         self.image_overlay = QLabel(self)
+
+        # eye gamma
+        self.pix_per_mm = LabeledDoubleSpinBox(self)
+        self.pix_per_mm.setText('pix_per_mm')
+        self.pix_per_mm.setRange(0,100)
+        self.pix_per_mm.setValue(40)
+        self.pix_per_mm.valueChanged.connect(self.update_tracker) 
     
         # eye gamma
         self.eye_gamma = LabeledDoubleSpinBox(self)

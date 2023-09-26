@@ -25,11 +25,11 @@ class TailTrackerWidget(QWidget):
         self.arc_angle_deg.valueChanged.connect(self.update_tracker) 
 
         #ksize_blur_mm 
-        self.ksize_blur_mm = LabeledDoubleSpinBox(self)
-        self.ksize_blur_mm.setText('blur size (mm)')
-        self.ksize_blur_mm.setRange(0,2)
-        self.ksize_blur_mm.setValue(0.06)
-        self.ksize_blur_mm.valueChanged.connect(self.update_tracker)
+        self.blur_sz_mm = LabeledDoubleSpinBox(self)
+        self.blur_sz_mm.setText('blur size (mm)')
+        self.blur_sz_mm.setRange(0,2)
+        self.blur_sz_mm.setValue(0.06)
+        self.blur_sz_mm.valueChanged.connect(self.update_tracker)
         
         # n_tail_points
         self.n_tail_points = LabeledSpinBox(self)
@@ -69,7 +69,7 @@ class TailTrackerWidget(QWidget):
     def layout_components(self):
         parameters = QVBoxLayout()
         parameters.addWidget(self.arc_angle_deg)
-        parameters.addWidget(self.ksize_blur_mm)
+        parameters.addWidget(self.blur_sz_mm)
         parameters.addWidget(self.n_tail_points)
         parameters.addWidget(self.tail_length_mm)
         parameters.addWidget(self.n_pts_arc)
@@ -90,7 +90,7 @@ class TailTrackerWidget(QWidget):
         )
         tracker_param = TailTrackerParamTracking(
             arc_angle_deg = self.arc_angle_deg.value(),
-            ksize_blur_mm = self.ksize_blur_mm.value(),
+            blur_sz_mm = self.blur_sz_mm.value(),
             n_tail_points = self.n_tail_points.value(),
             tail_length_mm = self.tail_length_mm.value(),
             n_pts_arc = self.n_pts_arc.value(),

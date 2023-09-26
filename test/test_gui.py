@@ -2,7 +2,7 @@ import os
 import socket
 import pandas as pd
 import numpy as np
-import cv2
+import sys
 from video.video_reader import OpenCV_VideoReader
 from video.background import StaticBackground, DynamicBackground, DynamicBackgroundMP
 from trackers.animal import AnimalTracker, AnimalTrackerParamTracking, AnimalTrackerParamOverlay
@@ -13,6 +13,9 @@ from trackers.tracker import Tracker
 from trackers.assignment import LinearSumAssignment, GridAssignment
 from image.imconvert import im2gray, im2single
 from tqdm import tqdm
+from PyQt5.QtWidgets import QApplication
+from gui import TrackerThreshold
+
 
 host = socket.gethostname()
 BASEFOLDER = '/home/martin/ownCloud - martin.privat@bi.mpg.de@owncloud.gwdg.de/Escapes/'
@@ -54,3 +57,7 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     LUT = np.zeros((600,600))
     assignment = GridAssignment(LUT)
     accumulator = None
+
+    app = QApplication(sys.argv)
+    window = TrackerThreshold(reader, background, assignment)
+    sys.exit(app.exec())
