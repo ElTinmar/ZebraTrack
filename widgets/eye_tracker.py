@@ -16,13 +16,20 @@ class EyesTrackerWidget(QWidget):
         self.mask = QLabel(self)
         self.image_overlay = QLabel(self)
 
-        # eye gamma
+        # pix per mm
         self.pix_per_mm = LabeledDoubleSpinBox(self)
         self.pix_per_mm.setText('pix_per_mm')
-        self.pix_per_mm.setRange(0,100)
+        self.pix_per_mm.setRange(0,1000)
         self.pix_per_mm.setValue(40)
         self.pix_per_mm.valueChanged.connect(self.update_tracker) 
-    
+
+        # target pix per mm
+        self.target_pix_per_mm = LabeledDoubleSpinBox(self)
+        self.target_pix_per_mm.setText('target pix_per_mm')
+        self.target_pix_per_mm.setRange(0,1000)
+        self.target_pix_per_mm.setValue(40)
+        self.target_pix_per_mm.valueChanged.connect(self.update_tracker) 
+
         # eye gamma
         self.eye_gamma = LabeledDoubleSpinBox(self)
         self.eye_gamma.setText('eye gamma')
@@ -86,6 +93,8 @@ class EyesTrackerWidget(QWidget):
 
     def layout_components(self):
         parameters = QVBoxLayout()
+        parameters.addWidget(self.pix_per_mm)
+        parameters.addWidget(self.target_pix_per_mm)
         parameters.addWidget(self.eye_gamma)
         parameters.addWidget(self.eye_contrast)
         parameters.addWidget(self.eye_norm)
@@ -113,6 +122,8 @@ class EyesTrackerWidget(QWidget):
             thickness = 2
         )
         tracker_param = EyesTrackerParamTracking(
+            pix_per_mm = self.pix_per_mm.value(),
+            target_pix_per_mm = self.target_pix_per_mm.value(),
             eye_gamma = self.eye_gamma.value(),
             eye_contrast = self.eye_contrast.value(),
             eye_norm = self.eye_norm.value(),

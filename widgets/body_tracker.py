@@ -24,6 +24,13 @@ class BodyTrackerWidget(QWidget):
         self.pix_per_mm.setValue(40)
         self.pix_per_mm.valueChanged.connect(self.update_tracker)
 
+        # pix per mm
+        self.target_pix_per_mm = LabeledDoubleSpinBox(self)
+        self.target_pix_per_mm.setText('target pixels / mm')
+        self.target_pix_per_mm.setRange(0,1000)
+        self.target_pix_per_mm.setValue(15)
+        self.target_pix_per_mm.valueChanged.connect(self.update_tracker)
+
         # body intensity
         self.body_intensity = LabeledDoubleSpinBox(self)
         self.body_intensity.setText('body intensity')
@@ -77,6 +84,7 @@ class BodyTrackerWidget(QWidget):
 
         parameters = QVBoxLayout()
         parameters.addWidget(self.pix_per_mm)
+        parameters.addWidget(self.target_pix_per_mm)
         parameters.addWidget(self.body_intensity)
         parameters.addWidget(self.min_body_size_mm)
         parameters.addWidget(self.max_body_size_mm)
@@ -102,6 +110,7 @@ class BodyTrackerWidget(QWidget):
         )
         tracker_param = BodyTrackerParamTracking(
             pix_per_mm = self.pix_per_mm.value(),
+            target_pix_per_mm = self.target_pix_per_mm.value(),
             body_intensity = self.body_intensity.value(),
             min_body_size_mm = self.min_body_size_mm.value(),
             max_body_size_mm = self.max_body_size_mm.value(),

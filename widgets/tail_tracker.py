@@ -16,7 +16,21 @@ class TailTrackerWidget(QWidget):
     def declare_components(self):
         self.image = QLabel(self)
         self.image_overlay = QLabel(self)
-    
+
+        # pix per mm
+        self.pix_per_mm = LabeledDoubleSpinBox(self)
+        self.pix_per_mm.setText('pix_per_mm')
+        self.pix_per_mm.setRange(0,1000)
+        self.pix_per_mm.setValue(40)
+        self.pix_per_mm.valueChanged.connect(self.update_tracker) 
+
+        # target pix per mm
+        self.target_pix_per_mm = LabeledDoubleSpinBox(self)
+        self.target_pix_per_mm.setText('target pix_per_mm')
+        self.target_pix_per_mm.setRange(0,1000)
+        self.target_pix_per_mm.setValue(40)
+        self.target_pix_per_mm.valueChanged.connect(self.update_tracker) 
+
         # arc angle deg
         self.arc_angle_deg = LabeledDoubleSpinBox(self)
         self.arc_angle_deg.setText('tail max angle (deg)')
@@ -68,6 +82,9 @@ class TailTrackerWidget(QWidget):
         
     def layout_components(self):
         parameters = QVBoxLayout()
+        parameters.addWidget(self.pix_per_mm)
+        parameters.addWidget(self.target_pix_per_mm)
+        parameters.addWidget(self.arc_angle_deg)
         parameters.addWidget(self.arc_angle_deg)
         parameters.addWidget(self.blur_sz_mm)
         parameters.addWidget(self.n_tail_points)
@@ -89,6 +106,8 @@ class TailTrackerWidget(QWidget):
             thickness = 2
         )
         tracker_param = TailTrackerParamTracking(
+            pix_per_mm = self.pix_per_mm.value(),
+            target_pix_per_mm = self.target_pix_per_mm.value(),
             arc_angle_deg = self.arc_angle_deg.value(),
             blur_sz_mm = self.blur_sz_mm.value(),
             n_tail_points = self.n_tail_points.value(),
