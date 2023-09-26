@@ -1,4 +1,5 @@
 from image.morphology import bwareafilter_props
+from image.imcontrast import imcontrast
 from sklearn.decomposition import PCA
 import numpy as np
 from numpy.typing import NDArray
@@ -117,7 +118,8 @@ class BodyTracker:
                 self.tracking_param.resize,
                 cv2.INTER_AREA
             )
-
+            
+        imcontrast(image)
         mask = (image >= self.tracking_param.body_intensity)
         props = bwareafilter_props(
             mask, 

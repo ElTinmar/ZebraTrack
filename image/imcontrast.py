@@ -1,20 +1,23 @@
 from numpy.typing import NDArray
+from typing import Optional
 from scipy import ndimage
 import cv2
 
 #TODO should you modify image in place ?
 def imcontrast(
         image: NDArray, 
-        contrast: float,
-        gamma: float,
-        intensity_norm: float, 
-        blur_size_px: int, 
-        medfilt_size_px: int
+        contrast: float = 1.0,
+        gamma: float = 1.0,
+        intensity_norm: float = 1.0, 
+        blur_size_px: Optional[int] = None, 
+        medfilt_size_px: Optional[int] = None
         ) -> None:
     
-    image = cv2.boxFilter(image, -1, (blur_size_px, blur_size_px))
+    if blur_size_px is not None:
+        image = cv2.boxFilter(image, -1, (blur_size_px, blur_size_px))
     image[image<0] = 0
     image = image/intensity_norm
-    image = ndimage.median_filter(image, size = medfilt_size_px)
+    if medfilt_size_px is not None:
+        image = ndimage.median_filter(image, size = medfilt_size_px)
     image = contrast*image**gamma
     image[image>1] = 1

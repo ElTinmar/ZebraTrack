@@ -1,4 +1,5 @@
 from image.morphology import bwareafilter_centroids
+from image.imcontrast import imcontrast
 import numpy as np
 from numpy.typing import NDArray
 from dataclasses import dataclass
@@ -103,6 +104,9 @@ class AnimalTracker:
                 self.tracking_param.resize,
                 cv2.INTER_AREA
             )
+
+        # tune image contrast and gamma
+        imcontrast(image)
 
         height, width = image.shape
         mask = (image >= self.tracking_param.body_intensity)
