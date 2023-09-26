@@ -167,9 +167,8 @@ class TailTracker:
 
         return res
     
-    def overlay(self, image: NDArray, tracking: TailTracking, offset: Optional[NDArray]):
+    def overlay(self, image: NDArray, tracking: TailTracking):
         # TODO check if using polyline is faster
-
         if tracking is not None:
             angle = np.arctan2(tracking.heading[1,1],tracking.heading[0,1]) 
             R = rotation_matrix(np.rad2deg(angle))[:2,:2]
@@ -179,8 +178,6 @@ class TailTracker:
 
             if tracking.skeleton_interp is not None:
                 transformed_coord = (R @ tracking.skeleton_interp.T).T + corner
-                if offset is not None:
-                    transformed_coord += offset
                 tail_segments = zip(transformed_coord[:-1,], transformed_coord[1:,])
                 for pt1, pt2 in tail_segments:
                     image = cv2.line(
@@ -195,4 +192,16 @@ class TailTracker:
     
     def overlay_local(self, tracking: TailTracking):
         if tracking is not None:
-            pass
+            image = tracking.image
+            if tracking.skeleton_interp is not None:
+                tail_segments = zip(tracking.skeleton_interp[:-1,], tracking.skeleton_interp[1:,])
+                for pt1, pt2 in tail_segments:
+                    image = cv2.line(
+                        image,
+                        pt1.astype(np.int32),
+                        pt2.astype(np.int32),
+                        self.overlay_param.color_tail,
+                        self.overlay_param.thickness
+                    )
+            
+        return image

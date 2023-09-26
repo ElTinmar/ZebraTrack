@@ -114,11 +114,11 @@ class BodyTrackerWidget(QWidget):
 
     def set_image(self, image: NDArray, offset = Optional[NDArray]):
         tracking = self.tracker.track(image, offset)
-        overlay = self.tracker.overlay(image, tracking, offset)
-        self.image.setPixmap(NDarray_to_QPixmap(image))
+        self.display(tracking)
+
+    def display(self, tracking):
+        overlay = self.tracker.overlay_local(tracking)
+        self.image.setPixmap(NDarray_to_QPixmap(tracking.image))
         self.mask.setPixmap(NDarray_to_QPixmap(tracking.mask))
         self.image_overlay.setPixmap(NDarray_to_QPixmap(overlay))
         self.update()
-
-    def display(self, tracking):
-        pass

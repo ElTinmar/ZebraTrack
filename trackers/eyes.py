@@ -147,7 +147,7 @@ class EyesTracker:
         return (found_eyes_and_sb, props, mask)
     
     def track(self, image: NDArray, heading: NDArray, centroid: NDArray):
-        
+
         if self.tracking_param.resize != 1:
             image = cv2.resize(
                 image, 
@@ -210,54 +210,44 @@ class EyesTracker:
         )
         
         return res
-       
-    def overlay(self, image: NDArray, tracking: EyesTracking, offset: Optional[NDArray] = None):
 
-        def process_eye(
-                image: NDArray, 
-                eye: dict, 
-                R: NDArray, 
-                corner: NDArray, 
-                offset: Optional[NDArray], 
-                color: tuple, 
-                eye_len_px: float, 
-                thickness: int
-            ) -> NDArray:
+    @staticmethod
+    def disp_eye(
+            image: NDArray, 
+            eye_centroid: NDArray,
+            eye_direction: NDArray,
+            color: tuple, 
+            eye_len_px: float, 
+            thickness: int
+        ) -> NDArray:
 
-            if eye is None:
-                return image
-            
-            eye_centroid = R @ eye['centroid'] + corner
-            if offset is not None:
-                eye_centroid += offset
-            eye_direction = R @ eye['direction']
-
-            pt1 = eye_centroid
-            pt2 = pt1 + eye_len_px * eye_direction
-            image = cv2.line(
-                image,
-                pt1.astype(np.int32),
-                pt2.astype(np.int32),
-                color,
-                thickness
-            )
-            pt2 = pt1 - eye_len_px * eye_direction
-            image = cv2.line(
-                image,
-                pt1.astype(np.int32),
-                pt2.astype(np.int32),
-                color,
-                thickness
-            )
-            image = cv2.circle(
-                image,
-                pt2.astype(np.int32),
-                2,
-                color,
-                thickness
-            )
-            return image
-        
+        pt1 = eye_centroid
+        pt2 = pt1 + eye_len_px * eye_direction
+        image = cv2.line(
+            image,
+            pt1.astype(np.int32),
+            pt2.astype(np.int32),
+            color,
+            thickness
+        )
+        pt2 = pt1 - eye_len_px * eye_direction
+        image = cv2.line(
+            image,
+            pt1.astype(np.int32),
+            pt2.astype(np.int32),
+            color,
+            thickness
+        )
+        image = cv2.circle(
+            image,
+            pt2.astype(np.int32),
+            2,
+            color,
+            thickness
+        )
+        return image
+    
+    def overlay(self, image: NDArray, tracking: EyesTracking):
         if tracking is not None:
             angle = np.arctan2(tracking.heading[1,1],tracking.heading[0,1]) 
             w = self.tracking_param.crop_dimension_px[0] / self.tracking_param.resize
@@ -265,29 +255,47 @@ class EyesTracker:
             corner = tracking.centroid - w//2 * tracking.heading[:,1] + (-h//2 + self.tracking_param.crop_offset_px / self.tracking_param.resize) * tracking.heading[:,0] 
             R = rotation_matrix(np.rad2deg(angle))[:2,:2]
 
-            image = process_eye(
-                image, 
-                tracking.left_eye, 
-                R, 
-                corner, 
-                offset, 
-                self.overlay_param.color_eye_left, 
-                self.overlay_param.eye_len_px, 
-                self.overlay_param.thickness
-            )
-            image = process_eye(
-                image, 
-                tracking.right_eye, 
-                R, 
-                corner, 
-                offset, 
-                self.overlay_param.color_eye_right, 
-                self.overlay_param.eye_len_px, 
-                self.overlay_param.thickness
-            )
+            if tracking.left_eye is not None:
+                image = self.disp_eye(
+                    image, 
+                    R @ tracking.left_eye['centroid'] + corner,
+                    R @ tracking.left_eye['direction'],
+                    self.overlay_param.color_eye_left, 
+                    self.overlay_param.eye_len_px, 
+                    self.overlay_param.thickness
+                )
+            if tracking.right_eye is not None:   
+                image = self.disp_eye(
+                    image, 
+                    R @ tracking.right_eye['centroid'] + corner,
+                    R @ tracking.right_eye['direction'],
+                    self.overlay_param.color_eye_right, 
+                    self.overlay_param.eye_len_px, 
+                    self.overlay_param.thickness
+                )
         
         return image
 
     def overlay_local(self, tracking: EyesTracking):
         if tracking is not None:
-            pass
+            image = tracking.image
+            if tracking.left_eye is not None:
+                image = self.disp_eye(
+                    image, 
+                    tracking.left_eye['centroid'],
+                    tracking.left_eye['direction'],
+                    self.overlay_param.color_eye_left, 
+                    self.overlay_param.eye_len_px, 
+                    self.overlay_param.thickness
+                )
+            if tracking.right_eye is not None:   
+                image = self.disp_eye(
+                    image, 
+                    tracking.right_eye['centroid'],
+                    tracking.right_eye['direction'],
+                    self.overlay_param.color_eye_right, 
+                    self.overlay_param.eye_len_px, 
+                    self.overlay_param.thickness
+                )
+        
+        return image

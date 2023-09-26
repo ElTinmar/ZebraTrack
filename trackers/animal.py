@@ -75,6 +75,7 @@ class AnimalTracking:
     bounding_boxes: NDArray
     bb_centroids: NDArray
     mask: NDArray
+    image: NDArray
 
     def to_csv(self):
         '''
@@ -129,7 +130,8 @@ class AnimalTracker:
             centroids = centroids/self.tracking_param.resize,
             bounding_boxes = bboxes/self.tracking_param.resize,
             bb_centroids = bb_centroids/self.tracking_param.resize,
-            mask = mask
+            mask = (255*mask).astype(np.uint8),
+            image = (255*image).astype(np.uint8)
         )
         return res
 
@@ -159,6 +161,26 @@ class AnimalTracker:
     
     def overlay_local(self, tracking: AnimalTracking):
         if tracking is not None:
-            pass
+            image = tracking.image
+            # draw centroid
+            for (x,y) in tracking.centroids:
+                image = cv2.circle(
+                    image,
+                    (int(x),int(y)), 
+                    self.overlay_param.radius_px, 
+                    self.overlay_param.centroid_color, 
+                    self.overlay_param.centroid_thickness
+                )
 
+            # draw bounding boxes
+            for (left, bottom, right, top) in tracking.bounding_boxes:
+                image = cv2.rectangle(
+                    image, 
+                    (int(left), int(top)),
+                    (int(right), int(bottom)), 
+                    self.overlay_param.bbox_color, 
+                    self.overlay_param.bbox_thickness
+                )
+
+        return image
     

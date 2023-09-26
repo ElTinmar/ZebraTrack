@@ -68,7 +68,8 @@ class BodyTrackerParamOverlay:
 class BodyTracking:
     heading: NDArray # 2x2 matrix, column 1 = fish heading, column 2 = fish right direction
     centroid: NDArray # 1x2 vector. (x,y) coordinates of the fish centroid ~ swim bladder location
-    mask: NDArray 
+    mask: NDArray
+    image: NDArray  
 
     def to_csv(self):
         '''
@@ -152,7 +153,8 @@ class BodyTracker:
             res = BodyTracking(
                 heading = principal_components,
                 centroid = centroid/self.tracking_param.resize,
-                mask = (255*mask).astype(np.uint8)
+                mask = (255*mask).astype(np.uint8),
+                image = (255*image).astype(np.uint8)
             )
             return res
 
@@ -166,7 +168,7 @@ class BodyTracker:
             if offset is not None:
                 pt1 += offset
             pt2 = pt1 + self.overlay_param.heading_len_px*tracking.heading[:,0]
-            self.image_overlay = cv2.line(
+            image = cv2.line(
                 image,
                 pt1.astype(np.int32),
                 pt2.astype(np.int32),
@@ -185,4 +187,22 @@ class BodyTracker:
     
     def overlay_local(self, tracking: BodyTracking):
         if tracking is not None:
-            pass
+            pt1 = tracking.centroid
+            pt2 = pt1 + self.overlay_param.heading_len_px*tracking.heading[:,0]
+            image = tracking.image
+            image = cv2.line(
+                image,
+                pt1.astype(np.int32),
+                pt2.astype(np.int32),
+                self.overlay_param.heading_color,
+                self.overlay_param.thickness
+            )
+            image = cv2.circle(
+                image,
+                pt2.astype(np.int32),
+                2,
+                self.overlay_param.heading_color,
+                self.overlay_param.thickness
+            )
+        
+        return image

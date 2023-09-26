@@ -99,12 +99,12 @@ class TailTrackerWidget(QWidget):
         )
         self.tracker = TailTracker(tracker_param, overlay_param)
 
-    def set_image(self, image: NDArray, heading: NDArray, centroid: NDArray, offset = Optional[NDArray]):
+    def set_image(self, image: NDArray, heading: NDArray, centroid: NDArray):
         tracking = self.tracker.track(image, heading, centroid)
-        overlay = self.tracker.overlay(image, tracking, offset)
-        self.image.setPixmap(NDarray_to_QPixmap(image))
-        self.image_overlay.setPixmap(NDarray_to_QPixmap(overlay))
-        self.update()
+        self.display(tracking)
 
     def display(self, tracking):
-        pass
+        overlay = self.tracker.overlay_local(tracking)
+        self.image.setPixmap(NDarray_to_QPixmap(tracking.image))
+        self.image_overlay.setPixmap(NDarray_to_QPixmap(overlay))
+        self.update()

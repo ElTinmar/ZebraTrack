@@ -83,9 +83,9 @@ class Tracker:
             if self.body_tracker is not None:
                 image = self.body_tracker.overlay(image, tracking['body'][id], offset)
                 if self.eyes_tracker is not None:
-                    image = self.eyes_tracker.overlay(image, tracking['eyes'][id], None)
+                    image = self.eyes_tracker.overlay(image, tracking['eyes'][id])
                 if self.tail_tracker is not None:
-                    image = self.tail_tracker.overlay(image, tracking['tail'][id], None)
+                    image = self.tail_tracker.overlay(image, tracking['tail'][id])
             cv2.putText(image, str(id), offset.astype(int), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0,0,255), 2, cv2.LINE_AA)
         return image
     
