@@ -280,7 +280,7 @@ class EyesTracker:
         image = None
         if tracking is not None:
             image = tracking.image.copy()
-
+            image = np.dstack((image,image,image))
             if tracking.left_eye is not None:
                 image = self.disp_eye(
                     image, 

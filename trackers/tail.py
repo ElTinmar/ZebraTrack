@@ -194,7 +194,7 @@ class TailTracker:
         image = None
         if tracking is not None:
             image = tracking.image.copy()
-
+            image = np.dstack((image,image,image))
             if tracking.skeleton_interp is not None:
                 tail_segments = zip(
                     tracking.skeleton_interp[:-1,]*self.tracking_param.resize, 

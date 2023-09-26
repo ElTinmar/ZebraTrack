@@ -167,7 +167,7 @@ class AnimalTracker:
         image = None
         if tracking is not None:
             image = tracking.image.copy()
-
+            image = np.dstack((image,image,image))
             # draw centroid
             for (x,y) in tracking.centroids*self.tracking_param.resize:
                 image = cv2.circle(
