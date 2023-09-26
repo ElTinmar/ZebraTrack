@@ -278,7 +278,7 @@ class EyesTracker:
 
     def overlay_local(self, tracking: EyesTracking):
         if tracking is not None:
-            image = tracking.image
+            image = tracking.image.copy()
             if tracking.left_eye is not None:
                 image = self.disp_eye(
                     image, 

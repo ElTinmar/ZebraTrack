@@ -192,7 +192,7 @@ class TailTracker:
     
     def overlay_local(self, tracking: TailTracking):
         if tracking is not None:
-            image = tracking.image
+            image = tracking.image.copy()
             if tracking.skeleton_interp is not None:
                 tail_segments = zip(tracking.skeleton_interp[:-1,], tracking.skeleton_interp[1:,])
                 for pt1, pt2 in tail_segments:

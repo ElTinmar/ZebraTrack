@@ -165,7 +165,7 @@ class AnimalTracker:
     
     def overlay_local(self, tracking: AnimalTracking):
         if tracking is not None:
-            image = tracking.image
+            image = tracking.image.copy()
             # draw centroid
             for (x,y) in tracking.centroids:
                 image = cv2.circle(
