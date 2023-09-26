@@ -284,7 +284,7 @@ class EyesTracker:
             if tracking.left_eye is not None:
                 image = self.disp_eye(
                     image, 
-                    tracking.left_eye['centroid'],
+                    tracking.left_eye['centroid']*self.tracking_param.resize,
                     tracking.left_eye['direction'],
                     self.overlay_param.color_eye_left, 
                     self.overlay_param.eye_len_px, 
@@ -293,7 +293,7 @@ class EyesTracker:
             if tracking.right_eye is not None:   
                 image = self.disp_eye(
                     image, 
-                    tracking.right_eye['centroid'],
+                    tracking.right_eye['centroid']*self.tracking_param.resize,
                     tracking.right_eye['direction'],
                     self.overlay_param.color_eye_right, 
                     self.overlay_param.eye_len_px, 

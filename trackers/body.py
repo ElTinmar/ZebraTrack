@@ -192,7 +192,7 @@ class BodyTracker:
         if tracking is not None:
             image = tracking.image.copy()
 
-            pt1 = tracking.centroid
+            pt1 = tracking.centroid*self.tracking_param.resize
             pt2 = pt1 + self.overlay_param.heading_len_px*tracking.heading[:,0]
             image = cv2.line(
                 image,

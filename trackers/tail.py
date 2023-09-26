@@ -196,7 +196,10 @@ class TailTracker:
             image = tracking.image.copy()
 
             if tracking.skeleton_interp is not None:
-                tail_segments = zip(tracking.skeleton_interp[:-1,], tracking.skeleton_interp[1:,])
+                tail_segments = zip(
+                    tracking.skeleton_interp[:-1,]*self.tracking_param.resize, 
+                    tracking.skeleton_interp[1:,]*self.tracking_param.resize
+                )
                 for pt1, pt2 in tail_segments:
                     image = cv2.line(
                         image,
