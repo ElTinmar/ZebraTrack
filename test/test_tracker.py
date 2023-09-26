@@ -1,8 +1,10 @@
+import multiprocessing as mp
 import os
 import socket
 import pandas as pd
 import numpy as np
 import cv2
+from video.video_display import VideoDisplay
 from video.video_reader import OpenCV_VideoReader
 from video.background import StaticBackground, DynamicBackground, DynamicBackgroundMP
 from trackers.animal import AnimalTracker, AnimalTrackerParamTracking, AnimalTrackerParamOverlay
@@ -13,6 +15,7 @@ from trackers.tracker import Tracker
 from trackers.assignment import LinearSumAssignment, GridAssignment
 from image.imconvert import im2gray, im2single
 from tqdm import tqdm
+
 
 host = socket.gethostname()
 BASEFOLDER = '/home/martin/ownCloud - martin.privat@bi.mpg.de@owncloud.gwdg.de/Escapes/'
@@ -64,6 +67,9 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     LUT = np.zeros((600,600))
     assignment = GridAssignment(LUT)
     accumulator = None
+
+    display = VideoDisplay()
+    display.start()
 
     # tracking 
     animal_tracker = AnimalTracker(
@@ -143,23 +149,21 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
         tail_tracker
     )
 
-    if DISPLAY:
-        cv2.namedWindow('tracking')
 
-    for i in tqdm(range(num_frames)):
-        ret, image = reader.next_frame()
-        if not ret:
-            break
+    try:
+        for i in tqdm(range(num_frames)):
+            ret, image = reader.next_frame()
+            if not ret:
+                break
+            img = im2single(im2gray(image))
+            image_sub = background.subtract_background(img)
+            tracking = tracker.track(image_sub)
+            if DISPLAY:
+                overlay = tracker.overlay(image, tracking)
+                if overlay is not None:
+                    display.queue_image(overlay)
+    finally:
+        display.exit()
+        display.join()
 
-        img = im2single(im2gray(image))
-        image_sub = background.subtract_background(img)
-        tracking = tracker.track(image_sub)
-        if DISPLAY:
-            overlay = tracker.overlay(image, tracking)
-            if overlay is not None:
-                #overlay = cv2.resize(overlay,None,None,0.5,0.5)
-                cv2.imshow('tracking', overlay)
-                cv2.waitKey(1)
-
-    if DISPLAY:
-        cv2.destroyAllWindows()
+    
