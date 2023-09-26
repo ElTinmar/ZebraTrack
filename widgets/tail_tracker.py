@@ -105,3 +105,6 @@ class TailTrackerWidget(QWidget):
         self.image.setPixmap(NDarray_to_QPixmap(image))
         self.image_overlay.setPixmap(NDarray_to_QPixmap(overlay))
         self.update()
+
+    def display(self, tracking):
+        pass

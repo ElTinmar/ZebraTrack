@@ -192,3 +192,7 @@ class TailTracker:
                     )
             
         return image
+    
+    def overlay_local(self, tracking: TailTracking):
+        if tracking is not None:
+            pass

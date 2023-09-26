@@ -287,4 +287,7 @@ class EyesTracker:
             )
         
         return image
-    
+
+    def overlay_local(self, tracking: EyesTracking):
+        if tracking is not None:
+            pass

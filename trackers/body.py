@@ -182,3 +182,7 @@ class BodyTracker:
             )
         
         return image
+    
+    def overlay_local(self, tracking: BodyTracking):
+        if tracking is not None:
+            pass

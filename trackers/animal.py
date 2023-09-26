@@ -156,5 +156,9 @@ class AnimalTracker:
                 )
 
         return image
+    
+    def overlay_local(self, tracking: AnimalTracking):
+        if tracking is not None:
+            pass
 
     

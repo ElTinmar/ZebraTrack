@@ -91,6 +91,7 @@ class TrackerThreshold(QMainWindow):
         self.display(tracking)
 
     def display(self, tracking):
+        id = 0 # TODO implement mouse callback
         self.animal_tracker_widget.display(tracking['animal'])
         self.body_tracker_widget.display(tracking['body'][id])
         self.eyes_tracker_widget.display(tracking['eyes'][id])
