@@ -11,13 +11,14 @@ def imcontrast(
         intensity_norm: float = 1.0, 
         blur_size_px: Optional[int] = None, 
         medfilt_size_px: Optional[int] = None
-        ) -> None:
+        ) -> NDArray:
     
     if blur_size_px is not None:
         image = cv2.boxFilter(image, -1, (blur_size_px, blur_size_px))
-    image[image<0] = 0
     image = image/intensity_norm
     if medfilt_size_px is not None:
         image = ndimage.median_filter(image, size = medfilt_size_px)
+    image[image<0] = 0
     image = contrast*image**gamma
     image[image>1] = 1
+    return image

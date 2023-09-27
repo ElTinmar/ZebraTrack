@@ -110,7 +110,7 @@ class TailTracker:
         )
 
         # tune image contrast and gamma
-        imcontrast(
+        image_crop = imcontrast(
             image_crop,
             self.tracking_param.tail_contrast,
             self.tracking_param.tail_gamma,

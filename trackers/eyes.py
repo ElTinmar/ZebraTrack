@@ -168,7 +168,7 @@ class EyesTracker:
         )
 
         # tune image contrast and gamma
-        imcontrast(
+        image_crop = imcontrast(
             image_crop,
             self.tracking_param.eye_contrast,
             self.tracking_param.eye_gamma,

@@ -16,7 +16,6 @@ from tqdm import tqdm
 from PyQt5.QtWidgets import QApplication
 from gui import TrackerThreshold
 
-
 host = socket.gethostname()
 BASEFOLDER = '/home/martin/ownCloud - martin.privat@bi.mpg.de@owncloud.gwdg.de/Escapes/'
 if host == 'hplaptop':

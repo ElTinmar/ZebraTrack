@@ -106,7 +106,7 @@ class AnimalTracker:
             )
 
         # tune image contrast and gamma
-        imcontrast(image)
+        image = imcontrast(image)
 
         height, width = image.shape
         mask = (image >= self.tracking_param.body_intensity)

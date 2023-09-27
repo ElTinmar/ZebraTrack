@@ -119,7 +119,7 @@ class BodyTracker:
                 cv2.INTER_AREA
             )
             
-        imcontrast(image)
+        image = imcontrast(image)
         mask = (image >= self.tracking_param.body_intensity)
         props = bwareafilter_props(
             mask, 
