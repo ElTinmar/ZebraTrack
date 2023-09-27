@@ -44,8 +44,10 @@ class TrackerWidget(QMainWindow):
             if self.tail_tracker_widget is not None:
                 tabs.addTab(self.tail_tracker_widget, 'tail')      
             dock_widget.setWidget(tabs)  
+            dock_widget.setFixedHeight(800)
             self.addDockWidget(Qt.RightDockWidgetArea, dock_widget)
         self.setCentralWidget(self.animal_tracker_widget)
+        self.setFixedHeight(800)
         
     def update_tracker(self):
         body_tracker = None
