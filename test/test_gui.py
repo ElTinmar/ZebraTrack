@@ -3,18 +3,17 @@ import socket
 import pandas as pd
 import numpy as np
 import sys
+from PyQt5.QtWidgets import QApplication
+
 from video.video_reader import OpenCV_VideoReader
 from video.background import StaticBackground, DynamicBackground, DynamicBackgroundMP
-from trackers.animal import AnimalTracker, AnimalTrackerParamTracking, AnimalTrackerParamOverlay
-from trackers.body import BodyTracker, BodyTrackerParamTracking, BodyTrackerParamOverlay
-from trackers.eyes import EyesTracker, EyesTrackerParamTracking, EyesTrackerParamOverlay
-from trackers.tail import TailTracker, TailTrackerParamTracking, TailTrackerParamOverlay
-from trackers.tracker import Tracker
 from trackers.assignment import LinearSumAssignment, GridAssignment
-from image.imconvert import im2gray, im2single
-from tqdm import tqdm
-from PyQt5.QtWidgets import QApplication
-from gui import TrackerThreshold
+from widgets.tracker import TrackerWidget
+from widgets.animal_tracker import AnimalTrackerWidget
+from widgets.body_tracker import BodyTrackerWidget
+from widgets.eye_tracker import EyesTrackerWidget
+from widgets.tail_tracker import TailTrackerWidget
+from gui import ZebraTrackGUI
 
 host = socket.gethostname()
 BASEFOLDER = '/home/martin/ownCloud - martin.privat@bi.mpg.de@owncloud.gwdg.de/Escapes/'
@@ -42,8 +41,8 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
 
     # video reader    
     reader = OpenCV_VideoReader()
-    #reader.open_file(video_file, safe=False, crop=(0,0,600,600))
-    reader.open_file(video_file, safe=False)
+    reader.open_file(video_file, safe=False, crop=(0,0,600,600))
+    #reader.open_file(video_file, safe=False)
     num_frames = reader.get_number_of_frame()
     height = reader.get_height()
     width = reader.get_width()
@@ -54,12 +53,31 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     )
 
     #assignment = LinearSumAssignment(distance_threshold=50)
-    #LUT = np.zeros((600,600))
-    X,Y = np.meshgrid(np.arange(1800) // 600,np.arange(1800) // 600)
-    LUT = X + 3*Y
-    assignment = GridAssignment(LUT)
-    accumulator = None
+    LUT = np.zeros((600,600))
+    #X,Y = np.meshgrid(np.arange(1800) // 600,np.arange(1800) // 600)
+    #LUT = X + 3*Y
 
     app = QApplication(sys.argv)
-    window = TrackerThreshold(reader, background, assignment)
+
+    fish_tracker = TrackerWidget(
+        GridAssignment(LUT), 
+        AnimalTrackerWidget(),
+        BodyTrackerWidget(),
+        EyesTrackerWidget(),
+        TailTrackerWidget()
+    )
+
+    paramecia_tracker = TrackerWidget(
+        LinearSumAssignment(distance_threshold=10), 
+        AnimalTrackerWidget(),
+        BodyTrackerWidget(),
+        None,
+        None,
+    )
+
+    window = ZebraTrackGUI(
+        reader, 
+        background, 
+        [fish_tracker, paramecia_tracker]
+    )
     sys.exit(app.exec())

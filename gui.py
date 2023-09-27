@@ -1,32 +1,24 @@
-from widgets.animal_tracker import AnimalTrackerWidget
-from widgets.body_tracker import BodyTrackerWidget
-from widgets.eye_tracker import EyesTrackerWidget
-from widgets.tail_tracker import TailTrackerWidget 
-from trackers.tracker import Tracker
+from widgets.tracker import TrackerWidget
 from PyQt5.QtCore import QTimer, Qt
-from PyQt5.QtWidgets import QMainWindow, QHBoxLayout, QTabWidget, QDockWidget
-from typing import Protocol
+from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QScrollArea
+from typing import List, Protocol
 from image.imconvert import im2gray, im2single
 
 # TODO add a media control bar with play / pause, frame by frame forward and backwards
 # and slider  
-
 class VideoReader(Protocol):
     pass
 
 class Background(Protocol):
     pass
 
-class Assignment(Protocol):
-    pass
-
-class TrackerThreshold(QMainWindow):
+class ZebraTrackGUI(QMainWindow):
 
     def __init__(
             self, 
-            reader: VideoReader, 
-            background: Background, 
-            assignment: Assignment, 
+            reader: VideoReader,
+            background: Background,
+            trackers: List[TrackerWidget], 
             *args, **kwargs
         ) -> None:
 
@@ -35,9 +27,7 @@ class TrackerThreshold(QMainWindow):
 
         self.reader = reader
         self.background = background
-        self.assignment = assignment
-        self.tracker = None
-        self.declare_components()
+        self.trackers = trackers
         self.layout_components()
 
         self.timer = QTimer()
@@ -46,36 +36,21 @@ class TrackerThreshold(QMainWindow):
         self.timer.start()
         self.show()
 
-    def declare_components(self):
-        self.animal_tracker_widget = AnimalTrackerWidget(self)
-        self.body_tracker_widget = BodyTrackerWidget(self)
-        self.eyes_tracker_widget = EyesTrackerWidget(self)
-        self.tail_tracker_widget = TailTrackerWidget(self)
-
     def layout_components(self):
-        dock_widget = QDockWidget('Single Animal', self)
-        tabs = QTabWidget()
-        tabs.addTab(self.body_tracker_widget, 'body')
-        tabs.addTab(self.eyes_tracker_widget, 'eyes')
-        tabs.addTab(self.tail_tracker_widget, 'tail')      
-        dock_widget.setWidget(tabs)  
-
-        self.setCentralWidget(self.animal_tracker_widget)
-        self.addDockWidget(Qt.RightDockWidgetArea, dock_widget)
+        scroll = QScrollArea() 
+        widget = QWidget()
+        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        scroll.setWidgetResizable(True)
+        layout = QVBoxLayout()
+        for tracker in self.trackers:
+            layout.addWidget(tracker)
+        widget.setLayout(layout)
+        scroll.setWidget(widget)
+        self.setCentralWidget(scroll)
 
     def update_tracker(self):
-        self.animal_tracker_widget.update_tracker()
-        self.body_tracker_widget.update_tracker()
-        self.eyes_tracker_widget.update_tracker()
-        self.tail_tracker_widget.update_tracker()
-        self.tracker = Tracker(
-            self.assignment,
-            None,
-            self.animal_tracker_widget.tracker,
-            self.body_tracker_widget.tracker,
-            self.eyes_tracker_widget.tracker,
-            self.tail_tracker_widget.tracker
-        )
+        for tracker in self.trackers:
+            tracker.update_tracker()
 
     def loop(self):
         self.update_tracker()
@@ -85,13 +60,6 @@ class TrackerThreshold(QMainWindow):
             return
         image_gray = im2single(im2gray(image))
         image_sub = self.background.subtract_background(image_gray)
-        tracking = self.tracker.track(image_sub)
-        self.display(tracking)
-
-    def display(self, tracking):
-        id = 0 # TODO implement mouse callback
-        if tracking is not None:
-            self.animal_tracker_widget.display(tracking['animals'])
-            self.body_tracker_widget.display(tracking['body'][id])
-            self.eyes_tracker_widget.display(tracking['eyes'][id])
-            self.tail_tracker_widget.display(tracking['tail'][id])
+        for tracker in self.trackers:
+            tracking = tracker.tracker.track(image_sub)
+            tracker.display(tracking)
