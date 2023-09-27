@@ -158,10 +158,6 @@ class EyesTrackerWidget(QWidget):
     def update_tracker(self):
         overlay_param = EyesTrackerParamOverlay(
             pix_per_mm = self.target_pix_per_mm.value(),
-            eye_len_mm = 0.2,
-            color_eye_left = (255,255,0),
-            color_eye_right = (0,255,0),
-            thickness = 2
         )
         tracker_param = EyesTrackerParamTracking(
             pix_per_mm = self.pix_per_mm.value(),
