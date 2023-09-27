@@ -108,7 +108,6 @@ class AnimalTrackerWidget(QWidget):
     def layout_components(self):
 
         parameters = QVBoxLayout()
-        parameters.addStretch()
         parameters.addWidget(self.pix_per_mm)
         parameters.addWidget(self.target_pix_per_mm)
         parameters.addWidget(self.body_intensity)
@@ -120,7 +119,6 @@ class AnimalTrackerWidget(QWidget):
         parameters.addWidget(self.max_body_width_mm)
         parameters.addWidget(self.pad_value_mm)    
         parameters.addStretch()
-        parameters.setSpacing(0)
 
         images = QHBoxLayout()
         images.addWidget(self.image)
@@ -129,9 +127,8 @@ class AnimalTrackerWidget(QWidget):
 
         images_and_zoom = QVBoxLayout()
         images_and_zoom.addWidget(self.zoom)
-        images_and_zoom.addWidget(self.zoom)
         images_and_zoom.addLayout(images)
-        images_and_zoom.addWidget(self.zoom)
+        images_and_zoom.addStretch()
 
         mainlayout = QHBoxLayout()
         mainlayout.addLayout(images_and_zoom)

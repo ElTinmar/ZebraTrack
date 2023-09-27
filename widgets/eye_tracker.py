@@ -129,7 +129,6 @@ class EyesTrackerWidget(QWidget):
 
     def layout_components(self):
         parameters = QVBoxLayout()
-        parameters.addStretch()
         parameters.addWidget(self.pix_per_mm)
         parameters.addWidget(self.target_pix_per_mm)
         parameters.addWidget(self.eye_gamma)
@@ -144,11 +143,9 @@ class EyesTrackerWidget(QWidget):
         parameters.addWidget(self.blur_sz_mm)
         parameters.addWidget(self.median_filter_sz_mm)
         parameters.addStretch()
-        parameters.setSpacing(0)
 
         images = QVBoxLayout()
         images.addWidget(self.zoom)
-        images.addStretch()
         images.addWidget(self.image)
         images.addWidget(self.mask)
         images.addWidget(self.image_overlay)
