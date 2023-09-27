@@ -53,9 +53,9 @@ class BodyTrackerParamTracking:
 @dataclass
 class BodyTrackerParamOverlay:
     pix_per_mm: float = 40.0
-    heading_len_mm: float = 1.0
+    heading_len_mm: float = 0.75
     heading_color: tuple = (0,128,255)
-    thickness: int = 2
+    thickness: int = 1
 
     def mm2px(self, val_mm):
         val_px = int(val_mm * self.pix_per_mm) 
