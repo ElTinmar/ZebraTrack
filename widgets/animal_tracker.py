@@ -3,6 +3,8 @@ from trackers.animal import AnimalTracker, AnimalTrackerParamOverlay, AnimalTrac
 from numpy.typing import NDArray
 from .helper.ndarray_to_qpixmap import NDarray_to_QPixmap
 from .custom_widgets.labeled_doublespinbox import LabeledDoubleSpinBox
+from .custom_widgets.labeled_spinbox import LabeledSpinBox
+import cv2
 
 class AnimalTrackerWidget(QWidget):
     def __init__(self, *args, **kwargs):
@@ -96,6 +98,13 @@ class AnimalTrackerWidget(QWidget):
         self.pad_value_mm.setSingleStep(0.1)
         self.pad_value_mm.valueChanged.connect(self.update_tracker)
 
+        self.zoom = LabeledSpinBox(self)
+        self.zoom.setText('zoom (%)')
+        self.zoom.setRange(0,500)
+        self.zoom.setValue(100)
+        self.zoom.setSingleStep(25)
+        self.zoom.valueChanged.connect(self.update_tracker)
+
     def layout_components(self):
 
         parameters = QVBoxLayout()
@@ -110,10 +119,17 @@ class AnimalTrackerWidget(QWidget):
         parameters.addWidget(self.max_body_width_mm)
         parameters.addWidget(self.pad_value_mm)    
 
+        images = QHBoxLayout()
+        images.addWidget(self.image)
+        images.addWidget(self.mask)
+        images.addWidget(self.image_overlay)
+
+        images_and_zoom = QVBoxLayout()
+        images_and_zoom.addWidget(self.zoom)
+        images_and_zoom.addLayout(images)
+
         mainlayout = QHBoxLayout()
-        mainlayout.addWidget(self.image)
-        mainlayout.addWidget(self.mask)
-        mainlayout.addWidget(self.image_overlay)
+        mainlayout.addLayout(images_and_zoom)
         mainlayout.addLayout(parameters)
 
         self.setLayout(mainlayout)
@@ -143,7 +159,13 @@ class AnimalTrackerWidget(QWidget):
     def display(self, tracking):
         if tracking is not None:
             overlay = self.tracker.overlay_local(tracking)
-            self.image.setPixmap(NDarray_to_QPixmap(tracking.image))
-            self.mask.setPixmap(NDarray_to_QPixmap(tracking.mask))
+
+            zoom = self.zoom.value()/100.0
+            image = cv2.resize(tracking.image,None,None,zoom,zoom)
+            mask = cv2.resize(tracking.mask,None,None,zoom,zoom)
+            overlay = cv2.resize(overlay,None,None,zoom,zoom)
+
+            self.image.setPixmap(NDarray_to_QPixmap(image))
+            self.mask.setPixmap(NDarray_to_QPixmap(mask))
             self.image_overlay.setPixmap(NDarray_to_QPixmap(overlay))
             self.update()
