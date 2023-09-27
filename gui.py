@@ -55,5 +55,6 @@ class ZebraTrackGUI(QMainWindow):
         image_gray = im2single(im2gray(image))
         image_sub = self.background.subtract_background(image_gray)
         for tracker in self.trackers:
+            # TODO this is breaking encapsulation, fix this
             tracking = tracker.tracker.track(image_sub)
             tracker.display(tracking)
