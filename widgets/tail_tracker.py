@@ -184,6 +184,7 @@ class TailTrackerWidget(QWidget):
 
     def update_tracker(self):
         overlay_param = TailTrackerParamOverlay(
+            pix_per_mm = self.target_pix_per_mm.value(),
             color_tail = (255, 128, 128),
             thickness = 2
         )
