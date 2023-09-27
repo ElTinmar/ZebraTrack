@@ -75,28 +75,28 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     animal_tracker = AnimalTracker(
         AnimalTrackerParamTracking(
             pix_per_mm=40,
-            target_pix_per_mm=10,
-            body_intensity=0.06,
-            min_body_size_mm=5.0,
-            max_body_size_mm=40.0,
-            min_body_length_mm=1.5,
-            max_body_length_mm=6.0,
-            min_body_width_mm=0.5,
+            target_pix_per_mm=7.5,
+            body_intensity=0.07,
+            min_body_size_mm=1.0,
+            max_body_size_mm=30.0,
+            min_body_length_mm=1.0,
+            max_body_length_mm=12.0,
+            min_body_width_mm=0.4,
             max_body_width_mm=3.0,
-            pad_value_mm=3.0
+            pad_value_mm=2.5
         ),
         AnimalTrackerParamOverlay()
     )
     body_tracker = BodyTracker(
         BodyTrackerParamTracking(
             pix_per_mm=40,
-            target_pix_per_mm=10,
+            target_pix_per_mm=7.5,
             body_intensity=0.06,
-            min_body_size_mm=5.0,
+            min_body_size_mm=2.0,
             max_body_size_mm=40.0,
-            min_body_length_mm=1.5,
-            max_body_length_mm=6.0,
-            min_body_width_mm=0.5,
+            min_body_length_mm=1.0,
+            max_body_length_mm=12.0,
+            min_body_width_mm=0.4,
             max_body_width_mm=3.0
         ),
         BodyTrackerParamOverlay()
@@ -105,17 +105,16 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
         EyesTrackerParamTracking(
             pix_per_mm=40,
             target_pix_per_mm=40,
-            eye_norm=0.2,
+            eye_norm=0.3,
             eye_gamma=3.0,
             eye_dyntresh_res=20,
             eye_contrast=1.5,
             eye_size_lo_mm=0.8,
             eye_size_hi_mm=10.0,
             blur_sz_mm=0.06,
-            median_filter_sz_mm=0.05,
-            dist_eye_midline_mm=0.1,
+            median_filter_sz_mm=0.06,
             crop_dimension_mm=(1.0,1.5),
-            crop_offset_mm=1.8
+            crop_offset_mm=1.75
         ),
         EyesTrackerParamOverlay()
     )
@@ -127,11 +126,11 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
             n_tail_points=12,
             n_pts_arc=20,
             n_pts_interp=40,
-            tail_length_mm=2.6,
+            tail_length_mm=2.3,
             dist_swim_bladder_mm=0.6,
             blur_sz_mm=0.15,
             median_filter_sz_mm=0.15,
-            tail_norm=0.15,
+            tail_norm=0.2,
             tail_contrast=1.0,
             tail_gamma=0.75,
             crop_dimension_mm=(3.5,3.5),

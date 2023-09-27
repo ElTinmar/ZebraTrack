@@ -39,7 +39,7 @@ class BodyTrackerWidget(QWidget):
         self.body_intensity = LabeledDoubleSpinBox(self)
         self.body_intensity.setText('body intensity')
         self.body_intensity.setRange(0,1)
-        self.body_intensity.setValue(0.08)
+        self.body_intensity.setValue(0.06)
         self.body_intensity.setSingleStep(0.01)
         self.body_intensity.valueChanged.connect(self.update_tracker)
 
