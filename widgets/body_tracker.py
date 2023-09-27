@@ -21,14 +21,16 @@ class BodyTrackerWidget(QWidget):
         self.pix_per_mm = LabeledDoubleSpinBox(self)
         self.pix_per_mm.setText('pixels / mm')
         self.pix_per_mm.setRange(0,1000)
-        self.pix_per_mm.setValue(40)
+        self.pix_per_mm.setValue(40.0)
+        self.pix_per_mm.setSingleStep(1.0)
         self.pix_per_mm.valueChanged.connect(self.update_tracker)
 
         # pix per mm
         self.target_pix_per_mm = LabeledDoubleSpinBox(self)
         self.target_pix_per_mm.setText('target pixels / mm')
         self.target_pix_per_mm.setRange(0,1000)
-        self.target_pix_per_mm.setValue(15)
+        self.target_pix_per_mm.setValue(7.5)
+        self.target_pix_per_mm.setSingleStep(0.5)
         self.target_pix_per_mm.valueChanged.connect(self.update_tracker)
 
         # body intensity
@@ -36,34 +38,39 @@ class BodyTrackerWidget(QWidget):
         self.body_intensity.setText('body intensity')
         self.body_intensity.setRange(0,1)
         self.body_intensity.setValue(0.08)
+        self.body_intensity.setSingleStep(0.01)
         self.body_intensity.valueChanged.connect(self.update_tracker)
 
         # body size
         self.min_body_size_mm = LabeledDoubleSpinBox(self)
         self.min_body_size_mm.setText('min body size (mm)')
         self.min_body_size_mm.setRange(0,1000)
-        self.min_body_size_mm.setValue(8)
+        self.min_body_size_mm.setValue(2.0)
+        self.min_body_size_mm.setSingleStep(0.25)
         self.min_body_size_mm.valueChanged.connect(self.update_tracker)
 
         #
         self.max_body_size_mm = LabeledDoubleSpinBox(self)
         self.max_body_size_mm.setText('max body size (mm)')
         self.max_body_size_mm.setRange(0,10000)
-        self.max_body_size_mm.setValue(30)
+        self.max_body_size_mm.setValue(30.0)
+        self.max_body_size_mm.setSingleStep(0.5)
         self.max_body_size_mm.valueChanged.connect(self.update_tracker)
 
         # body length
         self.min_body_length_mm = LabeledDoubleSpinBox(self)
         self.min_body_length_mm.setText('min body length (mm)')
         self.min_body_length_mm.setRange(0,100)
-        self.min_body_length_mm.setValue(2)
+        self.min_body_length_mm.setValue(2.0)
+        self.min_body_length_mm.setSingleStep(0.25)
         self.min_body_length_mm.valueChanged.connect(self.update_tracker)
 
         #
         self.max_body_length_mm = LabeledDoubleSpinBox(self)
         self.max_body_length_mm.setText('max body length (mm)')
         self.max_body_length_mm.setRange(0,100)
-        self.max_body_length_mm.setValue(6)
+        self.max_body_length_mm.setValue(6.0)
+        self.max_body_length_mm.setSingleStep(0.25)
         self.max_body_length_mm.valueChanged.connect(self.update_tracker)
 
         # body width
@@ -71,6 +78,7 @@ class BodyTrackerWidget(QWidget):
         self.min_body_width_mm.setText('min body width (mm)')
         self.min_body_width_mm.setRange(0,100)
         self.min_body_width_mm.setValue(0.4)
+        self.min_body_width_mm.setSingleStep(0.05)
         self.min_body_width_mm.valueChanged.connect(self.update_tracker)
 
         #
@@ -78,6 +86,7 @@ class BodyTrackerWidget(QWidget):
         self.max_body_width_mm.setText('max body width (mm)')
         self.max_body_width_mm.setRange(0,100)
         self.max_body_width_mm.setValue(1.2)
+        self.max_body_width_mm.setSingleStep(0.05)
         self.max_body_width_mm.valueChanged.connect(self.update_tracker)
 
     def layout_components(self):

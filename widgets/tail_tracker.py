@@ -21,28 +21,32 @@ class TailTrackerWidget(QWidget):
         self.pix_per_mm = LabeledDoubleSpinBox(self)
         self.pix_per_mm.setText('pix_per_mm')
         self.pix_per_mm.setRange(0,1000)
-        self.pix_per_mm.setValue(40)
+        self.pix_per_mm.setValue(40.0)
+        self.pix_per_mm.setSingleStep(1.0)
         self.pix_per_mm.valueChanged.connect(self.update_tracker) 
 
         # target pix per mm
         self.target_pix_per_mm = LabeledDoubleSpinBox(self)
         self.target_pix_per_mm.setText('target pix_per_mm')
         self.target_pix_per_mm.setRange(0,1000)
-        self.target_pix_per_mm.setValue(40)
+        self.target_pix_per_mm.setValue(20.0)
+        self.target_pix_per_mm.setSingleStep(0.5)
         self.target_pix_per_mm.valueChanged.connect(self.update_tracker) 
 
         # tail contrast
         self.tail_contrast = LabeledDoubleSpinBox(self)
         self.tail_contrast.setText('tail contrast')
         self.tail_contrast.setRange(0,10)
-        self.tail_contrast.setValue(1)
+        self.tail_contrast.setValue(1.0)
+        self.tail_contrast.setSingleStep(0.1)
         self.tail_contrast.valueChanged.connect(self.update_tracker) 
         
         # tail gamma
         self.tail_gamma = LabeledDoubleSpinBox(self)
         self.tail_gamma.setText('tail gamma')
         self.tail_gamma.setRange(0,10)
-        self.tail_gamma.setValue(1)
+        self.tail_gamma.setValue(0.75)
+        self.tail_gamma.setSingleStep(0.05)
         self.tail_gamma.valueChanged.connect(self.update_tracker) 
         
         # tail norm 
@@ -50,6 +54,7 @@ class TailTrackerWidget(QWidget):
         self.tail_norm.setText('tail norm')
         self.tail_norm.setRange(0,1)
         self.tail_norm.setValue(0.2)
+        self.tail_norm.setSingleStep(0.025)
         self.tail_norm.valueChanged.connect(self.update_tracker) 
         
         # arc angle deg
@@ -57,6 +62,7 @@ class TailTrackerWidget(QWidget):
         self.arc_angle_deg.setText('tail max angle (deg)')
         self.arc_angle_deg.setRange(0,360)
         self.arc_angle_deg.setValue(120)
+        self.arc_angle_deg.setSingleStep(2.5)
         self.arc_angle_deg.valueChanged.connect(self.update_tracker) 
 
         # n_tail_points
@@ -64,13 +70,15 @@ class TailTrackerWidget(QWidget):
         self.n_tail_points.setText('#tail points')
         self.n_tail_points.setRange(0,100)
         self.n_tail_points.setValue(12)
+        self.n_tail_points.setSingleStep(1)
         self.n_tail_points.valueChanged.connect(self.update_tracker)
 
         # tail_length_mm 
         self.tail_length_mm = LabeledDoubleSpinBox(self)
         self.tail_length_mm.setText('tail_length_mm')
         self.tail_length_mm.setRange(0,10)
-        self.tail_length_mm.setValue(2.4)
+        self.tail_length_mm.setValue(2.3)
+        self.tail_length_mm.setSingleStep(0.025)
         self.tail_length_mm.valueChanged.connect(self.update_tracker)
 
         # n_pts_arc
@@ -78,6 +86,7 @@ class TailTrackerWidget(QWidget):
         self.n_pts_arc.setText('angle res.')
         self.n_pts_arc.setRange(0,100)
         self.n_pts_arc.setValue(20)
+        self.n_pts_arc.setSingleStep(1)
         self.n_pts_arc.valueChanged.connect(self.update_tracker)
 
         # n_pts_interp  
@@ -85,13 +94,15 @@ class TailTrackerWidget(QWidget):
         self.n_pts_interp.setText('n_pts_interp')
         self.n_pts_interp.setRange(0,200)
         self.n_pts_interp.setValue(40)
+        self.n_pts_interp.setSingleStep(1)
         self.n_pts_interp.valueChanged.connect(self.update_tracker)
 
         # dist_swim_bladder_mm  
         self.dist_swim_bladder_mm = LabeledDoubleSpinBox(self)
         self.dist_swim_bladder_mm.setText('Offset tail Y (mm)')
         self.dist_swim_bladder_mm.setRange(0,3)
-        self.dist_swim_bladder_mm.setValue(0.4)
+        self.dist_swim_bladder_mm.setValue(0.2)
+        self.dist_swim_bladder_mm.setSingleStep(0.025)
         self.dist_swim_bladder_mm.valueChanged.connect(self.update_tracker)
 
         #ksize_blur_mm 
@@ -99,6 +110,7 @@ class TailTrackerWidget(QWidget):
         self.blur_sz_mm.setText('blur size (mm)')
         self.blur_sz_mm.setRange(0,2)
         self.blur_sz_mm.setValue(0.06)
+        self.blur_sz_mm.setSingleStep(0.01)
         self.blur_sz_mm.valueChanged.connect(self.update_tracker)
                 
         # median filter size
@@ -106,26 +118,30 @@ class TailTrackerWidget(QWidget):
         self.median_filter_sz_mm.setText('medfilt size (mm)')
         self.median_filter_sz_mm.setRange(0,2)
         self.median_filter_sz_mm.setValue(0.06)
+        self.median_filter_sz_mm.setSingleStep(0.01)
         self.median_filter_sz_mm.valueChanged.connect(self.update_tracker)
        
         # crop dimensions
         self.crop_dimension_x_mm = LabeledDoubleSpinBox(self)
         self.crop_dimension_x_mm.setText('crop X (mm)')
         self.crop_dimension_x_mm.setRange(0,10)
-        self.crop_dimension_x_mm.setValue(1.5)
+        self.crop_dimension_x_mm.setValue(3.5)
+        self.crop_dimension_x_mm.setSingleStep(0.1)
         self.crop_dimension_x_mm.valueChanged.connect(self.update_tracker)
                
         self.crop_dimension_y_mm = LabeledDoubleSpinBox(self)
         self.crop_dimension_y_mm.setText('crop Y (mm)')
         self.crop_dimension_y_mm.setRange(0,10)
-        self.crop_dimension_y_mm.setValue(1.5)
+        self.crop_dimension_y_mm.setValue(3.5)
+        self.crop_dimension_y_mm.setSingleStep(0.1)
         self.crop_dimension_y_mm.valueChanged.connect(self.update_tracker)
        
         # crop offset
         self.crop_offset_tail_mm = LabeledDoubleSpinBox(self)
         self.crop_offset_tail_mm.setText('crop offset (mm)')
         self.crop_offset_tail_mm.setRange(-5,5)
-        self.crop_offset_tail_mm.setValue(-0.5)
+        self.crop_offset_tail_mm.setValue(1.35)
+        self.crop_offset_tail_mm.setSingleStep(-0.05)
         self.crop_offset_tail_mm.valueChanged.connect(self.update_tracker)
           
     def layout_components(self):

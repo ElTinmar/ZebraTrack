@@ -22,6 +22,7 @@ class EyesTrackerWidget(QWidget):
         self.pix_per_mm.setText('pix_per_mm')
         self.pix_per_mm.setRange(0,1000)
         self.pix_per_mm.setValue(40)
+        self.pix_per_mm.setSingleStep(1.0)
         self.pix_per_mm.valueChanged.connect(self.update_tracker) 
 
         # target pix per mm
@@ -29,6 +30,7 @@ class EyesTrackerWidget(QWidget):
         self.target_pix_per_mm.setText('target pix_per_mm')
         self.target_pix_per_mm.setRange(0,1000)
         self.target_pix_per_mm.setValue(40)
+        self.target_pix_per_mm.setSingleStep(1.0)
         self.target_pix_per_mm.valueChanged.connect(self.update_tracker) 
 
         # eye gamma
@@ -36,6 +38,7 @@ class EyesTrackerWidget(QWidget):
         self.eye_gamma.setText('eye gamma')
         self.eye_gamma.setRange(0,100)
         self.eye_gamma.setValue(3.0)
+        self.eye_gamma.setSingleStep(0.1)
         self.eye_gamma.valueChanged.connect(self.update_tracker) 
 
         # eye constrast
@@ -43,13 +46,15 @@ class EyesTrackerWidget(QWidget):
         self.eye_contrast.setText('eye contrast')
         self.eye_contrast.setRange(0,100)
         self.eye_contrast.setValue(1.5)
+        self.eye_contrast.setSingleStep(0.1)
         self.eye_contrast.valueChanged.connect(self.update_tracker) 
 
         # eye norm
         self.eye_norm = LabeledDoubleSpinBox(self)
         self.eye_norm.setText('eye norm')
         self.eye_norm.setRange(0,1)
-        self.eye_norm.setValue(0.2)
+        self.eye_norm.setValue(0.3)
+        self.eye_norm.setSingleStep(0.025)
         self.eye_norm.valueChanged.connect(self.update_tracker) 
 
         # eye dynthresh
@@ -57,6 +62,7 @@ class EyesTrackerWidget(QWidget):
         self.eye_dyntresh_res.setText('dyntresh res')
         self.eye_dyntresh_res.setRange(0,100)
         self.eye_dyntresh_res.setValue(20)
+        self.eye_dyntresh_res.setSingleStep(1)
         self.eye_dyntresh_res.valueChanged.connect(self.update_tracker) 
 
         # eye size
@@ -64,25 +70,29 @@ class EyesTrackerWidget(QWidget):
         self.eye_size_lo_mm.setText('min. eye size')
         self.eye_size_lo_mm.setRange(0,100)
         self.eye_size_lo_mm.setValue(0.8)
+        self.eye_size_lo_mm.setSingleStep(0.05)
         self.eye_size_lo_mm.valueChanged.connect(self.update_tracker) 
 
         self.eye_size_hi_mm = LabeledDoubleSpinBox(self)
         self.eye_size_hi_mm.setText('max. eye size')
         self.eye_size_hi_mm.setRange(0,100)
-        self.eye_size_hi_mm.setValue(10)
+        self.eye_size_hi_mm.setValue(10.0)
+        self.eye_size_hi_mm.setSingleStep(1.0)
         self.eye_size_hi_mm.valueChanged.connect(self.update_tracker) 
 
         # crop_dimension_mm 
         self.crop_dimension_x_mm = LabeledDoubleSpinBox(self)
         self.crop_dimension_x_mm.setText('crop X (mm)')
         self.crop_dimension_x_mm.setRange(0,3)
-        self.crop_dimension_x_mm.setValue(1)
+        self.crop_dimension_x_mm.setValue(1.0)
+        self.crop_dimension_x_mm.setSingleStep(0.1)
         self.crop_dimension_x_mm.valueChanged.connect(self.update_tracker)
 
         self.crop_dimension_y_mm = LabeledDoubleSpinBox(self)
         self.crop_dimension_y_mm.setText('crop Y (mm)')
         self.crop_dimension_y_mm.setRange(0,3)
         self.crop_dimension_y_mm.setValue(1.5)
+        self.crop_dimension_y_mm.setSingleStep(0.1)
         self.crop_dimension_y_mm.valueChanged.connect(self.update_tracker)
 
         # crop offset 
@@ -90,6 +100,7 @@ class EyesTrackerWidget(QWidget):
         self.crop_offset_mm.setText('Y offset eyes')
         self.crop_offset_mm.setRange(-5,5)
         self.crop_offset_mm.setValue(1.75)
+        self.crop_offset_mm.setSingleStep(0.05)
         self.crop_offset_mm.valueChanged.connect(self.update_tracker) 
 
         #ksize_blur_mm 
@@ -97,6 +108,7 @@ class EyesTrackerWidget(QWidget):
         self.blur_sz_mm.setText('blur size (mm)')
         self.blur_sz_mm.setRange(0,2)
         self.blur_sz_mm.setValue(0.06)
+        self.blur_sz_mm.setSingleStep(0.01)
         self.blur_sz_mm.valueChanged.connect(self.update_tracker)
                 
         # median filter size
@@ -104,6 +116,7 @@ class EyesTrackerWidget(QWidget):
         self.median_filter_sz_mm.setText('medfilt size (mm)')
         self.median_filter_sz_mm.setRange(0,2)
         self.median_filter_sz_mm.setValue(0.06)
+        self.median_filter_sz_mm.setSingleStep(0.01)
         self.median_filter_sz_mm.valueChanged.connect(self.update_tracker)
 
     def layout_components(self):

@@ -18,6 +18,9 @@ class LabeledDoubleSpinBox(QWidget):
     
     def setValue(self, val: float) -> None:
         self.spinbox.setValue(val)
+    
+    def setSingleStep(self, val: float) -> None:
+        self.spinbox.setSingleStep(val)
 
     @property
     def valueChanged(self):
