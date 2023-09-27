@@ -36,7 +36,7 @@ class AnimalTrackerWidget(QWidget):
         self.body_intensity = LabeledDoubleSpinBox(self)
         self.body_intensity.setText('body intensity')
         self.body_intensity.setRange(0,1)
-        self.body_intensity.setValue(0.08)
+        self.body_intensity.setValue(0.07)
         self.body_intensity.setSingleStep(0.01)
         self.body_intensity.valueChanged.connect(self.update_tracker)
 
@@ -44,7 +44,7 @@ class AnimalTrackerWidget(QWidget):
         self.min_body_size_mm = LabeledDoubleSpinBox(self)
         self.min_body_size_mm.setText('min body size (mm)')
         self.min_body_size_mm.setRange(0,1000)
-        self.min_body_size_mm.setValue(2.0)
+        self.min_body_size_mm.setValue(1.0)
         self.min_body_size_mm.setSingleStep(0.25)
         self.min_body_size_mm.valueChanged.connect(self.update_tracker)
 
@@ -60,7 +60,7 @@ class AnimalTrackerWidget(QWidget):
         self.min_body_length_mm = LabeledDoubleSpinBox(self)
         self.min_body_length_mm.setText('min body length (mm)')
         self.min_body_length_mm.setRange(0,100)
-        self.min_body_length_mm.setValue(2.0)
+        self.min_body_length_mm.setValue(1.0)
         self.min_body_length_mm.setSingleStep(0.25)
         self.min_body_length_mm.valueChanged.connect(self.update_tracker)
 
@@ -68,7 +68,7 @@ class AnimalTrackerWidget(QWidget):
         self.max_body_length_mm = LabeledDoubleSpinBox(self)
         self.max_body_length_mm.setText('max body length (mm)')
         self.max_body_length_mm.setRange(0,100)
-        self.max_body_length_mm.setValue(6.0)
+        self.max_body_length_mm.setValue(12.0)
         self.max_body_length_mm.setSingleStep(0.25)
         self.max_body_length_mm.valueChanged.connect(self.update_tracker)
 
@@ -84,7 +84,7 @@ class AnimalTrackerWidget(QWidget):
         self.max_body_width_mm = LabeledDoubleSpinBox(self)
         self.max_body_width_mm.setText('max body width (mm)')
         self.max_body_width_mm.setRange(0,100)
-        self.max_body_width_mm.setValue(1.2)
+        self.max_body_width_mm.setValue(2.5)
         self.max_body_width_mm.setSingleStep(0.05)
         self.max_body_width_mm.valueChanged.connect(self.update_tracker)
 
