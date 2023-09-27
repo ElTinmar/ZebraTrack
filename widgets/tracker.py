@@ -9,9 +9,6 @@ from typing import Protocol, Optional
 from scipy.spatial.distance import cdist
 import numpy as np
 
-# TODO add a media control bar with play / pause, frame by frame forward and backwards
-# and slider  
-
 class Assignment(Protocol):
     pass
 
@@ -92,6 +89,7 @@ class TrackerWidget(QMainWindow):
         y = event.pos().y() 
 
         mouse_position = np.array([[x, y]])
+        # TODO I'm breaking encapsulation again
         zoom = self.animal_tracker_widget.zoom.value()
         target_res = self.animal_tracker_widget.target_pix_per_mm.value()
         res = self.animal_tracker_widget.pix_per_mm.value()
