@@ -9,6 +9,7 @@ class LabeledSpinBox(QWidget):
         layout.addWidget(self.label)
         layout.addWidget(self.spinbox)
         self.setLayout(layout)
+        self.setMinimumHeight(70)
 
     def setText(self, text: str) -> None:
         self.label.setText(text)

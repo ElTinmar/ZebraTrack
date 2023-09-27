@@ -102,6 +102,7 @@ class BodyTrackerWidget(QWidget):
     def layout_components(self):
 
         parameters = QVBoxLayout()
+        parameters.addStretch()
         parameters.addWidget(self.pix_per_mm)
         parameters.addWidget(self.target_pix_per_mm)
         parameters.addWidget(self.body_intensity)
@@ -111,12 +112,16 @@ class BodyTrackerWidget(QWidget):
         parameters.addWidget(self.max_body_length_mm)
         parameters.addWidget(self.min_body_width_mm)
         parameters.addWidget(self.max_body_width_mm)
+        parameters.addStretch()
+        parameters.setSpacing(0)
 
         images = QVBoxLayout()
         images.addWidget(self.zoom)
+        images.addStretch()
         images.addWidget(self.image)
         images.addWidget(self.mask)
         images.addWidget(self.image_overlay)
+        images.addStretch()
 
         mainlayout = QHBoxLayout()
         mainlayout.addLayout(images)
