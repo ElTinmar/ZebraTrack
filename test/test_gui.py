@@ -42,7 +42,8 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
 
     # video reader    
     reader = OpenCV_VideoReader()
-    reader.open_file(video_file, safe=False, crop=(0,0,600,600))
+    #reader.open_file(video_file, safe=False, crop=(0,0,600,600))
+    reader.open_file(video_file, safe=False)
     num_frames = reader.get_number_of_frame()
     height = reader.get_height()
     width = reader.get_width()
@@ -53,7 +54,9 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     )
 
     #assignment = LinearSumAssignment(distance_threshold=50)
-    LUT = np.zeros((600,600))
+    #LUT = np.zeros((600,600))
+    X,Y = np.meshgrid(np.arange(1800) // 600,np.arange(1800) // 600)
+    LUT = X + 3*Y
     assignment = GridAssignment(LUT)
     accumulator = None
 
