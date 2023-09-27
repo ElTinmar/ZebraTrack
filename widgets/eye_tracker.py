@@ -172,8 +172,9 @@ class EyesTrackerWidget(QWidget):
         self.display(tracking)
 
     def display(self, tracking):
-        overlay = self.tracker.overlay_local(tracking)
-        self.image.setPixmap(NDarray_to_QPixmap(tracking.image))
-        self.mask.setPixmap(NDarray_to_QPixmap(tracking.mask))
-        self.image_overlay.setPixmap(NDarray_to_QPixmap(overlay))
-        self.update()
+        if tracking is not None:
+            overlay = self.tracker.overlay_local(tracking)
+            self.image.setPixmap(NDarray_to_QPixmap(tracking.image))
+            self.mask.setPixmap(NDarray_to_QPixmap(tracking.mask))
+            self.image_overlay.setPixmap(NDarray_to_QPixmap(overlay))
+            self.update()
