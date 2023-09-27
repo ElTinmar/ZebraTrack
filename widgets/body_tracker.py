@@ -127,9 +127,6 @@ class BodyTrackerWidget(QWidget):
     def update_tracker(self):
         overlay_param = BodyTrackerParamOverlay(
             pix_per_mm = self.target_pix_per_mm.value(),
-            heading_len_mm = 1,
-            heading_color = (255,0,255),
-            thickness = 2
         )
         tracker_param = BodyTrackerParamTracking(
             pix_per_mm = self.pix_per_mm.value(),

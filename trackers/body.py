@@ -53,7 +53,7 @@ class BodyTrackerParamTracking:
 @dataclass
 class BodyTrackerParamOverlay:
     pix_per_mm: float = 40.0
-    heading_len_mm: float = 0.75
+    heading_len_mm: float = 1.5
     heading_color: tuple = (0,128,255)
     thickness: int = 1
 
