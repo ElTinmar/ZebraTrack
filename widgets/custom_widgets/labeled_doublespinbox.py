@@ -8,8 +8,8 @@ class LabeledDoubleSpinBox(QWidget):
         layout = QHBoxLayout()
         layout.addWidget(self.label)
         layout.addWidget(self.spinbox)
+        layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
-        self.setMinimumHeight(70)
 
     def setText(self, text: str) -> None:
         self.label.setText(text)
