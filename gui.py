@@ -31,6 +31,8 @@ class TrackerThreshold(QMainWindow):
         ) -> None:
 
         super().__init__(*args, **kwargs)
+        self.setWindowTitle('ZebraTrack')
+
         self.reader = reader
         self.background = background
         self.assignment = assignment
