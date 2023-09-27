@@ -1,6 +1,6 @@
 from widgets.tracker import TrackerWidget
 from PyQt5.QtCore import QTimer, Qt
-from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QScrollArea
+from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QTabWidget
 from typing import List, Protocol
 from image.imconvert import im2gray, im2single
 
@@ -37,16 +37,10 @@ class ZebraTrackGUI(QMainWindow):
         self.show()
 
     def layout_components(self):
-        scroll = QScrollArea() 
-        widget = QWidget()
-        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        scroll.setWidgetResizable(True)
-        layout = QVBoxLayout()
+        tabs = QTabWidget() 
         for tracker in self.trackers:
-            layout.addWidget(tracker)
-        widget.setLayout(layout)
-        scroll.setWidget(widget)
-        self.setCentralWidget(scroll)
+            tabs.addTab(tracker,'tracker')
+        self.setCentralWidget(tabs)
 
     def update_tracker(self):
         for tracker in self.trackers:
