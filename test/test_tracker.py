@@ -54,11 +54,10 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
         video_reader=reader
     )
 
-    '''
+
     reader = Buffered_OpenCV_VideoReader()
     reader.open_file(video_file, safe=False, crop=(0,0,600,600))
     reader.start()
-    '''
 
     '''
     background = DynamicBackgroundMP(
@@ -177,6 +176,8 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
                 if overlay is not None:
                     display.queue_image(overlay)
     finally:
+        reader.exit()
+        reader.join()
         display.exit()
         display.join()
 

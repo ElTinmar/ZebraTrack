@@ -198,8 +198,7 @@ class Buffered_OpenCV_VideoReader(Process):
         self._safe = safe
         self._crop = crop # [left,bottom,width,height]
         self._queue = Queue(maxsize=100)
-        self._keepgoing = Event()
-        self._buffering_process = None
+        self._stop = Event()
             
         # count number of frames
         if safe:
@@ -242,14 +241,17 @@ class Buffered_OpenCV_VideoReader(Process):
     def run(self) -> None:
         self._capture = cv2.VideoCapture(self._filename)
         self._current_frame = 0
-        while True:
+        while not self._stop.is_set():
             rval, frame = self.read_frame()
             if not rval:
-                breakpoint
+                break
             self._queue.put((rval, frame))
             
     def next_frame(self):
         return self._queue.get()
+    
+    def exit(self):
+        self._stop.set()
 
     def read_frame(self) -> Tuple[bool,NDArray]:
         rval, frame = self._capture.read()
