@@ -138,7 +138,6 @@ class BodyTrackerWidget(QWidget):
         self.zoom.setSingleStep(25)
         self.zoom.valueChanged.connect(self.update_tracker)
 
-
     def layout_components(self):
 
         parameters = QVBoxLayout()

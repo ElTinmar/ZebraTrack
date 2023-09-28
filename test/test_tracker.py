@@ -86,9 +86,9 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
             max_animal_length_mm=12.0,
             min_animal_width_mm=0.4,
             max_animal_width_mm=3.0,
-            pad_value_mm=2.5,
-            blur_sz_mm=0,
-            median_filter_sz_mm=0,
+            pad_value_mm=4.0,
+            blur_sz_mm=1/7.5,
+            median_filter_sz_mm=1/7.5,
         ),
         AnimalTrackerParamOverlay()
     )
@@ -96,8 +96,8 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
         BodyTrackerParamTracking(
             pix_per_mm=40,
             target_pix_per_mm=7.5,
-            body_intensity=0.06,
-            body_norm=1.0,
+            body_intensity=0.25,
+            body_norm=0.2,
             body_gamma=1.0,
             body_contrast=1.0,
             min_body_size_mm=2.0,
@@ -106,8 +106,8 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
             max_body_length_mm=12.0,
             min_body_width_mm=0.4,
             max_body_width_mm=3.0,
-            blur_sz_mm=0,
-            median_filter_sz_mm=0,
+            blur_sz_mm=1/7.5,
+            median_filter_sz_mm=1/7.5,
         ),
         BodyTrackerParamOverlay()
     )
@@ -133,10 +133,10 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
             pix_per_mm=40,
             target_pix_per_mm=20,
             arc_angle_deg=120,
-            n_tail_points=12,
+            n_tail_points=10,
             n_pts_arc=20,
             n_pts_interp=40,
-            tail_length_mm=2.3,
+            tail_length_mm=2.5,
             dist_swim_bladder_mm=0.6,
             blur_sz_mm=0.15,
             median_filter_sz_mm=0.15,
