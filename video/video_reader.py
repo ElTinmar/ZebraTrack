@@ -180,7 +180,8 @@ class OpenCV_VideoReader:
         return self._number_of_frames
 
 class Buffered_OpenCV_VideoReader(Process):
-
+    '''Buffer video file reading. Cannot seek to a specific frame'''
+    
     def open_file(
             self, 
             filename: str, 
