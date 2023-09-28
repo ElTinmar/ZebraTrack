@@ -42,8 +42,9 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     print(f'Processing {fish}...')
 
     # video reader    
+    crop = (0,0,600,600)
     reader = OpenCV_VideoReader()
-    reader.open_file(video_file, safe=False, crop=(0,0,600,600))
+    reader.open_file(video_file, safe=False, crop=crop)
     num_frames = reader.get_number_of_frame()
     height = reader.get_height()
     width = reader.get_width()
@@ -54,9 +55,8 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
         video_reader=reader
     )
 
-
     reader = Buffered_OpenCV_VideoReader()
-    reader.open_file(video_file, safe=False, crop=(0,0,600,600))
+    reader.open_file(video_file, safe=False, crop=crop)
     reader.start()
 
     '''
