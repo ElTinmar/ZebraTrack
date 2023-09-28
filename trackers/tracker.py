@@ -43,7 +43,8 @@ class Tracker:
         
         self.assignment.update(centroids)
         identities = self.assignment.get_ID()
-        data = np.hstack((identities[np.newaxis].T, animals.bb_centroids, animals.bounding_boxes)) 
+        to_keep = self.assignment.get_kept_centroids()
+        data = np.hstack((identities[np.newaxis].T, animals.bb_centroids[to_keep,:], animals.bounding_boxes[to_keep,:])) 
         body = {}
         eyes = {}
         tail = {}

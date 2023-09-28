@@ -12,11 +12,12 @@ class GridAssignment:
         self.ID = None
         self.LUT = LUT
         self.centroids = None
+        self.idx_to_keep = None
 
     def update(self, centroids: NDArray):
         IDs = []
         for x, y in centroids:
-            IDs.append(self.LUT[int(y), int(x)])
+            IDs.append(int(self.LUT[int(y), int(x)]))
         
         # look for duplicated IDs and chose the best among those
         unique_ids = sorted(set(IDs))
@@ -32,9 +33,13 @@ class GridAssignment:
 
         self.ID = np.array(unique_ids)
         self.centroids = centroids[idx_to_keep,:]
+        self.idx_to_keep = idx_to_keep
 
     def get_ID(self):
         return self.ID
+    
+    def get_kept_centroids(self):
+        return self.idx_to_keep
     
     def get_centroids(self):
         return self.centroids
@@ -43,6 +48,7 @@ class LinearSumAssignment:
     def __init__(self, distance_threshold):
         self.ID = None
         self.ID_max = 0
+        self.idx_to_keep = None
         self.previous_centroids = None
         self.distance_threshold = distance_threshold
 
@@ -85,9 +91,14 @@ class LinearSumAssignment:
             self.ID = final_id
 
         self.previous_centroids = centroids
+        self.idx_to_keep = np.arange(centroids.shape[0])
             
     def get_ID(self):
         return self.ID
+    
+    def get_kept_centroids(self):
+        '''for compatibility with grid assignment'''
+        return self.idx_to_keep
     
     def get_centroids(self):
         return self.previous_centroids

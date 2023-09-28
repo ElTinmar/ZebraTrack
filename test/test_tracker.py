@@ -136,7 +136,7 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
             n_tail_points=10,
             n_pts_arc=20,
             n_pts_interp=40,
-            tail_length_mm=2.5,
+            tail_length_mm=2.7,
             dist_swim_bladder_mm=0.6,
             blur_sz_mm=0.15,
             median_filter_sz_mm=0.15,
