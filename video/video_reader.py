@@ -237,17 +237,16 @@ class Buffered_OpenCV_VideoReader(Process):
             self._num_channels = 1
         self._type = frame.dtype  
 
+        self._capture.release()
+
     def run(self) -> None:
-        print('here1')
+        self._capture = cv2.VideoCapture(self._filename)
+        self._current_frame = 0
         while True:
-            print('here2')
             rval, frame = self.read_frame()
-            print(f'here3, rval')
             if not rval:
-                break
-            print('here4')
+                breakpoint
             self._queue.put(frame)
-            print('here5')
             
     def next_frame(self):
         return self._queue.get()
