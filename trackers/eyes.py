@@ -122,7 +122,7 @@ class EyesTracker:
     
     @staticmethod 
     def find_eyes_and_swimbladder(image, eye_dyntresh_res, eye_size_lo_px, eye_size_hi_px):
-        # this is slow, try to optimize
+        # OPTIM this is slow, try to optimize
         thresholds = np.linspace(0,1,eye_dyntresh_res)
         found_eyes_and_sb = False
         for t in thresholds:
