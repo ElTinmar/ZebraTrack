@@ -2,11 +2,17 @@ import cv2
 from numpy.typing import NDArray
 import numpy as np
 from typing import Tuple, Optional
+from multiprocessing import Process, Queue, Event
+import queue
 
 # TODO: Check index error (+-1). Make sure that number of frames is correct (end index valid)
 class OpenCV_VideoReader:
 
-    def open_file(self, filename: str, safe: bool = False, crop: Optional[Tuple[int,int,int,int]] = None):
+    def open_file(
+            self, 
+            filename: str, 
+            safe: bool = False, 
+            crop: Optional[Tuple[int,int,int,int]] = None):
             
         self._filename = filename
         self._capture = cv2.VideoCapture(filename)
@@ -17,6 +23,9 @@ class OpenCV_VideoReader:
         self._num_channels = 0
         self._safe = safe
         self._crop = crop # [left,bottom,width,height]
+        self._queue = Queue(maxsize=100)
+        self._keepgoing = Event()
+        self._buffering_process = None
             
         # count number of frames
         if safe:
@@ -60,11 +69,40 @@ class OpenCV_VideoReader:
         """
         TODO
         """
+        self.stop_buffering()
         self._capture.release()
         self._capture = cv2.VideoCapture(self._filename)
         self._current_frame = 0
+        self.start_buffering()
 
-    def next_frame(self) -> Tuple[bool,NDArray]:
+    def stop_buffering(self) -> None:
+        if self._buffering_process is not None:
+            self._keepgoing.clear()
+            self.flush_buffer()
+            self._buffering_process.join()
+            self.flush_buffer()
+
+    def start_buffering(self) -> None:
+        self._keepgoing.set()
+        self._buffering_process = Process(target=self.buffer_frames)
+        self._buffering_process.start()
+
+    def flush_buffer(self) -> None:
+        try:
+            while True:
+                self._queue.get_nowait()
+        except queue.Empty:
+            pass
+
+    def buffer_frames(self) -> None:
+        while self._keepgoing.is_set():
+            data = self.read_next_frame()
+            self._queue.put(data) 
+
+    def next_frame(self):
+        return self._queue.get()
+
+    def read_next_frame(self) -> Tuple[bool,NDArray]:
         """
         TODO
         """
@@ -78,7 +116,7 @@ class OpenCV_VideoReader:
                 ]
         return (rval, frame)
     
-    def previous_frame(self) -> Tuple[bool,NDArray]:
+    def read_previous_frame(self) -> Tuple[bool,NDArray]:
         self.seek_to(self._current_frame - 1) # -1 or -2 ?
         rval, frame = self._capture.read()
         if rval:
@@ -91,6 +129,8 @@ class OpenCV_VideoReader:
         return (rval, frame)
     
     def seek_to(self, index):
+        
+        self.stop_buffering()
 
         # check arguments value
         if not 0 <= index < self._number_of_frames:
@@ -113,7 +153,9 @@ class OpenCV_VideoReader:
         else:
             self._capture.set(cv2.CAP_PROP_POS_FRAMES, index-1)
             self._current_frame = index-1
-    
+
+        self.start_buffering()
+
     def read_frames(self, start: int, stop: int) -> NDArray:
         """
         Read frames between indices start and stop and store them in a numpy array in RAM
@@ -140,11 +182,6 @@ class OpenCV_VideoReader:
             rval, frame = self.next_frame()
             if not rval:
                 raise(RuntimeError(f"movie ended while seeking to frame {stop}"))
-            if self._crop is not None:
-                frame = frame[
-                    self._crop[1]:self._crop[1]+self._crop[3],
-                    self._crop[0]:self._crop[0]+self._crop[2]
-                ]
             frames[:,:,:,counter-start] = frame
             counter += 1
 
