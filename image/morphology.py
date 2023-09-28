@@ -132,6 +132,7 @@ def bwareaopen_props(
             filtered_props.append(blob)
     return filtered_props
 
+# OPTIM this is slow, maybe try to run on GPU with CuPy
 def bwareafilter_props(
         ar: NDArray, 
         min_size: int = 64, 
