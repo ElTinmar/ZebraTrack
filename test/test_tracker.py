@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import cv2
 from video.video_display import VideoDisplay
-from video.video_reader import OpenCV_VideoReader
+from video.video_reader import OpenCV_VideoReader, Buffered_OpenCV_VideoReader
 from video.background import StaticBackground, DynamicBackground, DynamicBackgroundMP
 from trackers.animal import AnimalTracker, AnimalTrackerParamTracking, AnimalTrackerParamOverlay
 from trackers.body import BodyTracker, BodyTrackerParamTracking, BodyTrackerParamOverlay
@@ -53,7 +53,13 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     background = StaticBackground(
         video_reader=reader
     )
-    
+
+    '''
+    reader = Buffered_OpenCV_VideoReader()
+    reader.open_file(video_file, safe=False, crop=(0,0,600,600))
+    reader.start()
+    '''
+
     '''
     background = DynamicBackgroundMP(
         height=height,
