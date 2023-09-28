@@ -118,7 +118,7 @@ class AnimalTrackerWidget(QWidget):
         self.pad_value_mm = LabeledDoubleSpinBox(self)
         self.pad_value_mm.setText('Bbox size (mm)')
         self.pad_value_mm.setRange(0,10)
-        self.pad_value_mm.setValue(2.5)
+        self.pad_value_mm.setValue(4.0)
         self.pad_value_mm.setSingleStep(0.1)
         self.pad_value_mm.valueChanged.connect(self.update_tracker)
 
