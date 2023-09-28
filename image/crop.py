@@ -65,7 +65,7 @@ def diagonal_crop(image: NDArray, rect: Rect, angle_deg: float) -> NDArray:
     T1 = translation_matrix(rect.left, rect.bottom)
     T2 = translation_matrix(-bb.left, -bb.bottom)
     warp_mat = T2 @ np.linalg.inv(T1 @ R @ T0)
-    rotated_image = cv2.warpAffine(image, warp_mat[:2,:], (bb.width, bb.height), flags=cv2.INTER_LINEAR)
+    rotated_image = cv2.warpAffine(image, warp_mat[:2,:], (bb.width, bb.height), flags=cv2.INTER_NEAREST)
     
     # crop rotated image        
     left = rect.left - bb.left

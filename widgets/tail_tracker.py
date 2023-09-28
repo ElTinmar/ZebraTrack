@@ -218,8 +218,8 @@ class TailTrackerWidget(QWidget):
             overlay = self.tracker.overlay_local(tracking)
 
             zoom = self.zoom.value()/100.0
-            image = cv2.resize(tracking.image,None,None,zoom,zoom)
-            overlay = cv2.resize(overlay,None,None,zoom,zoom)
+            image = cv2.resize(tracking.image,None,None,zoom,zoom,cv2.INTER_NEAREST)
+            overlay = cv2.resize(overlay,None,None,zoom,zoom,cv2.INTER_NEAREST)
 
             self.image.setPixmap(NDarray_to_QPixmap(image))
             self.image_overlay.setPixmap(NDarray_to_QPixmap(overlay))

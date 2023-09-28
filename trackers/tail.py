@@ -97,7 +97,7 @@ class TailTracker:
                 None,
                 self.tracking_param.resize,
                 self.tracking_param.resize,
-                cv2.INTER_AREA
+                cv2.INTER_NEAREST
             )
 
         # diagonal crop
