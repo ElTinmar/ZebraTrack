@@ -246,7 +246,7 @@ class Buffered_OpenCV_VideoReader(Process):
             rval, frame = self.read_frame()
             if not rval:
                 breakpoint
-            self._queue.put(frame)
+            self._queue.put((rval, frame))
             
     def next_frame(self):
         return self._queue.get()
