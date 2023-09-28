@@ -76,14 +76,19 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
         AnimalTrackerParamTracking(
             pix_per_mm=40,
             target_pix_per_mm=7.5,
-            body_intensity=0.07,
-            min_body_size_mm=1.0,
-            max_body_size_mm=30.0,
-            min_body_length_mm=1.0,
-            max_body_length_mm=12.0,
-            min_body_width_mm=0.4,
-            max_body_width_mm=3.0,
-            pad_value_mm=2.5
+            animal_intensity=0.07,
+            animal_norm=1.0,
+            animal_gamma=1.0,
+            animal_contrast=1.0,
+            min_animal_size_mm=1.0,
+            max_animal_size_mm=30.0,
+            min_animal_length_mm=1.0,
+            max_animal_length_mm=12.0,
+            min_animal_width_mm=0.4,
+            max_animal_width_mm=3.0,
+            pad_value_mm=2.5,
+            blur_sz_mm=0,
+            median_filter_sz_mm=0,
         ),
         AnimalTrackerParamOverlay()
     )
@@ -92,12 +97,17 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
             pix_per_mm=40,
             target_pix_per_mm=7.5,
             body_intensity=0.06,
+            body_norm=1.0,
+            body_gamma=1.0,
+            body_contrast=1.0,
             min_body_size_mm=2.0,
             max_body_size_mm=40.0,
             min_body_length_mm=1.0,
             max_body_length_mm=12.0,
             min_body_width_mm=0.4,
-            max_body_width_mm=3.0
+            max_body_width_mm=3.0,
+            blur_sz_mm=0,
+            median_filter_sz_mm=0,
         ),
         BodyTrackerParamOverlay()
     )
@@ -147,7 +157,6 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
         eyes_tracker, 
         tail_tracker
     )
-
 
     try:
         for i in tqdm(range(num_frames)):

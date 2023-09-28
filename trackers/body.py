@@ -12,6 +12,11 @@ class BodyTrackerParamTracking:
     pix_per_mm: float = 40.0
     target_pix_per_mm: float = 20.0
     body_intensity: float = 0.1
+    body_norm: float = 0.2
+    body_gamma: float = 1.0
+    body_contrast: float = 1.0
+    blur_sz_mm: float = 0.05
+    median_filter_sz_mm: float = 0.15
     min_body_size_mm: float = 10.0
     max_body_size_mm: float = 100.0
     min_body_length_mm: float = 2.0
@@ -50,6 +55,14 @@ class BodyTrackerParamTracking:
     def max_body_width_px(self):
         return self.mm2px(self.max_body_width_mm)
 
+    @property
+    def blur_sz_px(self):
+        return self.mm2px(self.blur_sz_mm)
+    
+    @property
+    def median_filter_sz_px(self):
+        return self.mm2px(self.median_filter_sz_mm)
+    
 @dataclass
 class BodyTrackerParamOverlay:
     pix_per_mm: float = 40.0
@@ -118,8 +131,17 @@ class BodyTracker:
                 self.tracking_param.resize,
                 cv2.INTER_AREA
             )
-            
-        image = imcontrast(image)
+
+        # tune image contrast and gamma
+        image = imcontrast(
+            image,
+            self.tracking_param.body_contrast,
+            self.tracking_param.body_gamma,
+            self.tracking_param.body_norm,
+            self.tracking_param.blur_sz_px,
+            self.tracking_param.median_filter_sz_px
+        )
+
         mask = (image >= self.tracking_param.body_intensity)
         props = bwareafilter_props(
             mask, 

@@ -42,6 +42,30 @@ class BodyTrackerWidget(QWidget):
         self.body_intensity.setValue(0.06)
         self.body_intensity.setSingleStep(0.01)
         self.body_intensity.valueChanged.connect(self.update_tracker)
+    
+        # gamma
+        self.body_gamma = LabeledDoubleSpinBox(self)
+        self.body_gamma.setText('body gamma')
+        self.body_gamma.setRange(0,100)
+        self.body_gamma.setValue(3.0)
+        self.body_gamma.setSingleStep(0.1)
+        self.body_gamma.valueChanged.connect(self.update_tracker) 
+
+        # constrast
+        self.body_contrast = LabeledDoubleSpinBox(self)
+        self.body_contrast.setText('body contrast')
+        self.body_contrast.setRange(0,100)
+        self.body_contrast.setValue(1.5)
+        self.body_contrast.setSingleStep(0.1)
+        self.body_contrast.valueChanged.connect(self.update_tracker) 
+
+        # norm
+        self.body_norm = LabeledDoubleSpinBox(self)
+        self.body_norm.setText('body norm')
+        self.body_norm.setRange(0,1)
+        self.body_norm.setValue(0.3)
+        self.body_norm.setSingleStep(0.025)
+        self.body_norm.valueChanged.connect(self.update_tracker) 
 
         # body size
         self.min_body_size_mm = LabeledDoubleSpinBox(self)
@@ -91,6 +115,22 @@ class BodyTrackerWidget(QWidget):
         self.max_body_width_mm.setSingleStep(0.05)
         self.max_body_width_mm.valueChanged.connect(self.update_tracker)
 
+        #ksize_blur_mm 
+        self.blur_sz_mm = LabeledDoubleSpinBox(self)
+        self.blur_sz_mm.setText('blur size (mm)')
+        self.blur_sz_mm.setRange(0,2)
+        self.blur_sz_mm.setValue(1/7.5)
+        self.blur_sz_mm.setSingleStep(1/7.5)
+        self.blur_sz_mm.valueChanged.connect(self.update_tracker)
+                
+        # median filter size
+        self.median_filter_sz_mm = LabeledDoubleSpinBox(self)
+        self.median_filter_sz_mm.setText('medfilt size (mm)')
+        self.median_filter_sz_mm.setRange(0,2)
+        self.median_filter_sz_mm.setValue(1/7.5)
+        self.median_filter_sz_mm.setSingleStep(1/7.5)
+        self.median_filter_sz_mm.valueChanged.connect(self.update_tracker)
+
         self.zoom = LabeledSpinBox(self)
         self.zoom.setText('zoom (%)')
         self.zoom.setRange(0,500)
@@ -105,12 +145,17 @@ class BodyTrackerWidget(QWidget):
         parameters.addWidget(self.pix_per_mm)
         parameters.addWidget(self.target_pix_per_mm)
         parameters.addWidget(self.body_intensity)
+        parameters.addWidget(self.body_gamma)
+        parameters.addWidget(self.body_contrast)
+        parameters.addWidget(self.body_norm)
         parameters.addWidget(self.min_body_size_mm)
         parameters.addWidget(self.max_body_size_mm)
         parameters.addWidget(self.min_body_length_mm)
         parameters.addWidget(self.max_body_length_mm)
         parameters.addWidget(self.min_body_width_mm)
         parameters.addWidget(self.max_body_width_mm)
+        parameters.addWidget(self.blur_sz_mm)
+        parameters.addWidget(self.median_filter_sz_mm)
         parameters.addStretch()
 
         images = QVBoxLayout()
@@ -134,12 +179,17 @@ class BodyTrackerWidget(QWidget):
             pix_per_mm = self.pix_per_mm.value(),
             target_pix_per_mm = self.target_pix_per_mm.value(),
             body_intensity = self.body_intensity.value(),
+            body_gamma = self.body_gamma.value(),
+            body_contrast = self.body_contrast.value(),
+            body_norm = self.body_norm.value(),
             min_body_size_mm = self.min_body_size_mm.value(),
             max_body_size_mm = self.max_body_size_mm.value(),
             min_body_length_mm = self.min_body_length_mm.value(),
             max_body_length_mm = self.max_body_length_mm.value(),
             min_body_width_mm = self.min_body_width_mm.value(),
-            max_body_width_mm = self.max_body_width_mm.value()
+            max_body_width_mm = self.max_body_width_mm.value(),
+            blur_sz_mm = self.blur_sz_mm.value(),
+            median_filter_sz_mm = self.median_filter_sz_mm.value()
         )
         self.tracker = BodyTracker(tracker_param, overlay_param)
 

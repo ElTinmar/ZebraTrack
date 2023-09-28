@@ -9,13 +9,18 @@ import cv2
 class AnimalTrackerParamTracking:
     pix_per_mm: float = 40.0
     target_pix_per_mm: float = 10.0
-    body_intensity: float = 0.1
-    min_body_size_mm: float = 10.0
-    max_body_size_mm: float = 100.0
-    min_body_length_mm: float = 2.0
-    max_body_length_mm: float = 6.0
-    min_body_width_mm: float = 1.0
-    max_body_width_mm: float = 3.0
+    animal_intensity: float = 0.1
+    animal_norm: float = 0.2
+    animal_gamma: float = 1.0
+    animal_contrast: float = 1.0
+    blur_sz_mm: float = 0.05
+    median_filter_sz_mm: float = 0.15
+    min_animal_size_mm: float = 10.0
+    max_animal_size_mm: float = 100.0
+    min_animal_length_mm: float = 2.0
+    max_animal_length_mm: float = 6.0
+    min_animal_width_mm: float = 1.0
+    max_animal_width_mm: float = 3.0
     pad_value_mm: float = 3.0
 
     def mm2px(self, val_mm):
@@ -27,33 +32,41 @@ class AnimalTrackerParamTracking:
         return self.target_pix_per_mm/self.pix_per_mm
     
     @property
-    def min_body_size_px(self):
-        return self.mm2px(self.min_body_size_mm)
+    def min_animal_size_px(self):
+        return self.mm2px(self.min_animal_size_mm)
     
     @property
-    def max_body_size_px(self):
-        return self.mm2px(self.max_body_size_mm) 
+    def max_animal_size_px(self):
+        return self.mm2px(self.max_animal_size_mm) 
         
     @property
-    def min_body_length_px(self):
-        return self.mm2px(self.min_body_length_mm)
+    def min_animal_length_px(self):
+        return self.mm2px(self.min_animal_length_mm)
     
     @property
-    def max_body_length_px(self):
-        return self.mm2px(self.max_body_length_mm)
+    def max_animal_length_px(self):
+        return self.mm2px(self.max_animal_length_mm)
 
     @property
-    def min_body_width_px(self):
-        return self.mm2px(self.min_body_width_mm)
+    def min_animal_width_px(self):
+        return self.mm2px(self.min_animal_width_mm)
     
     @property
-    def max_body_width_px(self):
-        return self.mm2px(self.max_body_width_mm)
+    def max_animal_width_px(self):
+        return self.mm2px(self.max_animal_width_mm)
     
     @property
     def pad_value_px(self):
         return self.mm2px(self.pad_value_mm)
 
+    @property
+    def blur_sz_px(self):
+        return self.mm2px(self.blur_sz_mm)
+    
+    @property
+    def median_filter_sz_px(self):
+        return self.mm2px(self.median_filter_sz_mm)
+    
 @dataclass
 class AnimalTrackerParamOverlay:
     pix_per_mm: float = 40.0
@@ -106,18 +119,25 @@ class AnimalTracker:
             )
 
         # tune image contrast and gamma
-        image = imcontrast(image)
+        image = imcontrast(
+            image,
+            self.tracking_param.animal_contrast,
+            self.tracking_param.animal_gamma,
+            self.tracking_param.animal_norm,
+            self.tracking_param.blur_sz_px,
+            self.tracking_param.median_filter_sz_px
+        )
 
         height, width = image.shape
-        mask = (image >= self.tracking_param.body_intensity)
+        mask = (image >= self.tracking_param.animal_intensity)
         centroids = bwareafilter_centroids(
             mask, 
-            min_size = self.tracking_param.min_body_size_px,
-            max_size = self.tracking_param.max_body_size_px, 
-            min_length = self.tracking_param.min_body_length_px,
-            max_length = self.tracking_param.max_body_length_px,
-            min_width = self.tracking_param.min_body_width_px,
-            max_width = self.tracking_param.max_body_width_px
+            min_size = self.tracking_param.min_animal_size_px,
+            max_size = self.tracking_param.max_animal_size_px, 
+            min_length = self.tracking_param.min_animal_length_px,
+            max_length = self.tracking_param.max_animal_length_px,
+            min_width = self.tracking_param.min_animal_width_px,
+            max_width = self.tracking_param.max_animal_width_px
         )
 
         bboxes = np.zeros((centroids.shape[0],4), dtype=int)
