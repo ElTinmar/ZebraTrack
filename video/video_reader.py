@@ -5,10 +5,16 @@ from typing import Tuple, Optional
 import queue
 from multiprocessing import Queue, Process, Event 
 
+# TODO: add resizing as an option 
 # TODO: Check index error (+-1). Make sure that number of frames is correct (end index valid)
 class OpenCV_VideoReader:
 
-    def open_file(self, filename: str, safe: bool = False, crop: Optional[Tuple[int,int,int,int]] = None):
+    def open_file(
+            self, 
+            filename: str, 
+            safe: bool = False, 
+            crop: Optional[Tuple[int,int,int,int]] = None
+        ) -> None:
             
         self._filename = filename
         self._capture = cv2.VideoCapture(filename)
