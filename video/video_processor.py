@@ -2,8 +2,7 @@ import subprocess
 import os
 from typing import Optional
 import numpy as np
-
-# TODO maybe add options for AV1 and HEVC/x265 encoders
+import datetime
 
 class VideoProcessor:
     '''
@@ -29,21 +28,23 @@ class VideoProcessor:
         return os.path.join(dest_folder, f"{self.input_name}_{suffix}{self.input_format}")
     
     def get_input_video_metadata(self) -> None:
+        # note that ffprobe doesn't show entries in the order specified in the command
+        # but has it's own internal order (see https://ffmpeg.org/ffprobe.html#Main-options)
         command = [
             'ffprobe',
             '-v', 'error',
-            '-show_entries',  'stream=width,height,r_frame_rate,nb_frames',
+            '-show_entries',  'stream=width,height,r_frame_rate,duration,nb_frames',
             '-of', 'csv=print_section=0:nokey=1',
             f'{self.input_video_path}'
         ]
         
         metadata = subprocess.check_output(command, text=True)
-        width, height, fps_frac, num_frames = metadata.split(',')
+        width, height, fps_frac, duration, num_frames = metadata.split(',')
         fps_numerator, fps_denominator = fps_frac.split('/')
         fps = float(fps_numerator)/float(fps_denominator)
-        return int(width), int(height), fps, int(num_frames)
+        return int(width), int(height), fps, int(num_frames), float(duration)
 
-    def shorten_time(
+    def shorten(
             self, 
             start: str, 
             stop: str,
@@ -63,15 +64,6 @@ class VideoProcessor:
         ]
         subprocess.call(command)
     
-    def shorten_index(
-            self, 
-            start: int, 
-            stop: int, 
-            suffix: str = 'short', 
-            dest_folder: Optional[str] = None
-        ) -> None:
-        pass
-
     def split(
             self, 
             n: int,
@@ -79,7 +71,17 @@ class VideoProcessor:
             dest_folder: Optional[str] = None
         ) -> None:
 
-        pass
+        width, height, fps, num_frames, duration = self.get_input_video_metadata()
+        chunk_dur = duration / n
+        splits = np.arange(n + 1) * chunk_dur
+        hh_mm_ss = lambda val: str(datetime.timedelta(seconds=val))
+        for n, (start, end) in enumerate(zip(splits, splits[1:]), start=1):
+            self.shorten(
+                    hh_mm_ss(start),
+                    hh_mm_ss(end),
+                    f"{suffix}_{n:03}",
+                    dest_folder
+                )
 
 class GPU_VideoProcessor(VideoProcessor):
     '''
@@ -134,7 +136,7 @@ class GPU_VideoProcessor(VideoProcessor):
         ) -> None:
 
         output_path = self.make_output_path(suffix, dest_folder)
-        width, height, fps, num_frames = self.get_input_video_metadata()
+        width, height, fps, num_frames, duration = self.get_input_video_metadata()
         new_width = int(width*scale)
         command = [
             'ffmpeg',
@@ -227,7 +229,7 @@ class CPU_VideoProcessor(VideoProcessor):
         ) -> None:
 
         output_path = self.make_output_path(suffix, dest_folder)
-        width, height, fps, num_frames = self.get_input_video_metadata()
+        width, height, fps, num_frames, duration = self.get_input_video_metadata()
         new_width = int(width*scale)
         command = [
             'ffmpeg',
