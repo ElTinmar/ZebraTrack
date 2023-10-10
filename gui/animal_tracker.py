@@ -165,7 +165,7 @@ class AnimalTrackerWidget(QWidget):
         parameters.addWidget(self.median_filter_sz_mm)
         parameters.addStretch()
 
-        images = QHBoxLayout()
+        images = QVBoxLayout()
         images.addWidget(self.image)
         images.addWidget(self.mask)
         images.addWidget(self.image_overlay)
