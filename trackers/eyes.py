@@ -7,8 +7,8 @@ from typing import Optional, Tuple
 from image.morphology import bwareafilter_props, bwareafilter
 from image.crop import diagonal_crop, rotation_matrix
 from image.imcontrast import imcontrast
-from helper.geometry import ellipse_direction, angle_between_vectors
-from helper.rect import Rect
+from geometry.geometry import ellipse_direction, angle_between_vectors
+from geometry.rect import Rect
 
 @dataclass
 class EyesTrackerParamTracking:

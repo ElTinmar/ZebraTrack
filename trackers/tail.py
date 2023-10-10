@@ -7,7 +7,7 @@ from numpy.typing import NDArray
 from typing import Optional, Tuple
 from image.crop import diagonal_crop, rotation_matrix
 from image.imcontrast import imcontrast
-from helper.rect import Rect
+from geometry.rect import Rect
 
 @dataclass
 class TailTrackerParamTracking:
