@@ -4,7 +4,6 @@ import pandas as pd
 import numpy as np
 import sys
 from PyQt5.QtWidgets import QApplication
-
 from video.video_reader import OpenCV_VideoReader
 from video.background import StaticBackground, DynamicBackground, DynamicBackgroundMP
 from trackers.assignment import LinearSumAssignment, GridAssignment
