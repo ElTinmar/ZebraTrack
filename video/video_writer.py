@@ -31,6 +31,11 @@ class OpenCV_VideoWriter:
 
 # video writer ffmpeg
 class FFMPEG_VideoWriter:
+    # To check which encoders are available, use:
+    # ffmpeg -encoders
+    #
+    # To check which profiles and presets are available for a given encoder use:
+    # ffmpeg -h encoder=h264_nvenc
 
     def __init__(
             self, 
