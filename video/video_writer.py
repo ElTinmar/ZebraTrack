@@ -73,6 +73,9 @@ class FFMPEG_VideoWriter:
         self.ffmpeg_process.stdin.write(image.astype(np.uint8).tobytes())
 
     def close(self) -> None:
+        # TODO subprocess may be hanging, use kill ?
         self.ffmpeg_process.stdin.flush()
         self.ffmpeg_process.stdin.close()
         self.ffmpeg_process.wait()
+        #self.ffmpeg_process.kill()
+        
