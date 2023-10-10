@@ -29,6 +29,6 @@ try:
         display.queue_image(image)
         writer.write_frame(image)
 finally:
-    writer.close()
     display.exit()
     display.join()
+    writer.close()
