@@ -4,6 +4,10 @@ from typing import Optional
 import numpy as np
 import datetime
 
+# Strongly inspired by DeepLabCut video functions :
+# https://github.com/DeepLabCut/DeepLabCut/blob/main/deeplabcut/utils/auxfun_videos.py
+
+
 class VideoProcessor:
     '''
     split, shorten, crop, resize videos using ffmpeg
