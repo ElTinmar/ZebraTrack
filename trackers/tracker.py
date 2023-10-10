@@ -70,6 +70,7 @@ class Tracker:
 
         res = {
             'identities': identities, 
+            'indices': to_keep,
             'animals': animals,
             'body': body,
             'eyes': eyes,
@@ -84,7 +85,7 @@ class Tracker:
             return None
         
         image = self.animal_tracker.overlay(image, tracking['animals'])
-        for idx, id in enumerate(tracking['identities']):
+        for idx, id in zip(tracking['indices'], tracking['identities']):
             offset = tracking['animals'].bounding_boxes[idx,:2]
             if self.body_tracker is not None:
                 image = self.body_tracker.overlay(image, tracking['body'][id], offset)
@@ -101,7 +102,7 @@ class Tracker:
         
         image = tracking['image'].copy()
         image = np.dstack((image,image,image))
-        for idx, id in enumerate(tracking['identities']):
+        for idx, id in zip(tracking['indices'], tracking['identities']):
             offset = tracking['animals'].bounding_boxes[idx,:2]
             if self.body_tracker is not None:
                 image = self.body_tracker.overlay(image, tracking['body'][id], offset)
