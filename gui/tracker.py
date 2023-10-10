@@ -29,9 +29,7 @@ class TrackerWidget(QMainWindow):
 
         super().__init__(*args, **kwargs)
         self.assignment = assignment
-        self.animal_tracker_widget = animal_tracker_widget
-        # TODO I'm breaking encapsulation, this needs to be fixed
-        self.animal_tracker_widget.image_overlay.mousePressEvent = self.on_mouse_click
+        self.animal_tracker_widget = animal_tracker_widget        
         self.body_tracker_widget = body_tracker_widget
         self.eyes_tracker_widget = eyes_tracker_widget
         self.tail_tracker_widget = tail_tracker_widget
@@ -42,6 +40,7 @@ class TrackerWidget(QMainWindow):
 
     def declare_components(self):
         self.image_overlay = QLabel(self)
+        self.image_overlay.mousePressEvent = self.on_mouse_click
 
         self.zoom = LabeledSpinBox(self)
         self.zoom.setText('zoom (%)')
@@ -124,11 +123,8 @@ class TrackerWidget(QMainWindow):
         y = event.pos().y() 
 
         mouse_position = np.array([[x, y]])
-        # TODO I'm breaking encapsulation again
-        zoom = self.animal_tracker_widget.zoom.value()
-        target_res = self.animal_tracker_widget.target_pix_per_mm.value()
-        res = self.animal_tracker_widget.pix_per_mm.value()
-        mouse_position = mouse_position * (100 * res) / (target_res * zoom)  
+        zoom = self.zoom.value()
+        mouse_position = mouse_position * 100.0/zoom
 
         centroids = self.assignment.get_centroids()
         ID = self.assignment.get_ID()
