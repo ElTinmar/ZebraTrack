@@ -1,9 +1,7 @@
-import multiprocessing as mp
 import os
 import socket
 import pandas as pd
 import numpy as np
-import cv2
 from video.video_display import VideoDisplay
 from video.video_reader import OpenCV_VideoReader, Buffered_OpenCV_VideoReader
 from video.background import StaticBackground, DynamicBackground, DynamicBackgroundMP
