@@ -5,6 +5,8 @@ from .animal import AnimalTracker
 import numpy as np
 import cv2
 from typing import Protocol, Optional
+from image.imcontrast import imcontrast
+
 
 class Accumulator(Protocol):
     def update(self):
@@ -35,6 +37,8 @@ class Tracker:
         self.tail_tracker = tail_tracker
         
     def track(self, image):
+        image = imcontrast(image)
+
         animals = self.animal_tracker.track(image)
         centroids = animals.centroids
 
@@ -70,7 +74,7 @@ class Tracker:
             'body': body,
             'eyes': eyes,
             'tail': tail,
-            'image': image
+            'image': (255*image).astype(np.uint8)
         }
 
         return res 
