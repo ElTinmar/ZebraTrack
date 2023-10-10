@@ -1,5 +1,5 @@
 from video.video_reader import OpenCV_VideoReader
-from video.video_writer import OpenCV_VideoWriter
+from video.video_writer import OpenCV_VideoWriter, FFMPEG_VideoWriter
 from video.video_display import VideoDisplay 
 from tqdm import tqdm
 
@@ -11,7 +11,7 @@ reader.open_file(video_file, safe=False, crop=(0,0,600,600))
 num_frames = reader.get_number_of_frame()
 
 # open writer
-writer = OpenCV_VideoWriter( 
+writer = FFMPEG_VideoWriter( 
     height = 600, 
     width = 600, 
     fps = 200, 
