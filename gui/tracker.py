@@ -4,10 +4,13 @@ from gui.eye_tracker import EyesTrackerWidget
 from gui.tail_tracker import TailTrackerWidget 
 from trackers.tracker import Tracker
 from PyQt5.QtCore import QTimer, Qt
-from PyQt5.QtWidgets import QMainWindow, QTabWidget, QDockWidget
+from PyQt5.QtWidgets import QMainWindow, QTabWidget, QDockWidget, QLabel, QVBoxLayout, QHBoxLayout, QWidget
 from typing import Protocol, Optional
 from scipy.spatial.distance import cdist
 import numpy as np
+from .helper.ndarray_to_qpixmap import NDarray_to_QPixmap
+from .custom_widgets.labeled_spinbox import LabeledSpinBox
+import cv2
 
 class Assignment(Protocol):
     pass
@@ -34,9 +37,28 @@ class TrackerWidget(QMainWindow):
         self.tail_tracker_widget = tail_tracker_widget
         self.tracker = None
         self.current_id = 0
+        self.declare_components()
         self.layout_components()
 
+    def declare_components(self):
+        self.image_overlay = QLabel(self)
+
+        self.zoom = LabeledSpinBox(self)
+        self.zoom.setText('zoom (%)')
+        self.zoom.setRange(0,500)
+        self.zoom.setValue(100)
+        self.zoom.setSingleStep(25)
+        self.zoom.valueChanged.connect(self.update_tracker)
+
     def layout_components(self):
+
+        main_widget = QWidget()
+
+        images_and_zoom = QVBoxLayout()
+        images_and_zoom.addWidget(self.zoom)
+        images_and_zoom.addWidget(self.image_overlay)
+        images_and_zoom.addStretch()
+    
         if self.body_tracker_widget is not None:
             dock_widget = QDockWidget('Single Animal', self)
             tabs = QTabWidget()
@@ -47,7 +69,12 @@ class TrackerWidget(QMainWindow):
                 tabs.addTab(self.tail_tracker_widget, 'tail')      
             dock_widget.setWidget(tabs)  
             self.addDockWidget(Qt.RightDockWidgetArea, dock_widget)
-        self.setCentralWidget(self.animal_tracker_widget)
+
+        mainlayout = QHBoxLayout(main_widget)
+        mainlayout.addLayout(images_and_zoom)
+        mainlayout.addWidget(self.animal_tracker_widget)
+
+        self.setCentralWidget(main_widget)
         
     def update_tracker(self):
         body_tracker = None
@@ -76,6 +103,11 @@ class TrackerWidget(QMainWindow):
 
     def display(self, tracking):
         if tracking is not None:
+            overlay = self.tracker.overlay_local(tracking)
+            zoom = self.zoom.value()/100.0
+            overlay = cv2.resize(overlay,None,None,zoom,zoom,cv2.INTER_NEAREST)
+            self.image_overlay.setPixmap(NDarray_to_QPixmap(overlay))
+
             self.animal_tracker_widget.display(tracking['animals'])
             if self.body_tracker_widget is not None:
                 self.body_tracker_widget.display(tracking['body'][self.current_id])
@@ -83,6 +115,9 @@ class TrackerWidget(QMainWindow):
                 self.eyes_tracker_widget.display(tracking['eyes'][self.current_id])
             if self.tail_tracker_widget is not None:
                 self.tail_tracker_widget.display(tracking['tail'][self.current_id])
+
+            self.update()
+
 
     def on_mouse_click(self, event):
         x = event.pos().x()

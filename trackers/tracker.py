@@ -69,7 +69,8 @@ class Tracker:
             'animals': animals,
             'body': body,
             'eyes': eyes,
-            'tail': tail
+            'tail': tail,
+            'image': image
         }
 
         return res 
@@ -79,6 +80,23 @@ class Tracker:
             return None
         
         image = self.animal_tracker.overlay(image, tracking['animals'])
+        for idx, id in enumerate(tracking['identities']):
+            offset = tracking['animals'].bounding_boxes[idx,:2]
+            if self.body_tracker is not None:
+                image = self.body_tracker.overlay(image, tracking['body'][id], offset)
+                if self.eyes_tracker is not None:
+                    image = self.eyes_tracker.overlay(image, tracking['eyes'][id])
+                if self.tail_tracker is not None:
+                    image = self.tail_tracker.overlay(image, tracking['tail'][id])
+            cv2.putText(image, str(id), offset.astype(int), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0,0,255), 2, cv2.LINE_AA)
+        return image
+    
+    def overlay_local(self, tracking):
+        if tracking is None:
+            return None
+        
+        image = tracking['image'].copy()
+        image = np.dstack((image,image,image))
         for idx, id in enumerate(tracking['identities']):
             offset = tracking['animals'].bounding_boxes[idx,:2]
             if self.body_tracker is not None:
