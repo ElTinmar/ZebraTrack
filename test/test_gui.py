@@ -19,7 +19,7 @@ DATA_LOCATION = {
     'hplaptop': '/home/martin/Downloads/Escapes/',
     'O1-619': '/home/martin/Documents/Escapes/',
     'L-O1-620': '/home/martinprivat/ownCloud/Escapes/',
-    'TheUgly': ''
+    'TheUgly': '/media/martin/MARTIN_8TB_0/Work/Baier/owncloud/Escapes/'
 }
 host = socket.gethostname()
 BASEFOLDER = DATA_LOCATION[host]
