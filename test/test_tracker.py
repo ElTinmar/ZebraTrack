@@ -16,15 +16,17 @@ from trackers.assignment import LinearSumAssignment, GridAssignment
 from image.imconvert import im2gray, im2single
 from tqdm import tqdm
 
-
+# get base folder location on different computers
+DATA_LOCATION = {
+    'hplaptop': '/home/martin/Downloads/Escapes/',
+    'O1-619': '/home/martin/Documents/Escapes/',
+    'L-O1-620': '/home/martinprivat/ownCloud/Escapes/',
+    'TheUgly': ''
+}
 host = socket.gethostname()
-BASEFOLDER = '/home/martin/ownCloud - martin.privat@bi.mpg.de@owncloud.gwdg.de/Escapes/'
-if host == 'hplaptop':
-    BASEFOLDER = '/home/martin/Downloads/Escapes/'
-if host == 'O1-619':
-    BASEFOLDER = '/home/martin/Documents/Escapes/'
-if host == 'L-O1-620':
-    BASEFOLDER = '/home/martinprivat/ownCloud/Escapes/'
+BASEFOLDER = DATA_LOCATION[host]
+
+# relative path
 FISHDATA = os.path.join(BASEFOLDER, 'fish.csv')
 SELECT = [25]
 DISPLAY = True
