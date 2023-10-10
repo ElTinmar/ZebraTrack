@@ -8,12 +8,12 @@ from PyQt5.QtWidgets import QApplication
 from video.video_reader import OpenCV_VideoReader
 from video.background import StaticBackground, DynamicBackground, DynamicBackgroundMP
 from trackers.assignment import LinearSumAssignment, GridAssignment
-from widgets.tracker import TrackerWidget
-from widgets.animal_tracker import AnimalTrackerWidget
-from widgets.body_tracker import BodyTrackerWidget
-from widgets.eye_tracker import EyesTrackerWidget
-from widgets.tail_tracker import TailTrackerWidget
-from gui import ZebraTrackGUI
+from gui.tracker import TrackerWidget
+from gui.animal_tracker import AnimalTrackerWidget
+from gui.body_tracker import BodyTrackerWidget
+from gui.eye_tracker import EyesTrackerWidget
+from gui.tail_tracker import TailTrackerWidget
+from gui.gui import ZebraTrackGUI
 
 host = socket.gethostname()
 BASEFOLDER = '/home/martin/ownCloud - martin.privat@bi.mpg.de@owncloud.gwdg.de/Escapes/'

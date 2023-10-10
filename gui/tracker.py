@@ -1,7 +1,7 @@
-from widgets.animal_tracker import AnimalTrackerWidget
-from widgets.body_tracker import BodyTrackerWidget
-from widgets.eye_tracker import EyesTrackerWidget
-from widgets.tail_tracker import TailTrackerWidget 
+from gui.animal_tracker import AnimalTrackerWidget
+from gui.body_tracker import BodyTrackerWidget
+from gui.eye_tracker import EyesTrackerWidget
+from gui.tail_tracker import TailTrackerWidget 
 from trackers.tracker import Tracker
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtWidgets import QMainWindow, QTabWidget, QDockWidget
