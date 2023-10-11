@@ -121,7 +121,7 @@ class DynamicBackground:
         if self.curr_image % self.sample_every_n_frames == 0:
             self.frame_collection.append(image)
             self.compute_background()
-        self.curr_image += 1
+        self.curr_image = self.curr_image + 1
         return image - self.background
 
 class BoundedQueue:
@@ -207,6 +207,6 @@ class DynamicBackgroundMP:
             self.image_store.append(image)
             if self.counter == 0:
                 self.background[:] = image.flatten()
-        self.counter += 1
+        self.counter = self.counter + 1
         bckg = self.get_background()
         return image - bckg

@@ -34,7 +34,7 @@ class OpenCV_VideoReader:
                 rval, frame = self._capture.read()
                 if not rval:
                     break
-                counter += 1
+                counter = counter + 1
             self._number_of_frames = counter
 
             # reinitialize reader
@@ -78,7 +78,7 @@ class OpenCV_VideoReader:
         """
         rval, frame = self._capture.read()
         if rval:
-            self._current_frame += 1
+            self._current_frame = self._current_frame + 1
             if self._crop is not None:
                 frame = frame[
                     self._crop[1]:self._crop[1]+self._crop[3],
@@ -108,7 +108,7 @@ class OpenCV_VideoReader:
                 rval, frame = self.next_frame()
                 if not rval:
                     raise(RuntimeError(f"movie ended while seekeing to frame {index}"))
-                counter += 1
+                counter = counter + 1
  
         else:
             self._capture.set(cv2.CAP_PROP_POS_FRAMES, index-1)
@@ -141,7 +141,7 @@ class OpenCV_VideoReader:
             if not rval:
                 raise(RuntimeError(f"movie ended while seeking to frame {stop}"))
             frames[:,:,:,counter-start] = frame
-            counter += 1
+            counter = counter + 1
 
         return frames
 
@@ -218,7 +218,7 @@ class Buffered_OpenCV_VideoReader(Process):
                 rval, frame = self._capture.read()
                 if not rval:
                     break
-                counter += 1
+                counter = counter + 1
             self._number_of_frames = counter
 
             # reinitialize reader
@@ -266,7 +266,7 @@ class Buffered_OpenCV_VideoReader(Process):
     def read_frame(self) -> Tuple[bool,NDArray]:
         rval, frame = self._capture.read()
         if rval:
-            self._current_frame += 1
+            self._current_frame = self._current_frame + 1
             if self._crop is not None:
                 frame = frame[
                     self._crop[1]:self._crop[1]+self._crop[3],

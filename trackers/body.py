@@ -187,10 +187,11 @@ class BodyTracker:
         offset: if tracking on cropped image, offset of cropped part in larger image
         '''
 
+
         if tracking is not None:
             pt1 = tracking.centroid
             if offset is not None:
-                pt1 += offset
+                pt1 = pt1 + offset
             pt2 = pt1 + self.overlay_param.heading_len_px*tracking.heading[:,0]
             image = cv2.line(
                 image,

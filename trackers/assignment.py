@@ -83,7 +83,7 @@ class LinearSumAssignment:
             final_id = np.zeros_like(new_id)
             for idx, value in enumerate(new_id):
                 if value == -1:
-                    self.ID_max += 1
+                    self.ID_max = self.ID_max + 1
                     final_id[idx] = self.ID_max
                 else:
                     final_id[idx] = value

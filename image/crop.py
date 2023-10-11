@@ -34,9 +34,9 @@ def rotate_vertices(rect: Rect, angle_deg: float) -> NDArray:
         dtype = np.float32
     )
     rotated_vertices = ROI_vertices
-    rotated_vertices -= np.array([rect.left, rect.bottom, 0])
+    rotated_vertices = rotated_vertices - np.array([rect.left, rect.bottom, 0])
     rotated_vertices = rotated_vertices @ rotation_matrix(angle_deg) 
-    rotated_vertices += np.array([rect.left, rect.bottom, 0])
+    rotated_vertices = rotated_vertices + np.array([rect.left, rect.bottom, 0])
     return rotated_vertices
 
 
