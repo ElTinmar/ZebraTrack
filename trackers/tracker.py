@@ -91,9 +91,9 @@ class Tracker:
             if self.body_tracker is not None:
                 image = self.body_tracker.overlay(image, tracking['body'][id], offset)
                 if self.eyes_tracker is not None:
-                    image = self.eyes_tracker.overlay(image, tracking['eyes'][id])
+                    image = self.eyes_tracker.overlay(image, tracking['eyes'][id], offset)
                 if self.tail_tracker is not None:
-                    image = self.tail_tracker.overlay(image, tracking['tail'][id])
+                    image = self.tail_tracker.overlay(image, tracking['tail'][id], offset)
             cv2.putText(image, str(id), offset.astype(int), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0,0,255), 2, cv2.LINE_AA)
         return image
     
@@ -106,11 +106,11 @@ class Tracker:
         for idx, id in zip(tracking['indices'], tracking['identities']):
             offset = tracking['animals'].bounding_boxes[idx,:2]
             if self.body_tracker is not None:
-                image = self.body_tracker.overlay(image, tracking['body'][id], offset)
+                image = self.body_tracker.overlay(image, tracking['body'][id], offset) # this is the culprit
                 if self.eyes_tracker is not None:
-                    image = self.eyes_tracker.overlay(image, tracking['eyes'][id])
+                    image = self.eyes_tracker.overlay(image, tracking['eyes'][id], offset)
                 if self.tail_tracker is not None:
-                    image = self.tail_tracker.overlay(image, tracking['tail'][id])
+                    image = self.tail_tracker.overlay(image, tracking['tail'][id], offset)
             cv2.putText(image, str(id), offset.astype(int), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0,0,255), 2, cv2.LINE_AA)
         return image
     

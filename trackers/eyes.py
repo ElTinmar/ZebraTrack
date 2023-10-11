@@ -243,12 +243,14 @@ class EyesTracker:
         )
         return image
     
-    def overlay(self, image: NDArray, tracking: EyesTracking):
+    def overlay(self, image: NDArray, tracking: EyesTracking, offset: Optional[NDArray] = None):
         if tracking is not None:
             angle = np.arctan2(tracking.heading[1,1],tracking.heading[0,1]) 
             w = self.tracking_param.crop_dimension_px[0] / self.tracking_param.resize
             h = self.tracking_param.crop_dimension_px[1] / self.tracking_param.resize
             corner = tracking.centroid - w//2 * tracking.heading[:,1] + (-h//2 + self.tracking_param.crop_offset_px / self.tracking_param.resize) * tracking.heading[:,0] 
+            if offset is not None:
+                corner = corner + offset 
             R = rotation_matrix(np.rad2deg(angle))[:2,:2]
 
             if tracking.left_eye is not None:
