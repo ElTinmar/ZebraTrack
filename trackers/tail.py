@@ -126,7 +126,7 @@ class TailTracker:
         spacing = float(self.tracking_param.tail_length_px) / self.tracking_param.n_tail_points
         start_angle = -np.pi/2
         arc = np.linspace(-arc_rad, arc_rad, self.tracking_param.n_pts_arc) + start_angle
-        x = w//2 
+        x = (right-left)//2 
         y = self.tracking_param.dist_swim_bladder_px
         points = [[x, y]]
         for j in range(self.tracking_param.n_tail_points):
