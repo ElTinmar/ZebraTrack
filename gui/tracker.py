@@ -47,7 +47,6 @@ class TrackerWidget(QMainWindow):
         self.zoom.setRange(0,500)
         self.zoom.setValue(100)
         self.zoom.setSingleStep(25)
-        self.zoom.valueChanged.connect(self.update_tracker)
 
     def layout_components(self):
 
