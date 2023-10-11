@@ -89,10 +89,9 @@ class TailTracker:
 
     def get_roi_coords(self, centroid):
         w, h = self.tracking_param.crop_dimension_px
-        corner = centroid * self.tracking_param.resize + self.tracking_param.crop_offset_tail_px
-        left, bottom = corner
+        left, bottom = centroid * self.tracking_param.resize
         left = left - w//2
-        bottom = bottom - h//2
+        bottom = bottom - h//2 + self.tracking_param.crop_offset_tail_px
         return int(left), int(bottom), int(left + w), int(bottom + h)
 
     def track(self, image: NDArray, centroid: NDArray):
