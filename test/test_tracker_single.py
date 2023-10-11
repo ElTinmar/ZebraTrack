@@ -155,12 +155,22 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
         TailTrackerParamOverlay()
     )
 
+    '''
     tracker = Tracker(            
         assignment,
         accumulator,
         animal_tracker,
         body_tracker, 
         eyes_tracker, 
+        tail_tracker
+    )
+    '''
+    tracker = Tracker(            
+        assignment,
+        accumulator,
+        animal_tracker,
+        body_tracker, 
+        None, 
         tail_tracker
     )
 
