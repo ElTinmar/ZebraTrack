@@ -7,5 +7,6 @@ def NDarray_to_QPixmap(img: NDArray) -> QPixmap:
         img = np.dstack((img,img,img))
     
     h,w,ch = img.shape
-    qimg = QImage(img.data, w, h, 3*w, QImage.Format_RGB888) 
+    # note opencv uses BGR format by default
+    qimg = QImage(img.data, w, h, 3*w, QImage.Format_BGR888) 
     return QPixmap(qimg)
