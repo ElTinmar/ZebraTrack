@@ -82,6 +82,7 @@ class BodyTrackerParamOverlay:
 class BodyTracking:
     heading: NDArray # 2x2 matrix, column 1 = fish heading, column 2 = fish right direction
     centroid: NDArray # 1x2 vector. (x,y) coordinates of the fish centroid ~ swim bladder location
+    angle_rad: float
     mask: NDArray
     image: NDArray  
 
@@ -177,6 +178,7 @@ class BodyTracker:
             res = BodyTracking(
                 heading = principal_components,
                 centroid = centroid/self.tracking_param.resize,
+                angle_rad = np.arctan2(principal_components[1,1], principal_components[0,1]),
                 mask = (255*mask).astype(np.uint8),
                 image = (255*image).astype(np.uint8)
             )

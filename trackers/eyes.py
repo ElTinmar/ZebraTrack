@@ -77,7 +77,6 @@ class EyesTrackerParamOverlay:
 
 @dataclass
 class EyesTracking:
-    heading: NDArray
     centroid: NDArray
     left_eye: dict
     right_eye: dict
@@ -108,12 +107,12 @@ class EyesTracker:
     
     @staticmethod
     def assign_features(blob_centroids):
-            """From Duncan, returns indicies of sb, left, right from an array of contour centres"""
-            contour_centres = np.array(blob_centroids)
+            """From Duncan, returns indices of swimbladder, left eye and right eye"""
+            centres = np.array(blob_centroids)
             distances = pdist(blob_centroids)
             sb_idx = 2 - np.argmin(distances)
             eye_idxs = [i for i in range(3) if i != sb_idx]
-            eye_vectors = contour_centres[eye_idxs] - contour_centres[sb_idx]
+            eye_vectors = centres[eye_idxs] - centres[sb_idx]
             cross_product = np.cross(*eye_vectors)
             if cross_product < 0:
                 eye_idxs = eye_idxs[::-1]
@@ -142,7 +141,15 @@ class EyesTracker:
                 break
         return (found_eyes_and_sb, props, mask)
     
-    def track(self, image: NDArray, heading: NDArray, centroid: NDArray):
+    def get_roi_coords(self, centroid):
+        w, h = self.tracking_param.crop_dimension_px
+        corner = centroid * self.tracking_param.resize + self.tracking_param.crop_offset_px
+        left, bottom = corner
+        left = left - w//2
+        bottom = bottom - h//2
+        return int(left), int(bottom), int(left + w), int(bottom + h)
+     
+    def track(self, image: NDArray, centroid: NDArray):
 
         if self.tracking_param.resize != 1:
             image = cv2.resize(
@@ -158,15 +165,9 @@ class EyesTracker:
         right_eye = None
         new_heading = None
     
-        # diagonal crop
-        angle = np.arctan2(heading[1,1],heading[0,1]) 
-        w, h = self.tracking_param.crop_dimension_px
-        corner = centroid*self.tracking_param.resize - w//2 * heading[:,1] + (-h//2 + self.tracking_param.crop_offset_px) * heading[:,0] 
-        image_crop = diagonal_crop(
-            image, 
-            Rect(int(corner[0]),int(corner[1]),w,h),
-            np.rad2deg(angle)
-        )
+        # crop image
+        left, bottom, right, top = self.get_roi_coords(centroid)
+        image_crop = image[bottom:top, left:right]
 
         # tune image contrast and gamma
         image_crop = imcontrast(
@@ -176,7 +177,7 @@ class EyesTracker:
             self.tracking_param.eye_norm,
             self.tracking_param.blur_sz_px,
             self.tracking_param.median_filter_sz_px
-            )
+        )
 
         # sweep threshold to obtain 3 connected component within size range (include SB)
         found_eyes_and_sb, props, mask = self.find_eyes_and_swimbladder(
@@ -185,26 +186,26 @@ class EyesTracker:
             self.tracking_param.eye_size_lo_px, 
             self.tracking_param.eye_size_hi_px
         )
-
-        # identify left eye, right eye and swimbladder
+        
         if found_eyes_and_sb: 
+            # identify left eye, right eye and swimbladder
             blob_centroids = np.array([blob.centroid for blob in props])
             sb_idx, left_idx, right_idx = self.assign_features(blob_centroids)
             heading_after_rot = np.array([0, 1], dtype=np.float32)
+
+            # compute eye orientation
             left_eye = self.get_eye_prop(props[left_idx], heading_after_rot, self.tracking_param.resize)
             right_eye = self.get_eye_prop(props[right_idx], heading_after_rot, self.tracking_param.resize)
             #new_heading = (props[left_idx].centroid + props[right_idx].centroid)/2 - props[sb_idx].centroid
             #new_heading = new_heading / np.linalg.norm(new_heading)
 
         res = EyesTracking(
-            heading = heading,
             centroid = centroid,
             left_eye = left_eye,
             right_eye = right_eye,
             mask = (255*mask).astype(np.uint8),
             image = (255*image_crop).astype(np.uint8)
         )
-        
         return res
 
     @staticmethod
@@ -243,21 +244,24 @@ class EyesTracker:
         )
         return image
     
-    def overlay(self, image: NDArray, tracking: EyesTracking, offset: Optional[NDArray] = None):
+    def overlay(
+            self, 
+            image: NDArray, 
+            tracking: EyesTracking, 
+            translation_vec: NDArray,
+            rotation_mat: NDArray
+        ) -> NDArray:
+
         if tracking is not None:
-            angle = np.arctan2(tracking.heading[1,1],tracking.heading[0,1]) 
-            w = self.tracking_param.crop_dimension_px[0] / self.tracking_param.resize
-            h = self.tracking_param.crop_dimension_px[1] / self.tracking_param.resize
-            corner = tracking.centroid - w//2 * tracking.heading[:,1] + (-h//2 + self.tracking_param.crop_offset_px / self.tracking_param.resize) * tracking.heading[:,0] 
-            if offset is not None:
-                corner = corner + offset 
-            R = rotation_matrix(np.rad2deg(angle))[:2,:2]
+            left, bottom, _, _ = self.get_roi_coords(tracking.centroid)
+            corner = np.array([left, bottom])
+            corner = corner + translation_vec 
 
             if tracking.left_eye is not None:
                 image = self.disp_eye(
                     image, 
-                    R @ tracking.left_eye['centroid'] + corner,
-                    R @ tracking.left_eye['direction'],
+                    rotation_mat @ tracking.left_eye['centroid'] + corner,
+                    rotation_mat @ tracking.left_eye['direction'],
                     self.overlay_param.color_eye_left, 
                     self.overlay_param.eye_len_px, 
                     self.overlay_param.thickness
@@ -265,8 +269,8 @@ class EyesTracker:
             if tracking.right_eye is not None:   
                 image = self.disp_eye(
                     image, 
-                    R @ tracking.right_eye['centroid'] + corner,
-                    R @ tracking.right_eye['direction'],
+                    rotation_mat @ tracking.right_eye['centroid'] + corner,
+                    rotation_mat @ tracking.right_eye['direction'],
                     self.overlay_param.color_eye_right, 
                     self.overlay_param.eye_len_px, 
                     self.overlay_param.thickness

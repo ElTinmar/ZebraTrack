@@ -69,7 +69,6 @@ class TailTrackerParamOverlay:
 
 @dataclass
 class TailTracking:
-    heading: NDArray
     centroid: NDArray
     skeleton: NDArray
     skeleton_interp: NDArray
@@ -88,7 +87,15 @@ class TailTracker:
         self.tracking_param = tracking_param
         self.overlay_param = overlay_param
 
-    def track(self, image: NDArray, heading: NDArray, centroid: NDArray):
+    def get_roi_coords(self, centroid):
+        w, h = self.tracking_param.crop_dimension_px
+        corner = centroid * self.tracking_param.resize + self.tracking_param.crop_offset_tail_px
+        left, bottom = corner
+        left = left - w//2
+        bottom = bottom - h//2
+        return int(left), int(bottom), int(left + w), int(bottom + h)
+
+    def track(self, image: NDArray, centroid: NDArray):
 
         if self.tracking_param.resize != 1:
             image = cv2.resize(
@@ -100,15 +107,9 @@ class TailTracker:
                 cv2.INTER_NEAREST
             )
 
-        # diagonal crop
-        angle = np.arctan2(heading[1,1],heading[0,1]) 
-        w, h = self.tracking_param.crop_dimension_px
-        corner = centroid*self.tracking_param.resize - w//2 * heading[:,1] + (-h//2 + self.tracking_param.crop_offset_tail_px) * heading[:,0] 
-        image_crop = diagonal_crop(
-            image, 
-            Rect(int(corner[0]),int(corner[1]),w,h),
-            np.rad2deg(angle)
-        )
+        # crop image
+        left, bottom, right, top = self.get_roi_coords(centroid)
+        image_crop = image[bottom:top, left:right]
 
         # tune image contrast and gamma
         image_crop = imcontrast(
@@ -159,7 +160,6 @@ class TailTracker:
             skeleton_interp = None
 
         res = TailTracking(
-            heading = heading,
             centroid = centroid,
             skeleton = skeleton,
             skeleton_interp = skeleton_interp,
@@ -168,19 +168,22 @@ class TailTracker:
 
         return res
     
-    def overlay(self, image: NDArray, tracking: TailTracking, offset: Optional[NDArray] = None):
-        # TODO check if using polyline is faster
+    # TODO check if using polyline is faster
+    def overlay(
+            self, 
+            image: NDArray, 
+            tracking: TailTracking, 
+            translation_vec: NDArray,
+            rotation_mat: NDArray
+        ) -> NDArray:
+
         if tracking is not None:
-            angle = np.arctan2(tracking.heading[1,1],tracking.heading[0,1]) 
-            R = rotation_matrix(np.rad2deg(angle))[:2,:2]
-            w = self.tracking_param.crop_dimension_px[0] / self.tracking_param.resize
-            h = self.tracking_param.crop_dimension_px[1] / self.tracking_param.resize
-            corner = tracking.centroid - w//2 * tracking.heading[:,1] + (-h//2 + self.tracking_param.crop_offset_tail_px / self.tracking_param.resize) * tracking.heading[:,0] 
-            if offset is not None:
-                corner = corner + offset 
+            left, bottom, _, _ = self.get_roi_coords(tracking.centroid)
+            corner = np.array([left, bottom])
+            corner = corner + translation_vec 
                 
             if tracking.skeleton_interp is not None:
-                transformed_coord = (R @ tracking.skeleton_interp.T).T + corner
+                transformed_coord = (rotation_mat @ tracking.skeleton_interp.T).T + corner
                 tail_segments = zip(transformed_coord[:-1,], transformed_coord[1:,])
                 for pt1, pt2 in tail_segments:
                     image = cv2.line(
@@ -194,7 +197,9 @@ class TailTracker:
         return image
     
     def overlay_local(self, tracking: TailTracking):
+
         image = None
+
         if tracking is not None:
             image = tracking.image.copy()
             image = np.dstack((image,image,image))
