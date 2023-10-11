@@ -108,12 +108,15 @@ class TrackerWidget(QMainWindow):
             self.image_overlay.setPixmap(NDarray_to_QPixmap(overlay))
 
             self.animal_tracker_widget.display(tracking['animals'])
-            if self.body_tracker_widget is not None:
-                self.body_tracker_widget.display(tracking['body'][self.current_id])
-            if self.eyes_tracker_widget is not None:
-                self.eyes_tracker_widget.display(tracking['eyes'][self.current_id])
-            if self.tail_tracker_widget is not None:
-                self.tail_tracker_widget.display(tracking['tail'][self.current_id])
+            try:
+                if self.body_tracker_widget is not None:
+                    self.body_tracker_widget.display(tracking['body'][self.current_id])
+                if self.eyes_tracker_widget is not None:
+                    self.eyes_tracker_widget.display(tracking['eyes'][self.current_id])
+                if self.tail_tracker_widget is not None:
+                    self.tail_tracker_widget.display(tracking['tail'][self.current_id])
+            except KeyError:
+                pass
 
             self.update()
 
