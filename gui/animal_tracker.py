@@ -204,10 +204,6 @@ class AnimalTrackerWidget(QWidget):
         )
         self.tracker = AnimalTracker(tracker_param, overlay_param)
 
-    def track(self, image: NDArray):
-        tracking = self.tracker.track(image)
-        self.display(tracking)
-
     def display(self, tracking):
         if tracking is not None:
             overlay = self.tracker.overlay_local(tracking)

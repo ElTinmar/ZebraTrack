@@ -192,10 +192,6 @@ class BodyTrackerWidget(QWidget):
         )
         self.tracker = BodyTracker(tracker_param, overlay_param)
 
-    def set_image(self, image: NDArray, offset = Optional[NDArray]):
-        tracking = self.tracker.track(image, offset)
-        self.display(tracking)
-
     def display(self, tracking):
         if tracking is not None:
             overlay = self.tracker.overlay_local(tracking)
