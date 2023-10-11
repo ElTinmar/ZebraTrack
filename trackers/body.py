@@ -187,7 +187,6 @@ class BodyTracker:
         offset: if tracking on cropped image, offset of cropped part in larger image
         '''
 
-
         if tracking is not None:
             pt1 = tracking.centroid
             if offset is not None:
