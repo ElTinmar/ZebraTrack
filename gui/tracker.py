@@ -117,8 +117,6 @@ class TrackerWidget(QMainWindow):
             except KeyError:
                 pass
 
-            self.update()
-
     def on_mouse_click(self, event):
         x = event.pos().x()
         y = event.pos().y() 
