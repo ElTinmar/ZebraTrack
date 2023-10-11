@@ -70,7 +70,7 @@ class Tracker:
             body[id] = None
 
             # crop each animal's bounding box
-            image_cropped = image[bottom:top, left:right]
+            image_cropped = image[bottom:top, left:right] 
             offset = np.array([bb_x, bb_y])
             if self.body_tracker is not None:
 
@@ -81,9 +81,16 @@ class Tracker:
                     # rotate image so that the animal's principal axis is vertical
                     image_rot = diagonal_crop(
                         image_cropped, 
-                        Rect(0,0,image_cropped.shape[1],image_cropped.shape[0]),
+                        Rect(int(left), int(bottom), image_cropped.shape[1], image_cropped.shape[0]),
                         np.rad2deg(body[id].angle_rad)
                     )
+                    
+                    if id == 0:
+                        cv2.imshow('debug0', image_rot)
+                        cv2.waitKey(1)
+                    if id == 1:
+                        cv2.imshow('debug1', image_rot)
+                        cv2.waitKey(1)
 
                     # track eyes 
                     if self.eyes_tracker is not None:
