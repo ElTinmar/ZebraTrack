@@ -61,6 +61,7 @@ class Tracker:
             if self.body_tracker is not None:
                 body[id] = self.body_tracker.track(image_cropped, offset)
                 if body[id] is not None:
+                    # TODO do diag crop here and give it directly to eye and tail tracker
                     if self.eyes_tracker is not None:
                         eyes[id] = self.eyes_tracker.track(image_cropped, body[id].heading, body[id].centroid)
                     if self.tail_tracker is not None:
