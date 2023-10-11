@@ -6,7 +6,7 @@ import numpy as np
 import cv2
 from typing import Protocol, Optional
 from image.imcontrast import imcontrast
-from image.crop import diagonal_crop, rotation_matrix
+from image.crop import diagonal_crop, rotate, rotation_matrix
 from geometry.rect import Rect
 
 class Accumulator(Protocol):
@@ -79,9 +79,9 @@ class Tracker:
                 if body[id] is not None:
                     
                     # rotate image so that the animal's principal axis is vertical
-                    image_rot = diagonal_crop(
+                    image_rot = rotate(
                         image_cropped, 
-                        Rect(int(left), int(bottom), image_cropped.shape[1], image_cropped.shape[0]),
+                        Rect(int(body[id].centroid[0]), int(body[id].centroid[1]), image_cropped.shape[1], image_cropped.shape[0]),
                         np.rad2deg(body[id].angle_rad)
                     )
                     

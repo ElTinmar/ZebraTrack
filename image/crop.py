@@ -91,3 +91,18 @@ def diagonal_crop(image: NDArray, rect: Rect, angle_deg: float) -> NDArray:
     rotated_crop = np.pad(rotated_crop,(pad_v,pad_h), constant_values=0)
 
     return rotated_crop
+
+def rotate(image: NDArray, rect: Rect, angle_deg: float) -> NDArray:
+    # compute bounding box after rotation
+    imrect = Rect(rect.left, rect.bottom, image.shape[1], image.shape[0])
+    bb = bounding_box_after_rot(imrect, angle_deg)
+
+    # rotate and translate image
+    T0 = translation_matrix(-rect.left, -rect.bottom)
+    R = rotation_matrix(angle_deg)
+    T1 = translation_matrix(rect.left, rect.bottom)
+    T2 = translation_matrix(-bb.left, -bb.bottom)
+    warp_mat = T2 @ np.linalg.inv(T1 @ R @ T0)
+    rotated_image = cv2.warpAffine(image, warp_mat[:2,:], (bb.width, bb.height), flags=cv2.INTER_NEAREST)
+    
+    return rotated_image
