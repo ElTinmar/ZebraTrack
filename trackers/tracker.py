@@ -116,16 +116,16 @@ class Tracker:
         if tracking is None:
             return None
         
-        # overlay animal bounding boxes
-        image = self.animal_tracker.overlay(image, tracking['animals'])
-
         # loop over animals
         for idx, id in zip(tracking['indices'], tracking['identities']):
-            if tracking['animals'] is not None:
+            if (self.animal_tracker is not None)  and (tracking['animals'] is not None):
+                # overlay animal bounding boxes
+                image = self.animal_tracker.overlay(image, tracking['animals'])
+                
                 # translate according to animal position 
                 bbox_bottomleft = tracking['animals'].bounding_boxes[idx,:2]
 
-                if tracking['body'] is not None:
+                if (self.body_tracker is not None)  and (tracking['body'][id] is not None):
                     # rotate according to animal orientation 
                     angle = tracking['body'][id].angle_rad
                     rotation = rotation_matrix(np.rad2deg(angle))[:2,:2]
@@ -134,12 +134,12 @@ class Tracker:
                     image = self.body_tracker.overlay(image, tracking['body'][id], bbox_bottomleft)
                     
                     # overlay eyes
-                    if tracking['eyes'] is not None:
+                    if (self.eyes_tracker is not None)  and (tracking['eyes'][id] is not None):
                         offset_eye_ROI = bbox_bottomleft + tracking['body'][id].centroid 
                         image = self.eyes_tracker.overlay(image, tracking['eyes'][id], offset_eye_ROI, rotation)
                     
                     # overlay tail
-                    if tracking['tail'] is not None:
+                    if (self.tail_tracker is not None)  and (tracking['tail'][id] is not None):
                         offset_tail_ROI = bbox_bottomleft + tracking['body'][id].centroid 
                         image = self.tail_tracker.overlay(image, tracking['tail'][id], offset_tail_ROI, rotation)
 
@@ -156,16 +156,16 @@ class Tracker:
         image = tracking['image'].copy()
         image = np.dstack((image,image,image))
 
-        # overlay animal bounding boxes
-        image = self.animal_tracker.overlay(image, tracking['animals'])
-
         # loop over animals
         for idx, id in zip(tracking['indices'], tracking['identities']):
-            if tracking['animals'] is not None:
+            if (self.animal_tracker is not None)  and (tracking['animals'] is not None):
+                # overlay animal bounding boxes
+                image = self.animal_tracker.overlay(image, tracking['animals'])
+                
                 # translate according to animal position 
                 bbox_bottomleft = tracking['animals'].bounding_boxes[idx,:2]
 
-                if tracking['body'] is not None:
+                if (self.body_tracker is not None)  and (tracking['body'][id] is not None):
                     # rotate according to animal orientation 
                     angle = tracking['body'][id].angle_rad
                     rotation = rotation_matrix(np.rad2deg(angle))[:2,:2]
@@ -174,12 +174,12 @@ class Tracker:
                     image = self.body_tracker.overlay(image, tracking['body'][id], bbox_bottomleft)
                     
                     # overlay eyes
-                    if tracking['eyes'] is not None:
+                    if (self.eyes_tracker is not None)  and (tracking['eyes'][id]is not None):
                         offset_eye_ROI = bbox_bottomleft + tracking['body'][id].centroid 
                         image = self.eyes_tracker.overlay(image, tracking['eyes'][id], offset_eye_ROI, rotation)
                     
                     # overlay tail
-                    if tracking['tail'] is not None:
+                    if (self.tail_tracker is not None)  and (tracking['tail'][id] is not None):
                         offset_tail_ROI = bbox_bottomleft + tracking['body'][id].centroid 
                         image = self.tail_tracker.overlay(image, tracking['tail'][id], offset_tail_ROI, rotation)
 
