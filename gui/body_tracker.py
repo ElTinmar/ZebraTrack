@@ -134,7 +134,7 @@ class BodyTrackerWidget(QWidget):
         self.zoom = LabeledSpinBox(self)
         self.zoom.setText('zoom (%)')
         self.zoom.setRange(0,500)
-        self.zoom.setValue(100)
+        self.zoom.setValue(300)
         self.zoom.setSingleStep(25)
         self.zoom.valueChanged.connect(self.update_tracker)
 

@@ -45,7 +45,7 @@ class TrackerWidget(QMainWindow):
         self.zoom = LabeledSpinBox(self)
         self.zoom.setText('zoom (%)')
         self.zoom.setRange(0,500)
-        self.zoom.setValue(100)
+        self.zoom.setValue(66)
         self.zoom.setSingleStep(25)
 
     def layout_components(self):
