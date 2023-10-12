@@ -92,7 +92,7 @@ class TailTracker:
         left, bottom = centroid * self.tracking_param.resize
         left = left - w//2
         bottom = bottom - h//2 + self.tracking_param.crop_offset_tail_px
-        return int(left), int(bottom), int(left + w), int(bottom + h)
+        return int(left), int(bottom), w, h
 
     def track(self, image: NDArray, centroid: NDArray):
 
@@ -107,7 +107,9 @@ class TailTracker:
             )
 
         # crop image
-        left, bottom, right, top = self.get_roi_coords(centroid)
+        left, bottom, w, h = self.get_roi_coords(centroid)
+        right = left + w
+        top = bottom + h
         image_crop = image[bottom:top, left:right]
 
         # tune image contrast and gamma
@@ -125,7 +127,7 @@ class TailTracker:
         spacing = float(self.tracking_param.tail_length_px) / self.tracking_param.n_tail_points
         start_angle = -np.pi/2
         arc = np.linspace(-arc_rad, arc_rad, self.tracking_param.n_pts_arc) + start_angle
-        x = (right-left)//2 
+        x = w//2 
         y = self.tracking_param.dist_swim_bladder_px
         points = [[x, y]]
         for j in range(self.tracking_param.n_tail_points):

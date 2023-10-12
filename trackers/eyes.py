@@ -146,7 +146,7 @@ class EyesTracker:
         left, bottom = centroid * self.tracking_param.resize
         left = left - w//2
         bottom = bottom - h//2 + self.tracking_param.crop_offset_px
-        return int(left), int(bottom), int(left + w), int(bottom + h)
+        return int(left), int(bottom), w, h
      
     def track(self, image: NDArray, centroid: NDArray):
 
@@ -165,7 +165,9 @@ class EyesTracker:
         new_heading = None
     
         # crop image
-        left, bottom, right, top = self.get_roi_coords(centroid)
+        left, bottom, w, h = self.get_roi_coords(centroid)
+        right = left + w
+        top = bottom + h
         image_crop = image[bottom:top, left:right]
 
         # tune image contrast and gamma

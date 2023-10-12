@@ -6,7 +6,7 @@ import numpy as np
 import cv2
 from typing import Protocol, Optional
 from image.imcontrast import imcontrast
-from image.crop import diagonal_crop, rotate, rotation_matrix
+from image.crop import diagonal_crop, imrotate, rotation_matrix
 from geometry.rect import Rect
 
 class Accumulator(Protocol):
@@ -78,27 +78,19 @@ class Tracker:
                 body[id] = self.body_tracker.track(image_cropped, offset)
                 if body[id] is not None:
                     
-                    # rotate image so that the animal's principal axis is vertical
-                    image_rot = rotate(
+                    image_rot, new_centroid = imrotate(
                         image_cropped, 
-                        Rect(int(body[id].centroid[0]), int(body[id].centroid[1]), image_cropped.shape[1], image_cropped.shape[0]),
+                        body[id].centroid[0], body[id].centroid[1], 
                         np.rad2deg(body[id].angle_rad)
                     )
-                    
-                    if id == 0:
-                        cv2.imshow('debug0', image_rot)
-                        cv2.waitKey(1)
-                    if id == 1:
-                        cv2.imshow('debug1', image_rot)
-                        cv2.waitKey(1)
 
-                    # track eyes 
                     if self.eyes_tracker is not None:
-                        eyes[id] = self.eyes_tracker.track(image_rot, body[id].centroid)
+                        # track eyes 
+                        eyes[id] = self.eyes_tracker.track(image_rot, new_centroid)
 
                     # track tail
                     if self.tail_tracker is not None:
-                        tail[id] = self.tail_tracker.track(image_rot, body[id].centroid)
+                        tail[id] = self.tail_tracker.track(image_rot, new_centroid)
 
                 # compute additional features based on tracking
                 if self.accumulator is not None:
