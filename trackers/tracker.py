@@ -126,29 +126,17 @@ class Tracker:
                 angle = tracking['body'][id].angle_rad
                 rotation = rotation_matrix(np.rad2deg(angle))[:2,:2]
                 
-                # overlay body orientation
+                # overlay body
                 image = self.body_tracker.overlay(image, tracking['body'][id], bbox_bottomleft)
                 
                 # overlay eyes
                 if self.eyes_tracker is not None:
-                    w, h = np.array(self.eyes_tracker.tracking_param.crop_dimension_px) / self.eyes_tracker.tracking_param.resize
-                    offset_eye_ROI = (
-                        bbox_bottomleft
-                        + tracking['body'][id].centroid 
-                        #+ tracking['body'][id].heading[:,1] * (-w//2)
-                        #+ tracking['body'][id].heading[:,0] * (-h//2 + self.eyes_tracker.tracking_param.crop_offset_px / self.eyes_tracker.tracking_param.resize)
-                    )
+                    offset_eye_ROI = bbox_bottomleft + tracking['body'][id].centroid 
                     image = self.eyes_tracker.overlay(image, tracking['eyes'][id], offset_eye_ROI, rotation)
                 
                 # overlay tail
                 if self.tail_tracker is not None:
-                    w, h = np.array(self.tail_tracker.tracking_param.crop_dimension_px) / self.tail_tracker.tracking_param.resize
-                    offset_tail_ROI = (
-                        bbox_bottomleft
-                        + tracking['body'][id].centroid 
-                        #+ tracking['body'][id].heading[:,1] * (-w//2) 
-                        #+ tracking['body'][id].heading[:,0] * (-h//2 + self.tail_tracker.tracking_param.crop_offset_tail_px / self.tail_tracker.tracking_param.resize)
-                    )
+                    offset_tail_ROI = bbox_bottomleft + tracking['body'][id].centroid 
                     image = self.tail_tracker.overlay(image, tracking['tail'][id], offset_tail_ROI, rotation)
 
             # show ID
@@ -182,24 +170,12 @@ class Tracker:
                 
                 # overlay eyes
                 if self.eyes_tracker is not None:
-                    w, h = np.array(self.eyes_tracker.tracking_param.crop_dimension_px) / self.eyes_tracker.tracking_param.resize
-                    offset_eye_ROI = (
-                        bbox_bottomleft
-                        + tracking['body'][id].centroid 
-                        #+ tracking['body'][id].heading[:,1] * (-w//2)
-                        #+ tracking['body'][id].heading[:,0] * (-h//2 + self.eyes_tracker.tracking_param.crop_offset_px / self.eyes_tracker.tracking_param.resize)
-                    )
+                    offset_eye_ROI = bbox_bottomleft + tracking['body'][id].centroid 
                     image = self.eyes_tracker.overlay(image, tracking['eyes'][id], offset_eye_ROI, rotation)
                 
                 # overlay tail
                 if self.tail_tracker is not None:
-                    w, h = np.array(self.tail_tracker.tracking_param.crop_dimension_px) / self.tail_tracker.tracking_param.resize
-                    offset_tail_ROI = (
-                        bbox_bottomleft
-                        + tracking['body'][id].centroid 
-                        #+ tracking['body'][id].heading[:,1] * (-w//2) 
-                        #+ tracking['body'][id].heading[:,0] * (-h//2 + self.tail_tracker.tracking_param.crop_offset_tail_px / self.tail_tracker.tracking_param.resize)
-                    )
+                    offset_tail_ROI = bbox_bottomleft + tracking['body'][id].centroid 
                     image = self.tail_tracker.overlay(image, tracking['tail'][id], offset_tail_ROI, rotation)
 
             # show ID
