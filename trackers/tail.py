@@ -96,6 +96,9 @@ class TailTracker:
 
     def track(self, image: NDArray, centroid: NDArray):
 
+        if (image is None) or (image.size == 0):
+            return None
+
         if self.tracking_param.resize != 1:
             image = cv2.resize(
                 image, 
@@ -111,6 +114,8 @@ class TailTracker:
         right = left + w
         top = bottom + h
         image_crop = image[bottom:top, left:right]
+        if image_crop.size == 0:
+            return None
 
         # tune image contrast and gamma
         image_crop = imcontrast(

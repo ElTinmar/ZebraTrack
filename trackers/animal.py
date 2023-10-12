@@ -107,6 +107,9 @@ class AnimalTracker:
         self.overlay_param = overlay_param
 
     def track(self, image: NDArray) -> AnimalTracking:
+
+        if (image is None) or (image.size == 0):
+            return None
         
         if self.tracking_param.resize != 1:
             image = cv2.resize(

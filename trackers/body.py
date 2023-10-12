@@ -123,6 +123,9 @@ class BodyTracker:
         Useful when tracking multiple fish to discriminate between nearby blobs
         '''
 
+        if (image is None) or (image.size == 0):
+            return None
+
         if self.tracking_param.resize != 1:
             image = cv2.resize(
                 image, 

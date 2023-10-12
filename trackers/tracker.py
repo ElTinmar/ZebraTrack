@@ -39,6 +39,9 @@ class Tracker:
         
     def track(self, image):
 
+        if (image is None) or (image.size == 0):
+            return None
+        
         # restrain image between 0 and 1
         image = imcontrast(image)
 
@@ -118,26 +121,27 @@ class Tracker:
 
         # loop over animals
         for idx, id in zip(tracking['indices'], tracking['identities']):
-            if self.body_tracker is not None:
+            if tracking['animals'] is not None:
                 # translate according to animal position 
                 bbox_bottomleft = tracking['animals'].bounding_boxes[idx,:2]
 
-                # rotate according to animal orientation 
-                angle = tracking['body'][id].angle_rad
-                rotation = rotation_matrix(np.rad2deg(angle))[:2,:2]
-                
-                # overlay body
-                image = self.body_tracker.overlay(image, tracking['body'][id], bbox_bottomleft)
-                
-                # overlay eyes
-                if self.eyes_tracker is not None:
-                    offset_eye_ROI = bbox_bottomleft + tracking['body'][id].centroid 
-                    image = self.eyes_tracker.overlay(image, tracking['eyes'][id], offset_eye_ROI, rotation)
-                
-                # overlay tail
-                if self.tail_tracker is not None:
-                    offset_tail_ROI = bbox_bottomleft + tracking['body'][id].centroid 
-                    image = self.tail_tracker.overlay(image, tracking['tail'][id], offset_tail_ROI, rotation)
+                if tracking['body'] is not None:
+                    # rotate according to animal orientation 
+                    angle = tracking['body'][id].angle_rad
+                    rotation = rotation_matrix(np.rad2deg(angle))[:2,:2]
+                    
+                    # overlay body
+                    image = self.body_tracker.overlay(image, tracking['body'][id], bbox_bottomleft)
+                    
+                    # overlay eyes
+                    if tracking['eyes'] is not None:
+                        offset_eye_ROI = bbox_bottomleft + tracking['body'][id].centroid 
+                        image = self.eyes_tracker.overlay(image, tracking['eyes'][id], offset_eye_ROI, rotation)
+                    
+                    # overlay tail
+                    if tracking['tail'] is not None:
+                        offset_tail_ROI = bbox_bottomleft + tracking['body'][id].centroid 
+                        image = self.tail_tracker.overlay(image, tracking['tail'][id], offset_tail_ROI, rotation)
 
             # show ID
             cv2.putText(image, str(id), bbox_bottomleft.astype(int), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0,0,255), 2, cv2.LINE_AA)
@@ -157,26 +161,27 @@ class Tracker:
 
         # loop over animals
         for idx, id in zip(tracking['indices'], tracking['identities']):
-            if self.body_tracker is not None:
+            if tracking['animals'] is not None:
                 # translate according to animal position 
                 bbox_bottomleft = tracking['animals'].bounding_boxes[idx,:2]
 
-                # rotate according to animal orientation 
-                angle = tracking['body'][id].angle_rad
-                rotation = rotation_matrix(np.rad2deg(angle))[:2,:2]
-
-                # overlay body
-                image = self.body_tracker.overlay(image, tracking['body'][id], bbox_bottomleft)
-                
-                # overlay eyes
-                if self.eyes_tracker is not None:
-                    offset_eye_ROI = bbox_bottomleft + tracking['body'][id].centroid 
-                    image = self.eyes_tracker.overlay(image, tracking['eyes'][id], offset_eye_ROI, rotation)
-                
-                # overlay tail
-                if self.tail_tracker is not None:
-                    offset_tail_ROI = bbox_bottomleft + tracking['body'][id].centroid 
-                    image = self.tail_tracker.overlay(image, tracking['tail'][id], offset_tail_ROI, rotation)
+                if tracking['body'] is not None:
+                    # rotate according to animal orientation 
+                    angle = tracking['body'][id].angle_rad
+                    rotation = rotation_matrix(np.rad2deg(angle))[:2,:2]
+                    
+                    # overlay body
+                    image = self.body_tracker.overlay(image, tracking['body'][id], bbox_bottomleft)
+                    
+                    # overlay eyes
+                    if tracking['eyes'] is not None:
+                        offset_eye_ROI = bbox_bottomleft + tracking['body'][id].centroid 
+                        image = self.eyes_tracker.overlay(image, tracking['eyes'][id], offset_eye_ROI, rotation)
+                    
+                    # overlay tail
+                    if tracking['tail'] is not None:
+                        offset_tail_ROI = bbox_bottomleft + tracking['body'][id].centroid 
+                        image = self.tail_tracker.overlay(image, tracking['tail'][id], offset_tail_ROI, rotation)
 
             # show ID
             cv2.putText(image, str(id), bbox_bottomleft.astype(int), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0,0,255), 2, cv2.LINE_AA)
