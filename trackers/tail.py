@@ -151,7 +151,7 @@ class TailTracker:
 
         # interpolate
         skeleton = np.array(points).astype('float')
-        skeleton = skeleton/self.tracking_param.resize
+        skeleton = skeleton / self.tracking_param.resize
         try:
             tck, _ = splprep(skeleton.T)
             new_points = splev(np.linspace(0,1,self.tracking_param.n_pts_interp), tck)
@@ -181,7 +181,8 @@ class TailTracker:
         if tracking is not None:
                 
             if tracking.skeleton_interp is not None:
-                transformed_coord = (rotation_mat @ tracking.skeleton_interp.T).T + translation_vec
+                skeleton_interp = tracking.skeleton_interp 
+                transformed_coord = (rotation_mat @ skeleton_interp.T).T + translation_vec
                 tail_segments = zip(transformed_coord[:-1,], transformed_coord[1:,])
                 for pt1, pt2 in tail_segments:
                     image = cv2.line(
@@ -202,9 +203,10 @@ class TailTracker:
             image = tracking.image.copy()
             image = np.dstack((image,image,image))
             if tracking.skeleton_interp is not None:
+                skeleton_interp = tracking.skeleton_interp * self.tracking_param.resize
                 tail_segments = zip(
-                    tracking.skeleton_interp[:-1,]*self.tracking_param.resize, 
-                    tracking.skeleton_interp[1:,]*self.tracking_param.resize
+                    skeleton_interp[:-1,], 
+                    skeleton_interp[1:,]
                 )
                 for pt1, pt2 in tail_segments:
                     image = cv2.line(

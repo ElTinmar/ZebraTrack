@@ -177,7 +177,7 @@ class BodyTracker:
 
             res = BodyTracking(
                 heading = principal_components,
-                centroid = centroid/self.tracking_param.resize,
+                centroid = centroid / self.tracking_param.resize,
                 angle_rad = np.arctan2(principal_components[1,1], principal_components[0,1]),
                 mask = (255*mask).astype(np.uint8),
                 image = (255*image).astype(np.uint8)
@@ -193,7 +193,7 @@ class BodyTracker:
             pt1 = tracking.centroid
             if offset is not None:
                 pt1 = pt1 + offset
-            pt2 = pt1 + self.overlay_param.heading_len_px*tracking.heading[:,0]
+            pt2 = pt1 + self.overlay_param.heading_len_px * tracking.heading[:,0]
             image = cv2.line(
                 image,
                 pt1.astype(np.int32),
@@ -216,8 +216,8 @@ class BodyTracker:
         if tracking is not None:
             image = tracking.image.copy()
             image = np.dstack((image,image,image))
-            pt1 = tracking.centroid*self.tracking_param.resize
-            pt2 = pt1 + self.overlay_param.heading_len_px*tracking.heading[:,0]
+            pt1 = tracking.centroid * self.tracking_param.resize
+            pt2 = pt1 + self.overlay_param.heading_len_px * tracking.heading[:,0]
             image = cv2.line(
                 image,
                 pt1.astype(np.int32),

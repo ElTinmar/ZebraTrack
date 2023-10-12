@@ -113,58 +113,97 @@ class Tracker:
         if tracking is None:
             return None
         
+        # overlay animal bounding boxes
         image = self.animal_tracker.overlay(image, tracking['animals'])
 
         # loop over animals
         for idx, id in zip(tracking['indices'], tracking['identities']):
             if self.body_tracker is not None:
                 # translate according to animal position 
-                translation = tracking['animals'].bounding_boxes[idx,:2]
+                bbox_bottomleft = tracking['animals'].bounding_boxes[idx,:2]
 
                 # rotate according to animal orientation 
                 angle = tracking['body'][id].angle_rad
                 rotation = rotation_matrix(np.rad2deg(angle))[:2,:2]
                 
-                image = self.body_tracker.overlay(image, tracking['body'][id], translation)
+                # overlay body orientation
+                image = self.body_tracker.overlay(image, tracking['body'][id], bbox_bottomleft)
+                
+                # overlay eyes
                 if self.eyes_tracker is not None:
                     w, h = np.array(self.eyes_tracker.tracking_param.crop_dimension_px) / self.eyes_tracker.tracking_param.resize
-                    offset_eye_ROI = tracking['body'][id].centroid - w//2 * tracking['body'][id].heading[:,1] + (-h//2 + self.eyes_tracker.tracking_param.crop_offset_px / self.eyes_tracker.tracking_param.resize) * tracking['body'][id].heading[:,0] 
-                    image = self.eyes_tracker.overlay(image, tracking['eyes'][id], translation+offset_eye_ROI, rotation)
+                    offset_eye_ROI = (
+                        bbox_bottomleft
+                        + tracking['body'][id].centroid 
+                        + tracking['body'][id].heading[:,1] * (-w//2)
+                        + tracking['body'][id].heading[:,0] * (-h//2 + self.eyes_tracker.tracking_param.crop_offset_px / self.eyes_tracker.tracking_param.resize)
+                    )
+                    image = self.eyes_tracker.overlay(image, tracking['eyes'][id], offset_eye_ROI, rotation)
+                
+                # overlay tail
                 if self.tail_tracker is not None:
                     w, h = np.array(self.tail_tracker.tracking_param.crop_dimension_px) / self.tail_tracker.tracking_param.resize
-                    offset_tail_ROI = tracking['body'][id].centroid - w//2 * tracking['body'][id].heading[:,1] + (-h//2 + self.tail_tracker.tracking_param.crop_offset_tail_px / self.tail_tracker.tracking_param.resize) * tracking['body'][id].heading[:,0] 
-                    image = self.tail_tracker.overlay(image, tracking['tail'][id], translation+offset_tail_ROI, rotation)
+                    offset_tail_ROI = (
+                        bbox_bottomleft
+                        + tracking['body'][id].centroid 
+                        + tracking['body'][id].heading[:,1] * (-w//2) 
+                        + tracking['body'][id].heading[:,0] * (-h//2 + self.tail_tracker.tracking_param.crop_offset_tail_px / self.tail_tracker.tracking_param.resize)
+                    )
+                    image = self.tail_tracker.overlay(image, tracking['tail'][id], offset_tail_ROI, rotation)
 
             # show ID
-            cv2.putText(image, str(id), translation.astype(int), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0,0,255), 2, cv2.LINE_AA)
+            cv2.putText(image, str(id), bbox_bottomleft.astype(int), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0,0,255), 2, cv2.LINE_AA)
+        
         return image
     
     def overlay_local(self, tracking):
         if tracking is None:
             return None
         
+        # copy to avoid side-effects
         image = tracking['image'].copy()
         image = np.dstack((image,image,image))
+
+        # overlay animal bounding boxes
+        image = self.animal_tracker.overlay(image, tracking['animals'])
+
+        # loop over animals
         for idx, id in zip(tracking['indices'], tracking['identities']):
             if self.body_tracker is not None:
                 # translate according to animal position 
-                translation = tracking['animals'].bounding_boxes[idx,:2]
+                bbox_bottomleft = tracking['animals'].bounding_boxes[idx,:2]
 
                 # rotate according to animal orientation 
                 angle = tracking['body'][id].angle_rad
                 rotation = rotation_matrix(np.rad2deg(angle))[:2,:2]
 
-                image = self.body_tracker.overlay(image, tracking['body'][id], translation)
+                # overlay body
+                image = self.body_tracker.overlay(image, tracking['body'][id], bbox_bottomleft)
+                
+                # overlay eyes
                 if self.eyes_tracker is not None:
                     w, h = np.array(self.eyes_tracker.tracking_param.crop_dimension_px) / self.eyes_tracker.tracking_param.resize
-                    offset_eye_ROI = tracking['body'][id].centroid - w//2 * tracking['body'][id].heading[:,1] + (-h//2 + self.eyes_tracker.tracking_param.crop_offset_px / self.eyes_tracker.tracking_param.resize) * tracking['body'][id].heading[:,0] 
-                    image = self.eyes_tracker.overlay(image, tracking['eyes'][id], translation+offset_eye_ROI, rotation)
+                    offset_eye_ROI = (
+                        bbox_bottomleft
+                        + tracking['body'][id].centroid 
+                        + tracking['body'][id].heading[:,1] * (-w//2)
+                        + tracking['body'][id].heading[:,0] * (-h//2 + self.eyes_tracker.tracking_param.crop_offset_px / self.eyes_tracker.tracking_param.resize)
+                    )
+                    image = self.eyes_tracker.overlay(image, tracking['eyes'][id], offset_eye_ROI, rotation)
+                
+                # overlay tail
                 if self.tail_tracker is not None:
                     w, h = np.array(self.tail_tracker.tracking_param.crop_dimension_px) / self.tail_tracker.tracking_param.resize
-                    offset_tail_ROI = tracking['body'][id].centroid - w//2 * tracking['body'][id].heading[:,1] + (-h//2 + self.tail_tracker.tracking_param.crop_offset_tail_px / self.tail_tracker.tracking_param.resize) * tracking['body'][id].heading[:,0] 
-                    image = self.tail_tracker.overlay(image, tracking['tail'][id], translation+offset_tail_ROI, rotation)
+                    offset_tail_ROI = (
+                        bbox_bottomleft
+                        + tracking['body'][id].centroid 
+                        + tracking['body'][id].heading[:,1] * (-w//2) 
+                        + tracking['body'][id].heading[:,0] * (-h//2 + self.tail_tracker.tracking_param.crop_offset_tail_px / self.tail_tracker.tracking_param.resize)
+                    )
+                    image = self.tail_tracker.overlay(image, tracking['tail'][id], offset_tail_ROI, rotation)
 
             # show ID
-            cv2.putText(image, str(id), translation.astype(int), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0,0,255), 2, cv2.LINE_AA)
+            cv2.putText(image, str(id), bbox_bottomleft.astype(int), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0,0,255), 2, cv2.LINE_AA)
+        
         return image
     
