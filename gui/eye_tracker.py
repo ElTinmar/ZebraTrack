@@ -100,7 +100,7 @@ class EyesTrackerWidget(QWidget):
         self.crop_offset_mm = LabeledDoubleSpinBox(self)
         self.crop_offset_mm.setText('Y offset eyes')
         self.crop_offset_mm.setRange(-5,5)
-        self.crop_offset_mm.setValue(1.75)
+        self.crop_offset_mm.setValue(-0.30)
         self.crop_offset_mm.setSingleStep(0.05)
         self.crop_offset_mm.valueChanged.connect(self.update_tracker) 
 

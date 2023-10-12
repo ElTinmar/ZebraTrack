@@ -78,7 +78,7 @@ class TailTrackerWidget(QWidget):
         self.tail_length_mm = LabeledDoubleSpinBox(self)
         self.tail_length_mm.setText('tail_length_mm')
         self.tail_length_mm.setRange(0,10)
-        self.tail_length_mm.setValue(2.3)
+        self.tail_length_mm.setValue(2.6)
         self.tail_length_mm.setSingleStep(0.025)
         self.tail_length_mm.valueChanged.connect(self.update_tracker)
 
@@ -141,7 +141,7 @@ class TailTrackerWidget(QWidget):
         self.crop_offset_tail_mm = LabeledDoubleSpinBox(self)
         self.crop_offset_tail_mm.setText('crop offset (mm)')
         self.crop_offset_tail_mm.setRange(-5,5)
-        self.crop_offset_tail_mm.setValue(1.35)
+        self.crop_offset_tail_mm.setValue(2.25)
         self.crop_offset_tail_mm.setSingleStep(-0.05)
         self.crop_offset_tail_mm.valueChanged.connect(self.update_tracker)
 

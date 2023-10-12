@@ -20,12 +20,12 @@ class TailTrackerParamTracking:
     n_tail_points: int = 12
     n_pts_arc: int = 20
     n_pts_interp: int = 40
-    tail_length_mm: float = 2.5
+    tail_length_mm: float = 2.6
     dist_swim_bladder_mm: float = 0.4
     blur_sz_mm: float = 0.10
     median_filter_sz_mm: float = 0.110
     crop_dimension_mm: Tuple[float, float] = (1.5, 1.5) 
-    crop_offset_tail_mm: float = 2.0
+    crop_offset_tail_mm: float = 2.25
     
     def mm2px(self, val_mm: float) -> int:
         return int(val_mm * self.target_pix_per_mm) 
