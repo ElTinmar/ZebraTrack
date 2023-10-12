@@ -6,7 +6,7 @@ import numpy as np
 import cv2
 from typing import Protocol, Optional
 from image.imcontrast import imcontrast
-from image.crop import diagonal_crop, imrotate, rotation_matrix
+from image.crop import imrotate, rotation_matrix
 from geometry.rect import Rect
 
 class Accumulator(Protocol):
@@ -78,19 +78,20 @@ class Tracker:
                 body[id] = self.body_tracker.track(image_cropped, offset)
                 if body[id] is not None:
                     
-                    image_rot, new_centroid = imrotate(
+                    # rotate the animal so that it's vertical head up
+                    image_rot, centroid_rot = imrotate(
                         image_cropped, 
                         body[id].centroid[0], body[id].centroid[1], 
                         np.rad2deg(body[id].angle_rad)
                     )
 
+                    # track eyes 
                     if self.eyes_tracker is not None:
-                        # track eyes 
-                        eyes[id] = self.eyes_tracker.track(image_rot, new_centroid)
+                        eyes[id] = self.eyes_tracker.track(image_rot, centroid_rot)
 
                     # track tail
                     if self.tail_tracker is not None:
-                        tail[id] = self.tail_tracker.track(image_rot, new_centroid)
+                        tail[id] = self.tail_tracker.track(image_rot, centroid_rot)
 
                 # compute additional features based on tracking
                 if self.accumulator is not None:
@@ -126,9 +127,13 @@ class Tracker:
                 
                 image = self.body_tracker.overlay(image, tracking['body'][id], translation)
                 if self.eyes_tracker is not None:
-                    image = self.eyes_tracker.overlay(image, tracking['eyes'][id], translation, rotation)
+                    w, h = np.array(self.eyes_tracker.tracking_param.crop_dimension_px) / self.eyes_tracker.tracking_param.resize
+                    offset_eye_ROI = tracking['body'][id].centroid - w//2 * tracking['body'][id].heading[:,1] + (-h//2 + self.eyes_tracker.tracking_param.crop_offset_px / self.eyes_tracker.tracking_param.resize) * tracking['body'][id].heading[:,0] 
+                    image = self.eyes_tracker.overlay(image, tracking['eyes'][id], translation+offset_eye_ROI, rotation)
                 if self.tail_tracker is not None:
-                    image = self.tail_tracker.overlay(image, tracking['tail'][id], translation, rotation)
+                    w, h = np.array(self.tail_tracker.tracking_param.crop_dimension_px) / self.tail_tracker.tracking_param.resize
+                    offset_tail_ROI = tracking['body'][id].centroid - w//2 * tracking['body'][id].heading[:,1] + (-h//2 + self.tail_tracker.tracking_param.crop_offset_tail_px / self.tail_tracker.tracking_param.resize) * tracking['body'][id].heading[:,0] 
+                    image = self.tail_tracker.overlay(image, tracking['tail'][id], translation+offset_tail_ROI, rotation)
 
             # show ID
             cv2.putText(image, str(id), translation.astype(int), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0,0,255), 2, cv2.LINE_AA)
@@ -149,11 +154,17 @@ class Tracker:
                 angle = tracking['body'][id].angle_rad
                 rotation = rotation_matrix(np.rad2deg(angle))[:2,:2]
 
-                image = self.body_tracker.overlay(image, tracking['body'][id], translation) # this is the culprit
+                image = self.body_tracker.overlay(image, tracking['body'][id], translation)
                 if self.eyes_tracker is not None:
-                    image = self.eyes_tracker.overlay(image, tracking['eyes'][id], translation, rotation)
+                    w, h = np.array(self.eyes_tracker.tracking_param.crop_dimension_px) / self.eyes_tracker.tracking_param.resize
+                    offset_eye_ROI = tracking['body'][id].centroid - w//2 * tracking['body'][id].heading[:,1] + (-h//2 + self.eyes_tracker.tracking_param.crop_offset_px / self.eyes_tracker.tracking_param.resize) * tracking['body'][id].heading[:,0] 
+                    image = self.eyes_tracker.overlay(image, tracking['eyes'][id], translation+offset_eye_ROI, rotation)
                 if self.tail_tracker is not None:
-                    image = self.tail_tracker.overlay(image, tracking['tail'][id], translation, rotation)
+                    w, h = np.array(self.tail_tracker.tracking_param.crop_dimension_px) / self.tail_tracker.tracking_param.resize
+                    offset_tail_ROI = tracking['body'][id].centroid - w//2 * tracking['body'][id].heading[:,1] + (-h//2 + self.tail_tracker.tracking_param.crop_offset_tail_px / self.tail_tracker.tracking_param.resize) * tracking['body'][id].heading[:,0] 
+                    image = self.tail_tracker.overlay(image, tracking['tail'][id], translation+offset_tail_ROI, rotation)
+
+            # show ID
             cv2.putText(image, str(id), translation.astype(int), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0,0,255), 2, cv2.LINE_AA)
         return image
     

@@ -254,14 +254,11 @@ class EyesTracker:
         ) -> NDArray:
 
         if tracking is not None:
-            left, bottom, _, _ = self.get_roi_coords(tracking.centroid)
-            corner = np.array([left, bottom])
-            corner = corner + translation_vec 
 
             if tracking.left_eye is not None:
                 image = self.disp_eye(
                     image, 
-                    rotation_mat @ tracking.left_eye['centroid'] + corner,
+                    rotation_mat @ tracking.left_eye['centroid'] + translation_vec,
                     rotation_mat @ tracking.left_eye['direction'],
                     self.overlay_param.color_eye_left, 
                     self.overlay_param.eye_len_px, 
@@ -270,7 +267,7 @@ class EyesTracker:
             if tracking.right_eye is not None:   
                 image = self.disp_eye(
                     image, 
-                    rotation_mat @ tracking.right_eye['centroid'] + corner,
+                    rotation_mat @ tracking.right_eye['centroid'] + translation_vec,
                     rotation_mat @ tracking.right_eye['direction'],
                     self.overlay_param.color_eye_right, 
                     self.overlay_param.eye_len_px, 

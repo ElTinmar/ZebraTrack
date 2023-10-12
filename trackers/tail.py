@@ -179,12 +179,9 @@ class TailTracker:
         ) -> NDArray:
 
         if tracking is not None:
-            left, bottom, _, _ = self.get_roi_coords(tracking.centroid)
-            corner = np.array([left, bottom])
-            corner = corner + translation_vec 
                 
             if tracking.skeleton_interp is not None:
-                transformed_coord = (rotation_mat @ tracking.skeleton_interp.T).T + corner
+                transformed_coord = (rotation_mat @ tracking.skeleton_interp.T).T + translation_vec
                 tail_segments = zip(transformed_coord[:-1,], transformed_coord[1:,])
                 for pt1, pt2 in tail_segments:
                     image = cv2.line(
