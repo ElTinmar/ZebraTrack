@@ -179,9 +179,11 @@ class TailTracker:
         ) -> NDArray:
 
         if tracking is not None:
+
+            left, bottom, _, _ = self.get_roi_coords(tracking.centroid)
                 
             if tracking.skeleton_interp is not None:
-                skeleton_interp = tracking.skeleton_interp 
+                skeleton_interp = tracking.skeleton_interp + np.array((left, bottom))/self.tracking_param.resize - tracking.centroid
                 transformed_coord = (rotation_mat @ skeleton_interp.T).T + translation_vec
                 tail_segments = zip(transformed_coord[:-1,], transformed_coord[1:,])
                 for pt1, pt2 in tail_segments:

@@ -257,10 +257,12 @@ class EyesTracker:
 
         if tracking is not None:
 
+            left, bottom, _, _ = self.get_roi_coords(tracking.centroid)
+
             if tracking.left_eye is not None:
                 image = self.disp_eye(
                     image, 
-                    rotation_mat @ tracking.left_eye['centroid'] + translation_vec,
+                    rotation_mat @ (tracking.left_eye['centroid'] + np.array((left, bottom))/self.tracking_param.resize - tracking.centroid) + translation_vec,
                     rotation_mat @ tracking.left_eye['direction'],
                     self.overlay_param.color_eye_left, 
                     self.overlay_param.eye_len_px, 
@@ -269,7 +271,7 @@ class EyesTracker:
             if tracking.right_eye is not None:   
                 image = self.disp_eye(
                     image, 
-                    rotation_mat @ tracking.right_eye['centroid'] + translation_vec,
+                    rotation_mat @ (tracking.right_eye['centroid'] + np.array((left, bottom))/self.tracking_param.resize - tracking.centroid) + translation_vec,
                     rotation_mat @ tracking.right_eye['direction'],
                     self.overlay_param.color_eye_right, 
                     self.overlay_param.eye_len_px, 
@@ -286,7 +288,7 @@ class EyesTracker:
             if tracking.left_eye is not None:
                 image = self.disp_eye(
                     image, 
-                    tracking.left_eye['centroid']*self.tracking_param.resize,
+                    tracking.left_eye['centroid'] * self.tracking_param.resize,
                     tracking.left_eye['direction'],
                     self.overlay_param.color_eye_left, 
                     self.overlay_param.eye_len_px, 
@@ -295,7 +297,7 @@ class EyesTracker:
             if tracking.right_eye is not None:   
                 image = self.disp_eye(
                     image, 
-                    tracking.right_eye['centroid']*self.tracking_param.resize,
+                    tracking.right_eye['centroid'] * self.tracking_param.resize,
                     tracking.right_eye['direction'],
                     self.overlay_param.color_eye_right, 
                     self.overlay_param.eye_len_px, 

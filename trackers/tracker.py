@@ -135,8 +135,8 @@ class Tracker:
                     offset_eye_ROI = (
                         bbox_bottomleft
                         + tracking['body'][id].centroid 
-                        + tracking['body'][id].heading[:,1] * (-w//2)
-                        + tracking['body'][id].heading[:,0] * (-h//2 + self.eyes_tracker.tracking_param.crop_offset_px / self.eyes_tracker.tracking_param.resize)
+                        #+ tracking['body'][id].heading[:,1] * (-w//2)
+                        #+ tracking['body'][id].heading[:,0] * (-h//2 + self.eyes_tracker.tracking_param.crop_offset_px / self.eyes_tracker.tracking_param.resize)
                     )
                     image = self.eyes_tracker.overlay(image, tracking['eyes'][id], offset_eye_ROI, rotation)
                 
@@ -146,8 +146,8 @@ class Tracker:
                     offset_tail_ROI = (
                         bbox_bottomleft
                         + tracking['body'][id].centroid 
-                        + tracking['body'][id].heading[:,1] * (-w//2) 
-                        + tracking['body'][id].heading[:,0] * (-h//2 + self.tail_tracker.tracking_param.crop_offset_tail_px / self.tail_tracker.tracking_param.resize)
+                        #+ tracking['body'][id].heading[:,1] * (-w//2) 
+                        #+ tracking['body'][id].heading[:,0] * (-h//2 + self.tail_tracker.tracking_param.crop_offset_tail_px / self.tail_tracker.tracking_param.resize)
                     )
                     image = self.tail_tracker.overlay(image, tracking['tail'][id], offset_tail_ROI, rotation)
 
@@ -186,8 +186,8 @@ class Tracker:
                     offset_eye_ROI = (
                         bbox_bottomleft
                         + tracking['body'][id].centroid 
-                        + tracking['body'][id].heading[:,1] * (-w//2)
-                        + tracking['body'][id].heading[:,0] * (-h//2 + self.eyes_tracker.tracking_param.crop_offset_px / self.eyes_tracker.tracking_param.resize)
+                        #+ tracking['body'][id].heading[:,1] * (-w//2)
+                        #+ tracking['body'][id].heading[:,0] * (-h//2 + self.eyes_tracker.tracking_param.crop_offset_px / self.eyes_tracker.tracking_param.resize)
                     )
                     image = self.eyes_tracker.overlay(image, tracking['eyes'][id], offset_eye_ROI, rotation)
                 
@@ -197,8 +197,8 @@ class Tracker:
                     offset_tail_ROI = (
                         bbox_bottomleft
                         + tracking['body'][id].centroid 
-                        + tracking['body'][id].heading[:,1] * (-w//2) 
-                        + tracking['body'][id].heading[:,0] * (-h//2 + self.tail_tracker.tracking_param.crop_offset_tail_px / self.tail_tracker.tracking_param.resize)
+                        #+ tracking['body'][id].heading[:,1] * (-w//2) 
+                        #+ tracking['body'][id].heading[:,0] * (-h//2 + self.tail_tracker.tracking_param.crop_offset_tail_px / self.tail_tracker.tracking_param.resize)
                     )
                     image = self.tail_tracker.overlay(image, tracking['tail'][id], offset_tail_ROI, rotation)
 
