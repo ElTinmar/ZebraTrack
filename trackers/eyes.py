@@ -97,7 +97,10 @@ class EyesTracker:
         self.overlay_param = overlay_param
     
     @staticmethod
-    def get_eye_prop(blob, heading, resize):
+    def get_eye_prop(blob, resize):
+        # fish must be vertical head up
+        heading = np.array([0, 1], dtype=np.float32)
+
         eye_dir = ellipse_direction(blob.inertia_tensor, heading)
         eye_angle = angle_between_vectors(eye_dir, heading)
         # (row,col) to (x,y) coordinates 
@@ -192,11 +195,10 @@ class EyesTracker:
             # identify left eye, right eye and swimbladder
             blob_centroids = np.array([blob.centroid for blob in props])
             sb_idx, left_idx, right_idx = self.assign_features(blob_centroids)
-            heading_after_rot = np.array([0, 1], dtype=np.float32)
 
             # compute eye orientation
-            left_eye = self.get_eye_prop(props[left_idx], heading_after_rot, self.tracking_param.resize)
-            right_eye = self.get_eye_prop(props[right_idx], heading_after_rot, self.tracking_param.resize)
+            left_eye = self.get_eye_prop(props[left_idx], self.tracking_param.resize)
+            right_eye = self.get_eye_prop(props[right_idx], self.tracking_param.resize)
             #new_heading = (props[left_idx].centroid + props[right_idx].centroid)/2 - props[sb_idx].centroid
             #new_heading = new_heading / np.linalg.norm(new_heading)
 
