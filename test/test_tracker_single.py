@@ -55,6 +55,7 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     background = StaticBackground(
         video_reader=reader
     )
+    background.initialize()
 
     reader = Buffered_OpenCV_VideoReader()
     reader.open_file(video_file, safe=False, crop=crop)

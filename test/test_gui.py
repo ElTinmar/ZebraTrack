@@ -54,6 +54,7 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     background = StaticBackground(
         video_reader=reader
     )
+    background.initialize()
 
     #assignment = LinearSumAssignment(distance_threshold=50)
     LUT = np.hstack(( np.zeros((600,600)) , np.ones((600,600)) ))

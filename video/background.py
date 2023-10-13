@@ -13,6 +13,10 @@ from abc import ABC, abstractmethod
 class BackgroundSubtractor(ABC):
     
     @abstractmethod
+    def initialize(self) -> None:
+        pass
+
+    @abstractmethod
     def subtract_background(self, image: NDArray) -> NDArray:
         pass
     
@@ -56,7 +60,6 @@ class StaticBackground(BackgroundSubtractor):
         self.video_reader = video_reader
         self.num_sample_frames = num_sample_frames
         self.background = None
-        self.initialize_background_model()
 
     def sample_frames_evenly(self) -> NDArray:
         '''
@@ -87,7 +90,7 @@ class StaticBackground(BackgroundSubtractor):
         """
         self.background = stats.mode(frame_collection, axis=2, keepdims=False).mode
 
-    def initialize_background_model(self):
+    def initialize(self):
         print('Static background')
         print('Getting sample frames from video...')
         frame_collection = self.sample_frames_evenly()
@@ -130,6 +133,9 @@ class DynamicBackground(BackgroundSubtractor):
             self.compute_background()
         self.curr_image = self.curr_image + 1
         return image - self.background
+    
+    def initialize(self) -> None:
+        pass
 
 class BoundedQueue:
     def __init__(self, size, maxlen):
@@ -217,3 +223,6 @@ class DynamicBackgroundMP(BackgroundSubtractor):
         self.counter = self.counter + 1
         bckg = self.get_background()
         return image - bckg
+
+    def initialize(self) -> None:
+        self.start()
