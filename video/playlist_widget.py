@@ -24,23 +24,28 @@ class PlaylistWidget(QWidget):
         # add zoom crop controls
         self.zoom = LabeledSliderDoubleSpinBox(self)
         self.zoom.setText('zoom')
-        self.zoom.valueChanged.connect(self.crop_resize)
+        self.zoom.setValue(1.0)
+        self.zoom.valueChanged.connect(self.video_selected)
 
         self.left = LabeledSliderSpinBox(self)
         self.left.setText('left')
-        self.left.valueChanged.connect(self.crop_resize)
+        self.left.setValue(0)
+        self.left.valueChanged.connect(self.video_selected)
 
         self.bottom = LabeledSliderSpinBox(self)
         self.bottom.setText('bottom')
-        self.bottom.valueChanged.connect(self.crop_resize)
+        self.bottom.setValue(0)
+        self.bottom.valueChanged.connect(self.video_selected)
 
         self.width = LabeledSliderSpinBox(self)
         self.width.setText('width')
-        self.width.valueChanged.connect(self.crop_resize)
+        self.width.setValue(100)
+        self.width.valueChanged.connect(self.video_selected)
 
         self.height = LabeledSliderSpinBox(self)
         self.height.setText('height')
-        self.height.valueChanged.connect(self.crop_resize)
+        self.height.setValue(100)
+        self.height.valueChanged.connect(self.video_selected)
 
         self.add_button = QPushButton('add', self)
         self.add_button.clicked.connect(self.add_video)
@@ -71,6 +76,13 @@ class PlaylistWidget(QWidget):
 
     def layout_components(self):
 
+        crop_resize = QVBoxLayout()
+        crop_resize.addWidget(self.zoom)
+        crop_resize.addWidget(self.left)
+        crop_resize.addWidget(self.bottom)
+        crop_resize.addWidget(self.width)
+        crop_resize.addWidget(self.height)
+    
         playlist_control0 = QHBoxLayout()
         playlist_control0.addWidget(self.add_button)
         playlist_control0.addWidget(self.delete_button)
@@ -80,6 +92,7 @@ class PlaylistWidget(QWidget):
         playlist_control1.addWidget(self.next_button)
 
         controls = QVBoxLayout()
+        controls.addLayout(crop_resize)
         controls.addLayout(playlist_control0)
         controls.addWidget(self.video_list)
         controls.addLayout(playlist_control1)
@@ -106,7 +119,9 @@ class PlaylistWidget(QWidget):
         self.frame_changed()
 
     def frame_changed(self):
-        pass
+        frame = self.frame_slider.value()
+        # TODO maybe chheck that video reader is opened
+        self.video_reader.seek_to(frame)
 
     def add_video(self):
         file_name = QFileDialog.getOpenFileName(self, 'Select file')
@@ -145,9 +160,6 @@ class PlaylistWidget(QWidget):
             self.frame_spinbox.setRange(0,num_frames-1)
             self.height.setRange(1, height-bottom)
             self.width.setRange(1, width-left)
-
-    def crop_resize(self):
-        self.video_selected()
 
     def previous_video(self):
         num_item = self.video_list.count()
