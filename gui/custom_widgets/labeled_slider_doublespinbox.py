@@ -15,10 +15,10 @@ class LabeledSliderDoubleSpinBox(QWidget):
         self.setLayout(layout)
 
     def slider_change(self):
-        self.spinbox.setValue(set.slider.value())
+        self.spinbox.setValue(self.slider.value())
 
     def spinbox_change(self):
-        self.slider.setValue(set.spinbox.value())
+        self.slider.setValue(self.spinbox.value())
 
     def setText(self, text: str) -> None:
         self.label.setText(text)
