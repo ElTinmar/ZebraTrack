@@ -8,6 +8,13 @@ from multiprocessing import Process, Event
 from multiprocessing.sharedctypes import RawArray, Value
 import ctypes
 from tqdm import tqdm
+from abc import ABC, abstractmethod
+
+class BackgroundSubtractor(ABC):
+    
+    @abstractmethod
+    def subtract_background(self, image: NDArray) -> NDArray:
+        pass
     
 # TODO : stats.mode is single threaded, you can do better    
 class VideoReader(Protocol):
@@ -36,7 +43,7 @@ class VideoReader(Protocol):
     def reset_reader(self) -> None:
         """reset reader to video beginning"""
         
-class StaticBackground:
+class StaticBackground(BackgroundSubtractor):
     '''
     Use this if you want to track if you already have the full video
     and the background doesn't change with time
@@ -92,7 +99,7 @@ class StaticBackground:
     def subtract_background(self, image: NDArray) -> NDArray:
         return image - self.background 
 
-class DynamicBackground:
+class DynamicBackground(BackgroundSubtractor):
     '''
     Use this if you want to extract background from a streaming source 
     (images arriving continuously) or if the background is changing 
@@ -147,7 +154,7 @@ class BoundedQueue:
             data_np = np.frombuffer(self.data, dtype=np.float32).reshape((self.maxlen, *self.size))
             return data_np[0:self.numel.value,:,:]
 
-class DynamicBackgroundMP:
+class DynamicBackgroundMP(BackgroundSubtractor):
     '''
     Use this if you want to extract background from a streaming source 
     (images arriving continuously) or if the background is changing 
