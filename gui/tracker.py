@@ -12,6 +12,9 @@ from .helper.ndarray_to_qpixmap import NDarray_to_QPixmap
 from .custom_widgets.labeled_spinbox import LabeledSpinBox
 import cv2
 
+# TODO add widget to chose assignment method
+# TODO add widget to chose accumulator method (useful when you want to actually do the tracking)
+
 class Assignment(Protocol):
     pass
 
