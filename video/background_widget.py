@@ -62,10 +62,12 @@ class BackgroundSubtractorWidget(QWidget):
         static_layout = QVBoxLayout(self.parameters_static)
         static_layout.addWidget(self.static_filename)
         static_layout.addWidget(self.static_numsamples)
+        static_layout.addStretch()
 
         dynamic_layout = QVBoxLayout(self.parameters_dynamic)
         dynamic_layout.addWidget(self.dynamic_numsamples)
         dynamic_layout.addWidget(self.dynamic_samplefreq)
+        dynamic_layout.addStretch()
 
         dynamic_mp_layout = QVBoxLayout(self.parameters_dynamic_mp)
         dynamic_mp_layout.addWidget(self.dynamic_mp_numsamples)
