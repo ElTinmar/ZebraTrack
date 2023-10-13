@@ -13,7 +13,8 @@ class OpenCV_VideoReader:
             self, 
             filename: str, 
             safe: bool = False, 
-            crop: Optional[Tuple[int,int,int,int]] = None
+            crop: Optional[Tuple[int,int,int,int]] = None,
+            resize: Optional[float] = None
         ) -> None:
             
         self._filename = filename
@@ -25,6 +26,7 @@ class OpenCV_VideoReader:
         self._num_channels = 0
         self._safe = safe
         self._crop = crop # [left,bottom,width,height]
+        self._resize = resize
             
         # count number of frames
         if safe:
@@ -84,6 +86,15 @@ class OpenCV_VideoReader:
                     self._crop[1]:self._crop[1]+self._crop[3],
                     self._crop[0]:self._crop[0]+self._crop[2]
                 ]
+            if self._resize is not None:
+                frame = cv2.resize(
+                    frame,
+                    None,
+                    None,
+                    self._resize,
+                    self._resize,
+                    cv2.INTER_NEAREST
+                )
         return (rval, frame)
     
     def previous_frame(self) -> Tuple[bool,NDArray]:
