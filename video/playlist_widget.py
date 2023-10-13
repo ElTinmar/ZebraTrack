@@ -1,13 +1,16 @@
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMainWindow, QSpinBox, QSlider, QListWidget, QFileDialog, QPushButton, QLineEdit, QComboBox, QStackedWidget, QLabel, QVBoxLayout, QHBoxLayout, QWidget
+from PyQt5.QtWidgets import QMainWindow, QSpinBox, QSlider, QListWidgetItem, QListWidget, QFileDialog, QPushButton, QLineEdit, QComboBox, QStackedWidget, QLabel, QVBoxLayout, QHBoxLayout, QWidget
 from video.video_reader import OpenCV_VideoReader
+from gui.helper.ndarray_to_qpixmap import NDarray_to_QPixmap
+from gui.custom_widgets.labeled_slider_doublespinbox import LabeledSliderDoubleSpinBox
+from gui.custom_widgets.labeled_slider_spinbox import LabeledSliderSpinBox
 
 class PlaylistWidget(QWidget):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.video_reader = None
+        self.video_reader = OpenCV_VideoReader()
         self.declare_components()
         self.layout_components()
 
@@ -17,6 +20,27 @@ class PlaylistWidget(QWidget):
         self.timer.start()
 
     def declare_components(self):
+
+        # add zoom crop controls
+        self.zoom = LabeledSliderDoubleSpinBox(self)
+        self.zoom.setText('zoom')
+        self.zoom.valueChanged.connect(self.crop_resize)
+
+        self.left = LabeledSliderSpinBox(self)
+        self.left.setText('left')
+        self.left.valueChanged.connect(self.crop_resize)
+
+        self.bottom = LabeledSliderSpinBox(self)
+        self.bottom.setText('bottom')
+        self.bottom.valueChanged.connect(self.crop_resize)
+
+        self.width = LabeledSliderSpinBox(self)
+        self.width.setText('width')
+        self.width.valueChanged.connect(self.crop_resize)
+
+        self.height = LabeledSliderSpinBox(self)
+        self.height.setText('height')
+        self.height.valueChanged.connect(self.crop_resize)
 
         self.add_button = QPushButton('add', self)
         self.add_button.clicked.connect(self.add_video)
@@ -80,33 +104,74 @@ class PlaylistWidget(QWidget):
     def frame_changed_spinbox(self):
         self.frame_slider.setValue(self.frame_spinbox.value())
         self.frame_changed()
-        
+
     def frame_changed(self):
         pass
 
     def add_video(self):
-        pass
+        file_name = QFileDialog.getOpenFileName(self, 'Select file')
+        if file_name:
+            list_item = QListWidgetItem(file_name[0])
+            self.video_list.addItem(list_item)
 
     def delete_video(self):
-        pass
+        row = self.video_list.currentRow()
+        if row:
+            self.video_list.takeItem(row)
 
     def video_selected(self):
-        pass
-    
+        current_item = self.video_list.currentItem()
+        if current_item:
+            filename = current_item.text()
+
+            resize = self.zoom.value()
+            left = self.left.value()
+            bottom = self.bottom.value()
+            width = self.width.value()
+            height = self.height.value()
+            
+            self.video_reader.open_file(
+                filename, 
+                crop = (left, bottom, width, height),
+                resize = resize 
+            )
+
+            num_frames = self.video_reader.get_number_of_frame()
+            height = self.video_reader.get_height()
+            width = self.video_reader.get_width()
+            
+            self.frame_slider.setMinimum(0)
+            self.frame_slider.setMaximum(num_frames-1)
+            self.frame_spinbox.setRange(0,num_frames-1)
+            self.height.setRange(1, height-bottom)
+            self.width.setRange(1, width-left)
+
+    def crop_resize(self):
+        self.video_selected()
+
     def previous_video(self):
-        pass
+        num_item = self.video_list.count()
+        current_row = self.video_list.currentRow()
+        previous_row = (current_row - 1) % num_item
+        self.video_list.setCurrentRow(previous_row)
 
     def playpause_video(self):
         if self.playpause_button.isChecked():
             self.playpause_button.setText('pause')
         else:
-            #pause
             self.playpause_button.setText('play')
 
     def next_video(self):
-        pass
+        num_item = self.video_list.count()
+        current_row = self.video_list.currentRow()
+        next_row = (current_row + 1) % num_item
+        self.video_list.setCurrentRow(next_row)
 
     def main(self):
-        pass
+        if self.playpause_button.isChecked():
+            ret, image = self.video_reader.next_frame()
+            if ret:
+                self.video_label.setPixmap(NDarray_to_QPixmap(image))
+
 
     
