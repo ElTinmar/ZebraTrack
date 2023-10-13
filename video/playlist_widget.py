@@ -25,6 +25,7 @@ class PlaylistWidget(QWidget):
         self.zoom = LabeledSliderDoubleSpinBox(self)
         self.zoom.setText('zoom')
         self.zoom.setValue(1.0)
+        self.zoom.setRange(0.1, 5.0)
         self.zoom.valueChanged.connect(self.video_selected)
 
         self.left = LabeledSliderSpinBox(self)
@@ -152,14 +153,17 @@ class PlaylistWidget(QWidget):
             )
 
             num_frames = self.video_reader.get_number_of_frame()
-            height = self.video_reader.get_height()
-            width = self.video_reader.get_width()
+            height_max = self.video_reader.get_height_max()
+            width_max = self.video_reader.get_width_max()
             
             self.frame_slider.setMinimum(0)
             self.frame_slider.setMaximum(num_frames-1)
             self.frame_spinbox.setRange(0,num_frames-1)
-            self.height.setRange(1, height-bottom)
-            self.width.setRange(1, width-left)
+
+            self.left.setRange(1, height_max-height)
+            self.bottom.setRange(1, width_max-width)
+            self.height.setRange(1, height_max-bottom)
+            self.width.setRange(1, width_max-left)
 
     def previous_video(self):
         num_item = self.video_list.count()

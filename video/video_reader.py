@@ -175,6 +175,12 @@ class OpenCV_VideoReader:
 
         cv2.destroyAllWindows()
 
+    def get_width_max(self) -> int:
+        return int(self._capture.get(cv2.CAP_PROP_FRAME_WIDTH))
+
+    def get_height_max(self) -> int:
+        return int(self._capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        
     def get_width(self) -> int:
         return self._width
     
