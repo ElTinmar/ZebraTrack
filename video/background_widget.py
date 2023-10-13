@@ -17,13 +17,30 @@ class BackgroundSubtractorWidget(QWidget):
         self.layout_components()
 
     def declare_components(self):
+
+        # static background
+        self.parameters_static = QWidget()
         self.static_filename = FileOpenLabeledEditButton()
         self.static_numsamples = LabeledSpinBox()
         self.static_numsamples.setText('Number images')
 
-        self.parameters_static = QWidget()
+        # dynamic background    
         self.parameters_dynamic = QWidget()
+        self.dynamic_numsamples = LabeledSpinBox()
+        self.dynamic_numsamples.setText('Number images')
+        self.dynamic_samplefreq = LabeledSpinBox()
+        self.dynamic_samplefreq.setText('Frequency')
+        
+        # dynamic multiprocessing
         self.parameters_dynamic_mp = QWidget()
+        self.dynamic_mp_numsamples = LabeledSpinBox()
+        self.dynamic_mp_numsamples.setText('Number images')
+        self.dynamic_mp_samplefreq = LabeledSpinBox()
+        self.dynamic_mp_samplefreq.setText('Frequency')
+        self.dynamic_mp_width = LabeledSpinBox()
+        self.dynamic_mp_width.setText('Width')
+        self.dynamic_mp_height = LabeledSpinBox()
+        self.dynamic_mp_height.setText('Height')
         
         # drop-down list to choose the background subtraction method
         self.bckgsub_method_combobox = QComboBox(self)
@@ -46,6 +63,15 @@ class BackgroundSubtractorWidget(QWidget):
         static_layout.addWidget(self.static_filename)
         static_layout.addWidget(self.static_numsamples)
 
+        dynamic_layout = QVBoxLayout(self.parameters_dynamic)
+        dynamic_layout.addWidget(self.dynamic_numsamples)
+        dynamic_layout.addWidget(self.dynamic_samplefreq)
+
+        dynamic_mp_layout = QVBoxLayout(self.parameters_dynamic_mp)
+        dynamic_mp_layout.addWidget(self.dynamic_mp_numsamples)
+        dynamic_mp_layout.addWidget(self.dynamic_mp_samplefreq)
+        dynamic_mp_layout.addWidget(self.dynamic_mp_height)
+        dynamic_mp_layout.addWidget(self.dynamic_mp_width)
 
     def open_file(self):
         file_name = QFileDialog.getOpenFileName(self, 'Select video file')
