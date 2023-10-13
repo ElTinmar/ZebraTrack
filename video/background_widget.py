@@ -6,6 +6,8 @@ from PyQt5.QtWidgets import QMainWindow, QFileDialog, QPushButton, QLineEdit, QC
 from video.background import BackgroundSubtractor, StaticBackground, DynamicBackground, DynamicBackgroundMP
 from video.video_reader import OpenCV_VideoReader
 from gui.custom_widgets.labeled_spinbox import LabeledSpinBox
+from gui.custom_widgets.labeled_editline_openfile import FileOpenLabeledEditButton
+
 
 class BackgroundSubtractorWidget(QWidget):
     def __init__(self, *args, **kwargs):
@@ -15,12 +17,7 @@ class BackgroundSubtractorWidget(QWidget):
         self.layout_components()
 
     def declare_components(self):
-        self.static_filename = QLineEdit()
-        self.static_filename_label = QLabel()
-        self.static_filename_label.setText('Video file')
-        folder_icon = QIcon.fromTheme('document-open')
-        self.open_videofile_button = QPushButton()
-        self.open_videofile_button.clicked.connect(self.open_file)
+        self.static_filename = FileOpenLabeledEditButton()
         self.static_numsamples = LabeledSpinBox()
         self.static_numsamples.setText('Number images')
 
@@ -33,6 +30,7 @@ class BackgroundSubtractorWidget(QWidget):
         self.bckgsub_method_combobox.addItem('static')
         self.bckgsub_method_combobox.addItem('dynamic')
         self.bckgsub_method_combobox.addItem('dynamic mp')
+        self.bckgsub_method_combobox.currentIndexChanged.connect(self.on_method_change)
 
         self.bckgsub_parameter_stack = QStackedWidget(self)
         self.bckgsub_parameter_stack.addWidget(self.parameters_static)
@@ -40,14 +38,21 @@ class BackgroundSubtractorWidget(QWidget):
         self.bckgsub_parameter_stack.addWidget(self.parameters_dynamic_mp)
 
     def layout_components(self):
-        pass
+        main_layout = QVBoxLayout(self)
+        main_layout.addWidget(self.bckgsub_method_combobox)
+        main_layout.addWidget(self.bckgsub_parameter_stack)
+
+        static_layout = QVBoxLayout(self.parameters_static)
+        static_layout.addWidget(self.static_filename)
+        static_layout.addWidget(self.static_numsamples)
+
 
     def open_file(self):
         file_name = QFileDialog.getOpenFileName(self, 'Select video file')
         self.static_filename.setText(file_name)
 
-    def on_method_change(self):
-        pass
+    def on_method_change(self, index):
+        self.bckgsub_parameter_stack.setCurrentIndex(index)
 
     def update_background_subtractor(self):
         pass

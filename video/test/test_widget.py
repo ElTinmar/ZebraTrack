@@ -5,6 +5,6 @@ from video.background_widget import BackgroundSubtractorWidget
 from gui.custom_widgets.labeled_editline_openfile import FileOpenLabeledEditButton
 
 app = QApplication(sys.argv)
-ex = FileOpenLabeledEditButton()
+ex = BackgroundSubtractorWidget()
 ex.show()
 sys.exit(app.exec_())
