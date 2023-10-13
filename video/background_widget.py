@@ -1,10 +1,10 @@
 # widget to specify a background subtraction method
 
 from PyQt5.QtCore import QTimer, Qt
-from PyQT5.QtGui import QIcon, QFileDialog
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QLineEdit, QComboBox, QStackedWidget, QLabel, QVBoxLayout, QHBoxLayout, QWidget
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QPushButton, QLineEdit, QComboBox, QStackedWidget, QLabel, QVBoxLayout, QHBoxLayout, QWidget
 from video.background import BackgroundSubtractor, StaticBackground, DynamicBackground, DynamicBackgroundMP
-from video_reader import OpenCV_VideoReader
+from video.video_reader import OpenCV_VideoReader
 
 class BackgroundSubtractorWidget(QWidget):
     def __init__(self, *args, **kwargs):
