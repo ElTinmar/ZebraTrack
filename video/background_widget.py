@@ -10,9 +10,10 @@ from gui.custom_widgets.labeled_editline_openfile import FileOpenLabeledEditButt
 
 
 class BackgroundSubtractorWidget(QWidget):
+    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.background = None
+        self.background_subtractor = None
         self.declare_components()
         self.layout_components()
 
@@ -21,26 +22,34 @@ class BackgroundSubtractorWidget(QWidget):
         # static background
         self.parameters_static = QWidget()
         self.static_filename = FileOpenLabeledEditButton()
+        self.static_filename.textChanged.connect(self.update_background_subtractor)
         self.static_numsamples = LabeledSpinBox()
         self.static_numsamples.setText('Number images')
+        self.static_numsamples.valueChanged.connect(self.update_background_subtractor)
 
         # dynamic background    
         self.parameters_dynamic = QWidget()
         self.dynamic_numsamples = LabeledSpinBox()
         self.dynamic_numsamples.setText('Number images')
+        self.dynamic_numsamples.valueChanged.connect(self.update_background_subtractor)
         self.dynamic_samplefreq = LabeledSpinBox()
         self.dynamic_samplefreq.setText('Frequency')
+        self.dynamic_samplefreq.valueChanged.connect(self.update_background_subtractor)
         
         # dynamic multiprocessing
         self.parameters_dynamic_mp = QWidget()
         self.dynamic_mp_numsamples = LabeledSpinBox()
         self.dynamic_mp_numsamples.setText('Number images')
+        self.dynamic_mp_numsamples.valueChanged.connect(self.update_background_subtractor)
         self.dynamic_mp_samplefreq = LabeledSpinBox()
         self.dynamic_mp_samplefreq.setText('Frequency')
+        self.dynamic_mp_samplefreq.valueChanged.connect(self.update_background_subtractor)
         self.dynamic_mp_width = LabeledSpinBox()
         self.dynamic_mp_width.setText('Width')
+        self.dynamic_mp_width.valueChanged.connect(self.update_background_subtractor)
         self.dynamic_mp_height = LabeledSpinBox()
         self.dynamic_mp_height.setText('Height')
+        self.dynamic_mp_height.valueChanged.connect(self.update_background_subtractor)
         
         # drop-down list to choose the background subtraction method
         self.bckgsub_method_combobox = QComboBox(self)
@@ -75,15 +84,35 @@ class BackgroundSubtractorWidget(QWidget):
         dynamic_mp_layout.addWidget(self.dynamic_mp_height)
         dynamic_mp_layout.addWidget(self.dynamic_mp_width)
 
-    def open_file(self):
-        file_name = QFileDialog.getOpenFileName(self, 'Select video file')
-        self.static_filename.setText(file_name)
-
     def on_method_change(self, index):
         self.bckgsub_parameter_stack.setCurrentIndex(index)
+        self.update_background_subtractor()
 
     def update_background_subtractor(self):
-        pass
+        method = self.bckgsub_method_combobox.currentIndex()
+        
+        if method == 0:
+            video_reader = OpenCV_VideoReader()
+            video_reader.open_file(self.static_filename.text())
+            self.background_subtractor = StaticBackground(
+                video_reader = video_reader,
+                num_sample_frames = self.static_numsamples.value()
+            )
+        
+        if method == 1:
+            self.background_subtractor = DynamicBackground(
+                num_sample_frames = self.dynamic_numsamples.value(),
+                sample_every_n_frames = self.dynamic_samplefreq.value()
+            )
+
+        if method == 2:
+            self.background_subtractor = DynamicBackgroundMP(
+                num_images = self.dynamic_mp_numsamples.value(),
+                every_n_image = self.dynamic_mp_samplefreq.value(),
+                width = self.dynamic_mp_width.value(),
+                height = self.dynamic_mp_height.value()
+            )
 
     def get_background_subtractor(self):
-        pass
+        return self.background_subtractor
+
