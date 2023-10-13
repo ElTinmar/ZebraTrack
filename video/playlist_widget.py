@@ -16,7 +16,7 @@ class PlaylistWidget(QWidget):
 
         self.timer = QTimer()
         self.timer.timeout.connect(self.main)
-        self.timer.setInterval(33)
+        self.timer.setInterval(16)
         self.timer.start()
 
     def declare_components(self):
@@ -186,6 +186,9 @@ class PlaylistWidget(QWidget):
     def main(self):
         if self.playpause_button.isChecked():
             ret, image = self.video_reader.next_frame()
+            frame_index = self.video_reader.get_current_frame_index()
+            self.frame_slider.setValue(frame_index)
+            self.frame_spinbox.setValue(frame_index)
             if ret:
                 self.video_label.setPixmap(NDarray_to_QPixmap(image))
 
