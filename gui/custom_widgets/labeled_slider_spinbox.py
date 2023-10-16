@@ -32,7 +32,7 @@ class LabeledSliderSpinBox(QWidget):
     
     def setValue(self, val: int) -> None:
         self.spinbox.setValue(val)
-        #self.slider.setValue(val)
+        self.slider.setValue(val)
 
     def setSingleStep(self, val: int) -> None:
         self.spinbox.setSingleStep(val)

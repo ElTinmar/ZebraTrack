@@ -139,7 +139,7 @@ class PlaylistWidget(QWidget):
         if current_item:
             filename = current_item.text()
 
-            resize = self.zoom.value()/100
+            resize = self.zoom.value()/100.0
             left = self.left.value()
             bottom = self.bottom.value()
             width = self.width.value()
