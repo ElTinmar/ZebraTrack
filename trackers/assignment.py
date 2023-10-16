@@ -24,11 +24,11 @@ class GridAssignment:
         idx_to_keep = []
         for id in unique_ids:
             indices = [i for i,x in enumerate(IDs) if x==id]
-            if len(indices) > 1: 
+            if len(indices) > 1 and (self.centroids is not None): 
                 dist = cdist(centroids[indices, :], [self.centroids[id,:]])
                 id_shortest_distance = np.argmin(dist)
                 idx_to_keep.append(indices[id_shortest_distance])
-            elif len(indices) == 1:
+            else:
                 idx_to_keep.append(indices[0])
 
         self.ID = np.array(unique_ids)
