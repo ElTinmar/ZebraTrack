@@ -24,8 +24,8 @@ class PlaylistWidget(QWidget):
         # add zoom crop controls
         self.zoom = LabeledSliderDoubleSpinBox(self)
         self.zoom.setText('zoom')
-        self.zoom.setValue(1.0)
         self.zoom.setRange(0.1, 5.0)
+        self.zoom.setValue(1.0)
         self.zoom.valueChanged.connect(self.on_crop_resize)
 
         self.left = LabeledSliderSpinBox(self)
