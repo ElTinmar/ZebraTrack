@@ -188,7 +188,6 @@ class PlaylistWidget(QWidget):
             self.width.setValue(height_max)
             self.height.setValue(width_max)
 
-
     def previous_video(self):
         num_item = self.video_list.count()
         current_row = self.video_list.currentRow()
