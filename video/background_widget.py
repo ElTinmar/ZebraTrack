@@ -8,6 +8,7 @@ from video.video_reader import OpenCV_VideoReader
 from gui.custom_widgets.labeled_spinbox import LabeledSpinBox
 from gui.custom_widgets.labeled_editline_openfile import FileOpenLabeledEditButton
 
+# TODO define protocol or import ABC for BackgroundSubtractor
 
 class BackgroundSubtractorWidget(QWidget):
     
@@ -72,15 +73,21 @@ class BackgroundSubtractorWidget(QWidget):
         self.bckgsub_method_combobox.addItem('dynamic mp')
         self.bckgsub_method_combobox.currentIndexChanged.connect(self.on_method_change)
 
+        self.init_button = QPushButton('initialize', self)
+        self.init_button.clicked.connect(self.initialize_background_subtractor)
+
         self.bckgsub_parameter_stack = QStackedWidget(self)
         self.bckgsub_parameter_stack.addWidget(self.parameters_static)
         self.bckgsub_parameter_stack.addWidget(self.parameters_dynamic)
         self.bckgsub_parameter_stack.addWidget(self.parameters_dynamic_mp)
 
+
+
     def layout_components(self):
         main_layout = QVBoxLayout(self)
         main_layout.addWidget(self.bckgsub_method_combobox)
         main_layout.addWidget(self.bckgsub_parameter_stack)
+        main_layout.addWidget(self.init_button)
 
         static_layout = QVBoxLayout(self.parameters_static)
         static_layout.addWidget(self.static_filename)
@@ -126,6 +133,9 @@ class BackgroundSubtractorWidget(QWidget):
                 width = self.dynamic_mp_width.value(),
                 height = self.dynamic_mp_height.value()
             )
+
+    def initialize_background_subtractor(self):
+        self.background_subtractor.initialize()
 
     def get_background_subtractor(self):
         return self.background_subtractor

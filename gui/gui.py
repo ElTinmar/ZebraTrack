@@ -24,8 +24,6 @@ class ZebraTrackGUI(QMainWindow):
 
     def __init__(
             self, 
-            reader: VideoReader,
-            background: Background,
             trackers: List[TrackerWidget], 
             *args, **kwargs
         ) -> None:
@@ -33,8 +31,6 @@ class ZebraTrackGUI(QMainWindow):
         super().__init__(*args, **kwargs)
         self.setWindowTitle('ZebraTrack')
 
-        self.reader = reader
-        self.background = background
         self.trackers = trackers
         self.create_components()
         self.layout_components()
@@ -66,23 +62,20 @@ class ZebraTrackGUI(QMainWindow):
 
         self.setCentralWidget(main_widget)
 
-    def update_background(self):
-        # update background subtraction method
-        pass
-
     def update_tracker(self):
         for tracker in self.trackers:
             tracker.update_tracker()
 
     def loop(self):
         self.update_tracker()
-        self.update_background()
-        ret, image = self.reader.next_frame()
+        background = self.background_widget.get_background_subtractor()
+        reader = self.playlist_widget.get_video_reader()
+        ret, image = reader.next_frame()
         if not ret:
-            self.reader.reset_reader()
+            reader.reset_reader()
             return
         image_gray = im2single(im2gray(image))
-        image_sub = self.background.subtract_background(image_gray)
+        image_sub = background.subtract_background(image_gray)
         for tracker in self.trackers:
             tracking = tracker.tracker.track(image_sub)
             tracker.display(tracking)

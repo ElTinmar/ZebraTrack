@@ -42,20 +42,6 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     fov_size_mm = experiment['fov_size_mm'] 
     print(f'Processing {fish}...')
 
-    # video reader    
-    reader = OpenCV_VideoReader()
-    reader.open_file(video_file, safe=False, crop=(0,0,1200,600))
-    #reader.open_file(video_file, safe=False)
-    num_frames = reader.get_number_of_frame()
-    height = reader.get_height()
-    width = reader.get_width()
-
-    # background subtraction
-    background = StaticBackground(
-        video_reader=reader
-    )
-    background.initialize()
-
     #assignment = LinearSumAssignment(distance_threshold=50)
     LUT = np.hstack(( np.zeros((600,600)) , np.ones((600,600)) ))
     #X,Y = np.meshgrid(np.arange(1800) // 600,np.arange(1800) // 600)
@@ -79,9 +65,5 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
         None,
     )
 
-    window = ZebraTrackGUI(
-        reader, 
-        background, 
-        [fish_tracker, paramecia_tracker]
-    )
+    window = ZebraTrackGUI([fish_tracker, paramecia_tracker])
     sys.exit(app.exec())
