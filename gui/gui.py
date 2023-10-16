@@ -1,8 +1,10 @@
 from gui.tracker import TrackerWidget
 from PyQt5.QtCore import QTimer, Qt
-from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QTabWidget, QAction, QMenu, QMenuBar
+from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QTabWidget, QHBoxLayout
 from typing import List, Protocol
 from image.imconvert import im2gray, im2single
+from video.background_widget import BackgroundSubtractorWidget
+from video.playlist_widget import PlaylistWidget
 
 # TODO add a media control bar with play / pause, frame by frame forward and backwards
 # and slider  
@@ -34,8 +36,7 @@ class ZebraTrackGUI(QMainWindow):
         self.reader = reader
         self.background = background
         self.trackers = trackers
-        self.create_actions()
-        self.create_menubar()
+        self.create_components()
         self.layout_components()
 
         self.timer = QTimer()
@@ -44,29 +45,26 @@ class ZebraTrackGUI(QMainWindow):
         self.timer.start()
         self.show()
 
-    def create_actions(self):
-        pass
-    
-    def create_menubar(self):
-        # create bar
-        menuBar = QMenuBar(self)
-        self.setMenuBar(menuBar)
-
-        # create menus 
-
-        ## files
-        fileMenu = QMenu("&File", self)
-        menuBar.addMenu(fileMenu)
-
-        ## trackfileMenu = QMenu("&File", self)
-        trackMenu = QMenu("&Track", self)
-        menuBar.addMenu(trackMenu)
+    def create_components(self):
+        self.playlist_widget = PlaylistWidget()
+        self.background_widget = BackgroundSubtractorWidget()
 
     def layout_components(self):
+        main_widget = QWidget()
+
+        video_control = QVBoxLayout()
+        video_control.addWidget(self.playlist_widget)
+        video_control.addWidget(self.background_widget)
+
         tabs = QTabWidget() 
         for tracker in self.trackers:
             tabs.addTab(tracker,'tracker')
-        self.setCentralWidget(tabs)
+
+        main_layout = QHBoxLayout(main_widget)
+        main_layout.addLayout(video_control)
+        main_layout.addWidget(tabs)
+
+        self.setCentralWidget(main_widget)
 
     def update_background(self):
         # update background subtraction method
