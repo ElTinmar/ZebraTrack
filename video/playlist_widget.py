@@ -207,6 +207,9 @@ class PlaylistWidget(QWidget):
         next_row = (current_row + 1) % num_item
         self.video_list.setCurrentRow(next_row)
 
+    def get_video_reader(self):
+        return self.video_reader
+
     def main(self):
         if self.playpause_button.isChecked():
             ret, image = self.video_reader.next_frame()
