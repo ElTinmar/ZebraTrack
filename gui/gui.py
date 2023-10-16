@@ -6,11 +6,6 @@ from image.imconvert import im2gray, im2single
 from video.background_widget import BackgroundSubtractorWidget
 from video.playlist_widget import PlaylistWidget
 
-# TODO add a media control bar with play / pause, frame by frame forward and backwards
-# and slider  
-
-# TODO add tabs to load file into a list
-# TODO add tab to select background subtraction methods and options
 # TODO add the possibility to dynamically add trackers in a new tab
 # TODO remove parameters from init, load everything from the GUI
 
