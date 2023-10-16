@@ -61,7 +61,7 @@ class PlaylistWidget(QWidget):
         self.previous_button.clicked.connect(self.previous_video)
 
         self.next_button = QPushButton('next', self)
-        self.previous_button.clicked.connect(self.next_video)
+        self.next_button.clicked.connect(self.next_video)
 
         self.video_label = QLabel(self)
 
