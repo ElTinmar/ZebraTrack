@@ -70,12 +70,14 @@ class ZebraTrackGUI(QMainWindow):
         self.update_tracker()
         background = self.background_widget.get_background_subtractor()
         reader = self.playlist_widget.get_video_reader()
-        ret, image = reader.next_frame()
-        if not ret:
-            reader.reset_reader()
-            return
-        image_gray = im2single(im2gray(image))
-        image_sub = background.subtract_background(image_gray)
-        for tracker in self.trackers:
-            tracking = tracker.tracker.track(image_sub)
-            tracker.display(tracking)
+        if reader.is_open():
+            ret, image = reader.next_frame()
+            if not ret:
+                reader.reset_reader()
+                return
+            image_gray = im2single(im2gray(image))
+            if background:
+                image_sub = background.subtract_background(image_gray)
+                for tracker in self.trackers:
+                    tracking = tracker.tracker.track(image_sub)
+                    tracker.display(tracking)

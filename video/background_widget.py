@@ -3,7 +3,7 @@
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QPushButton, QLineEdit, QComboBox, QStackedWidget, QLabel, QVBoxLayout, QHBoxLayout, QWidget
-from video.background import BackgroundSubtractor, StaticBackground, DynamicBackground, DynamicBackgroundMP
+from video.background import BackgroundSubtractor, NoBackgroundSub, StaticBackground, DynamicBackground, DynamicBackgroundMP
 from video.video_reader import OpenCV_VideoReader
 from gui.custom_widgets.labeled_spinbox import LabeledSpinBox
 from gui.custom_widgets.labeled_editline_openfile import FileOpenLabeledEditButton
@@ -68,6 +68,7 @@ class BackgroundSubtractorWidget(QWidget):
         
         # drop-down list to choose the background subtraction method
         self.bckgsub_method_combobox = QComboBox(self)
+        self.bckgsub_method_combobox.addItem('none')
         self.bckgsub_method_combobox.addItem('static')
         self.bckgsub_method_combobox.addItem('dynamic')
         self.bckgsub_method_combobox.addItem('dynamic mp')
@@ -80,8 +81,6 @@ class BackgroundSubtractorWidget(QWidget):
         self.bckgsub_parameter_stack.addWidget(self.parameters_static)
         self.bckgsub_parameter_stack.addWidget(self.parameters_dynamic)
         self.bckgsub_parameter_stack.addWidget(self.parameters_dynamic_mp)
-
-
 
     def layout_components(self):
         main_layout = QVBoxLayout(self)
@@ -115,18 +114,23 @@ class BackgroundSubtractorWidget(QWidget):
         if method == 0:
             video_reader = OpenCV_VideoReader()
             video_reader.open_file(self.static_filename.text())
+            self.background_subtractor = NoBackgroundSub()
+        
+        if method == 1:
+            video_reader = OpenCV_VideoReader()
+            video_reader.open_file(self.static_filename.text())
             self.background_subtractor = StaticBackground(
                 video_reader = video_reader,
                 num_sample_frames = self.static_numsamples.value()
             )
         
-        if method == 1:
+        if method == 2:
             self.background_subtractor = DynamicBackground(
                 num_sample_frames = self.dynamic_numsamples.value(),
                 sample_every_n_frames = self.dynamic_samplefreq.value()
             )
 
-        if method == 2:
+        if method == 3:
             self.background_subtractor = DynamicBackgroundMP(
                 num_images = self.dynamic_mp_numsamples.value(),
                 every_n_image = self.dynamic_mp_samplefreq.value(),

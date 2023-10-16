@@ -47,6 +47,13 @@ class VideoReader(Protocol):
     def reset_reader(self) -> None:
         """reset reader to video beginning"""
         
+class NoBackgroundSub(BackgroundSubtractor):
+    def initialize(self):
+        pass
+
+    def subtract_background(self, image: NDArray) -> NDArray:
+        return image 
+
 class StaticBackground(BackgroundSubtractor):
     '''
     Use this if you want to track if you already have the full video

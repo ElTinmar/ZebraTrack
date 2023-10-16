@@ -8,6 +8,9 @@ from multiprocessing import Queue, Process, Event
 # TODO: add resizing as an option 
 # TODO: Check index error (+-1). Make sure that number of frames is correct (end index valid)
 class OpenCV_VideoReader:
+    
+    def __init__(self):
+        self.open = False
 
     def open_file(
             self, 
@@ -65,7 +68,11 @@ class OpenCV_VideoReader:
         self._type = frame.dtype  
 
         self.reset_reader()
+        self.open = True
 
+    def is_open(self) -> bool:
+        return self.open
+    
     def reset_reader(self) -> None:
         """
         TODO
