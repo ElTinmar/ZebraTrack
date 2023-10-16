@@ -5,6 +5,7 @@ from numpy.typing import NDArray
 from dataclasses import dataclass
 import cv2
 
+
 @dataclass
 class AnimalTrackerParamTracking:
     pix_per_mm: float = 40.0

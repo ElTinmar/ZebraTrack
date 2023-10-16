@@ -6,7 +6,9 @@ from .helper.ndarray_to_qpixmap import NDarray_to_QPixmap
 from .custom_widgets.labeled_doublespinbox import LabeledDoubleSpinBox
 from .custom_widgets.labeled_spinbox import LabeledSpinBox
 import cv2
-    
+
+# TODO maybe group settings into collapsable blocks
+
 class TailTrackerWidget(QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
