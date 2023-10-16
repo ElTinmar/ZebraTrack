@@ -17,6 +17,7 @@ class BackgroundSubtractorWidget(QWidget):
         self.background_subtractor = None
         self.declare_components()
         self.layout_components()
+        self.update_background_subtractor()
 
     def declare_components(self):
 
@@ -126,13 +127,9 @@ class BackgroundSubtractorWidget(QWidget):
         method = self.bckgsub_method_combobox.currentIndex()
         
         if method == 0:
-            video_reader = OpenCV_VideoReader()
-            video_reader.open_file(self.static_filename.text())
             self.background_subtractor = NoBackgroundSub()
 
         if method == 1:
-            video_reader = OpenCV_VideoReader()
-            video_reader.open_file(self.static_filename.text())
             self.background_subtractor = BackroundImage(
                 image_file_name = self.image_filename.value()
             )
