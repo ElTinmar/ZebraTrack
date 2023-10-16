@@ -1,15 +1,17 @@
 from PyQt5.QtWidgets import QWidget, QLabel, QSlider, QDoubleSpinBox, QHBoxLayout
+from PyQt5.QtCore import Qt
 
 class LabeledSliderDoubleSpinBox(QWidget):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.label = QLabel()
-        self.slider = QSlider()
+        self.slider = QSlider(Qt.Horizontal)
         self.slider.valueChanged.connect(self.slider_change)
         self.spinbox = QDoubleSpinBox()
         self.spinbox.valueChanged.connect(self.spinbox_change)
         layout = QHBoxLayout()
         layout.addWidget(self.label)
+        layout.addWidget(self.slider)
         layout.addWidget(self.spinbox)
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
@@ -30,7 +32,7 @@ class LabeledSliderDoubleSpinBox(QWidget):
     
     def setValue(self, val: float) -> None:
         self.spinbox.setValue(val)
-        self.slider.setValue(val)
+        #self.slider.setValue(val)
 
     def setSingleStep(self, val: float) -> None:
         self.spinbox.setSingleStep(val)
