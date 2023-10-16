@@ -177,16 +177,17 @@ class PlaylistWidget(QWidget):
             self.frame_slider.setMaximum(num_frames-1)
             self.frame_spinbox.setRange(0,num_frames-1)
 
+            self.left.setRange(0, height_max-1)
+            self.bottom.setRange(0, width_max-1)
+            self.height.setRange(1, height_max)
+            self.width.setRange(1, width_max)
+            
             self.zoom.setValue(50)
             self.left.setValue(0)
             self.bottom.setValue(0)
             self.width.setValue(height_max)
             self.height.setValue(width_max)
 
-            self.left.setRange(0, height_max-1)
-            self.bottom.setRange(0, width_max-1)
-            self.height.setRange(1, height_max)
-            self.width.setRange(1, width_max)
 
     def previous_video(self):
         num_item = self.video_list.count()
