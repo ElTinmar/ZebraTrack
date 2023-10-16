@@ -181,13 +181,13 @@ class PlaylistWidget(QWidget):
             self.zoom.setValue(0.5)
             self.left.setValue(0)
             self.bottom.setValue(0)
-            self.width.setValue(height_max-1)
-            self.height.setValue(width_max-1)
+            self.width.setValue(height_max)
+            self.height.setValue(width_max)
 
-            self.left.setRange(0, height_max)
-            self.bottom.setRange(0, width_max)
-            self.height.setRange(1, height_max-1)
-            self.width.setRange(1, width_max-1)
+            self.left.setRange(0, height_max-1)
+            self.bottom.setRange(0, width_max-1)
+            self.height.setRange(1, height_max)
+            self.width.setRange(1, width_max)
 
     def previous_video(self):
         num_item = self.video_list.count()
