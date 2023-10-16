@@ -3,7 +3,6 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QSpinBox, QSlider, QListWidgetItem, QListWidget, QFileDialog, QPushButton, QLineEdit, QComboBox, QStackedWidget, QLabel, QVBoxLayout, QHBoxLayout, QWidget
 from video.video_reader import OpenCV_VideoReader
 from gui.helper.ndarray_to_qpixmap import NDarray_to_QPixmap
-from gui.custom_widgets.labeled_slider_doublespinbox import LabeledSliderDoubleSpinBox
 from gui.custom_widgets.labeled_slider_spinbox import LabeledSliderSpinBox
 
 class PlaylistWidget(QWidget):
@@ -22,10 +21,10 @@ class PlaylistWidget(QWidget):
     def declare_components(self):
 
         # add zoom crop controls
-        self.zoom = LabeledSliderDoubleSpinBox(self)
-        self.zoom.setText('zoom')
-        self.zoom.setRange(0.1, 5.0)
-        self.zoom.setValue(1.0)
+        self.zoom = LabeledSliderSpinBox(self)
+        self.zoom.setText('zoom (%)')
+        self.zoom.setRange(10, 500)
+        self.zoom.setValue(50)
         self.zoom.valueChanged.connect(self.on_crop_resize)
 
         self.left = LabeledSliderSpinBox(self)
@@ -140,7 +139,7 @@ class PlaylistWidget(QWidget):
         if current_item:
             filename = current_item.text()
 
-            resize = self.zoom.value()
+            resize = self.zoom.value()/100
             left = self.left.value()
             bottom = self.bottom.value()
             width = self.width.value()
@@ -178,7 +177,7 @@ class PlaylistWidget(QWidget):
             self.frame_slider.setMaximum(num_frames-1)
             self.frame_spinbox.setRange(0,num_frames-1)
 
-            self.zoom.setValue(0.5)
+            self.zoom.setValue(50)
             self.left.setValue(0)
             self.bottom.setValue(0)
             self.width.setValue(height_max)
