@@ -3,7 +3,7 @@
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QPushButton, QLineEdit, QComboBox, QStackedWidget, QLabel, QVBoxLayout, QHBoxLayout, QWidget
-from video.background import BackgroundSubtractor, NoBackgroundSub, StaticBackground, DynamicBackground, DynamicBackgroundMP
+from video.background import BackgroundSubtractor, NoBackgroundSub, BackroundImage, StaticBackground, DynamicBackground, DynamicBackgroundMP
 from video.video_reader import OpenCV_VideoReader
 from gui.custom_widgets.labeled_spinbox import LabeledSpinBox
 from gui.custom_widgets.labeled_editline_openfile import FileOpenLabeledEditButton
@@ -19,6 +19,13 @@ class BackgroundSubtractorWidget(QWidget):
         self.layout_components()
 
     def declare_components(self):
+
+        # none
+        self.parameters_none = QWidget()
+
+        # image background
+        self.parameters_image = QWidget()
+        self.image_filename = FileOpenLabeledEditButton()
 
         # static background
         self.parameters_static = QWidget()
@@ -69,6 +76,7 @@ class BackgroundSubtractorWidget(QWidget):
         # drop-down list to choose the background subtraction method
         self.bckgsub_method_combobox = QComboBox(self)
         self.bckgsub_method_combobox.addItem('none')
+        self.bckgsub_method_combobox.addItem('image')
         self.bckgsub_method_combobox.addItem('static')
         self.bckgsub_method_combobox.addItem('dynamic')
         self.bckgsub_method_combobox.addItem('dynamic mp')
@@ -78,6 +86,8 @@ class BackgroundSubtractorWidget(QWidget):
         self.init_button.clicked.connect(self.initialize_background_subtractor)
 
         self.bckgsub_parameter_stack = QStackedWidget(self)
+        self.bckgsub_parameter_stack.addWidget(self.parameters_none)
+        self.bckgsub_parameter_stack.addWidget(self.parameters_image)
         self.bckgsub_parameter_stack.addWidget(self.parameters_static)
         self.bckgsub_parameter_stack.addWidget(self.parameters_dynamic)
         self.bckgsub_parameter_stack.addWidget(self.parameters_dynamic_mp)
@@ -87,6 +97,10 @@ class BackgroundSubtractorWidget(QWidget):
         main_layout.addWidget(self.bckgsub_method_combobox)
         main_layout.addWidget(self.bckgsub_parameter_stack)
         main_layout.addWidget(self.init_button)
+
+        image_layout = QVBoxLayout(self.parameters_image)
+        image_layout.addWidget(self.image_filename)
+        image_layout.addStretch()
 
         static_layout = QVBoxLayout(self.parameters_static)
         static_layout.addWidget(self.static_filename)
@@ -115,8 +129,15 @@ class BackgroundSubtractorWidget(QWidget):
             video_reader = OpenCV_VideoReader()
             video_reader.open_file(self.static_filename.text())
             self.background_subtractor = NoBackgroundSub()
-        
+
         if method == 1:
+            video_reader = OpenCV_VideoReader()
+            video_reader.open_file(self.static_filename.text())
+            self.background_subtractor = BackroundImage(
+                image_file_name = self.image_filename.value()
+            )
+        
+        if method == 2:
             video_reader = OpenCV_VideoReader()
             video_reader.open_file(self.static_filename.text())
             self.background_subtractor = StaticBackground(
@@ -124,13 +145,13 @@ class BackgroundSubtractorWidget(QWidget):
                 num_sample_frames = self.static_numsamples.value()
             )
         
-        if method == 2:
+        if method == 3:
             self.background_subtractor = DynamicBackground(
                 num_sample_frames = self.dynamic_numsamples.value(),
                 sample_every_n_frames = self.dynamic_samplefreq.value()
             )
 
-        if method == 3:
+        if method == 4:
             self.background_subtractor = DynamicBackgroundMP(
                 num_images = self.dynamic_mp_numsamples.value(),
                 every_n_image = self.dynamic_mp_samplefreq.value(),

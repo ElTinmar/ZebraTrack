@@ -8,6 +8,7 @@ from multiprocessing import Process, Event
 from multiprocessing.sharedctypes import RawArray, Value
 import ctypes
 from tqdm import tqdm
+import cv2
 from abc import ABC, abstractmethod
 
 class BackgroundSubtractor(ABC):
@@ -53,6 +54,19 @@ class NoBackgroundSub(BackgroundSubtractor):
 
     def subtract_background(self, image: NDArray) -> NDArray:
         return image 
+
+class BackroundImage(BackgroundSubtractor):
+    def __init__(self, image_file_name) -> None:
+        super().__init__()
+        self.image_file_name = image_file_name
+        self.background = None
+
+    def initialize(self) -> None:
+        image = cv2.imread(self.image_file_name)
+        self.background = im2single(im2gray(image)) 
+
+    def subtract_background(self, image: NDArray) -> NDArray:
+        return image - self.background
 
 class StaticBackground(BackgroundSubtractor):
     '''
