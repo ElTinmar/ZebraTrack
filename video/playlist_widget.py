@@ -26,27 +26,27 @@ class PlaylistWidget(QWidget):
         self.zoom.setText('zoom')
         self.zoom.setValue(1.0)
         self.zoom.setRange(0.1, 5.0)
-        self.zoom.valueChanged.connect(self.video_selected)
+        self.zoom.valueChanged.connect(self.on_crop_resize)
 
         self.left = LabeledSliderSpinBox(self)
         self.left.setText('left')
         self.left.setValue(0)
-        self.left.valueChanged.connect(self.video_selected)
+        self.left.valueChanged.connect(self.on_crop_resize)
 
         self.bottom = LabeledSliderSpinBox(self)
         self.bottom.setText('bottom')
         self.bottom.setValue(0)
-        self.bottom.valueChanged.connect(self.video_selected)
+        self.bottom.valueChanged.connect(self.on_crop_resize)
 
         self.width = LabeledSliderSpinBox(self)
         self.width.setText('width')
         self.width.setValue(100)
-        self.width.valueChanged.connect(self.video_selected)
+        self.width.valueChanged.connect(self.on_crop_resize)
 
         self.height = LabeledSliderSpinBox(self)
         self.height.setText('height')
         self.height.setValue(100)
-        self.height.valueChanged.connect(self.video_selected)
+        self.height.valueChanged.connect(self.on_crop_resize)
 
         self.add_button = QPushButton('add', self)
         self.add_button.clicked.connect(self.add_video)
@@ -135,7 +135,7 @@ class PlaylistWidget(QWidget):
         if row:
             self.video_list.takeItem(row)
 
-    def video_selected(self):
+    def on_crop_resize(self):
         current_item = self.video_list.currentItem()
         if current_item:
             filename = current_item.text()
@@ -152,6 +152,24 @@ class PlaylistWidget(QWidget):
                 resize = resize 
             )
 
+            height_max = self.video_reader.get_height_max()
+            width_max = self.video_reader.get_width_max()
+
+            self.left.setRange(0, height_max-height)
+            self.bottom.setRange(0, width_max-width)
+            self.height.setRange(1, height_max-bottom) # TODO maybe -1
+            self.width.setRange(1, width_max-left)
+
+    def video_selected(self):
+        current_item = self.video_list.currentItem()
+        if current_item:
+            filename = current_item.text()
+            
+            self.video_reader.open_file(
+                filename,
+                resize=0.5,
+            )
+
             num_frames = self.video_reader.get_number_of_frame()
             height_max = self.video_reader.get_height_max()
             width_max = self.video_reader.get_width_max()
@@ -160,10 +178,16 @@ class PlaylistWidget(QWidget):
             self.frame_slider.setMaximum(num_frames-1)
             self.frame_spinbox.setRange(0,num_frames-1)
 
-            self.left.setRange(1, height_max-height)
-            self.bottom.setRange(1, width_max-width)
-            self.height.setRange(1, height_max-bottom)
-            self.width.setRange(1, width_max-left)
+            self.zoom.setValue(0.5)
+            self.left.setValue(0)
+            self.bottom.setValue(0)
+            self.width.setValue(height_max-1)
+            self.height.setValue(width_max-1)
+
+            self.left.setRange(0, height_max)
+            self.bottom.setRange(0, width_max)
+            self.height.setRange(1, height_max-1)
+            self.width.setRange(1, width_max-1)
 
     def previous_video(self):
         num_item = self.video_list.count()
