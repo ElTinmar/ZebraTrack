@@ -11,6 +11,9 @@ from tqdm import tqdm
 import cv2
 from abc import ABC, abstractmethod
 
+# TODO : stats.mode is single threaded, try to multiprocess on blocks  
+
+
 class BackgroundSubtractor(ABC):
 
     def __init__(self) -> None:
@@ -28,7 +31,6 @@ class BackgroundSubtractor(ABC):
     def is_initialized(self):
         return self.initialized
     
-# TODO : stats.mode is single threaded, you can do better    
 class VideoReader(Protocol):
     def next_frame(self) -> Tuple[bool,NDArray]:
         """return the next frame in the movie, 
