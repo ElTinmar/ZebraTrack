@@ -104,7 +104,6 @@ class BackgroundSubtractorWidget(QWidget):
         self.bckgsub_parameter_stack.addWidget(self.parameters_dynamic)
         self.bckgsub_parameter_stack.addWidget(self.parameters_dynamic_mp)
 
-
         self.zoom = LabeledSpinBox(self)
         self.zoom.setText('zoom (%)')
         self.zoom.setRange(25,500)
@@ -191,8 +190,8 @@ class BackgroundSubtractorWidget(QWidget):
     def main(self):
         if self.background_subtractor.is_initialized():
             image = self.background_subtractor.get_background_image()
-            image = (255*image).astype(np.uint8)
             if image is not None:
+                image = (255*image).astype(np.uint8)
                 scale = self.zoom.value()/100
                 image = cv2.resize(image,None,None,scale,scale,cv2.INTER_NEAREST)
                 self.background_image.setPixmap(NDarray_to_QPixmap(image))
