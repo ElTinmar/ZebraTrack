@@ -4,15 +4,34 @@ from scipy import stats
 from typing import Protocol, Tuple
 from collections import deque
 from image.imconvert import im2gray, im2single
-from multiprocessing import Process, Event
+from multiprocessing import Process, Event, Pool, cpu_count
 from multiprocessing.sharedctypes import RawArray, Value
 import ctypes
 from tqdm import tqdm
 import cv2
 from abc import ABC, abstractmethod
+from functools import partial
 
 # TODO : stats.mode is single threaded, try to multiprocess on blocks  
 
+def my_mode(x: NDArray) -> NDArray:
+    return stats.mode(x, axis=2, keepdims=False).mode
+
+def mode(arr: NDArray, num_processes: int = cpu_count()):
+    
+    # create iterable
+    chunk_size = int(arr.shape[0] / num_processes) 
+    chunks = [arr[i:i + chunk_size] for i in range(0, arr.shape[0], chunk_size)] 
+
+    # distribute work
+    with Pool(processes=num_processes) as pool:
+        res = pool.map(my_mode, chunks)
+
+    # reshape result
+    out = np.vstack(res)
+    out.reshape(arr.shape[:2])
+
+    return out
 
 class BackgroundSubtractor(ABC):
 
@@ -120,7 +139,7 @@ class StaticBackground(BackgroundSubtractor):
         Output:
             background: m x n numpy.float32 array
         """
-        self.background = stats.mode(frame_collection, axis=2, keepdims=False).mode
+        self.background = mode(frame_collection)
 
     def initialize(self):
         print('Static background')
@@ -156,10 +175,7 @@ class DynamicBackground(BackgroundSubtractor):
         self.background = None
 
     def compute_background(self):
-        self.background = stats.mode(
-            np.asarray(self.frame_collection), 
-            axis=2, 
-            keepdims=False).mode
+        self.background = mode(np.asarray(self.frame_collection))
 
     def subtract_background(self, image: NDArray) -> NDArray: 
         if self.curr_image % self.sample_every_n_frames == 0:
@@ -242,7 +258,7 @@ class DynamicBackgroundMP(BackgroundSubtractor):
         while not stop_flag.is_set():
             data = image_store.get_data()
             if data is not None:
-                bckg_img = stats.mode(data, axis=0, keepdims=False).mode
+                bckg_img = mode(data)
                 background[:] = bckg_img.flatten()
 
     def get_background(self) -> NDArray:
