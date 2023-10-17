@@ -9,7 +9,8 @@ from gui.custom_widgets.labeled_spinbox import LabeledSpinBox
 from gui.custom_widgets.labeled_editline_openfile import FileOpenLabeledEditButton
 import os
 
-# TODO define protocol or import ABC for BackgroundSubtractor
+# TODO show image of background
+# TODO add widget to save static background as an image
 
 class BackgroundSubtractorWidget(QWidget):
     

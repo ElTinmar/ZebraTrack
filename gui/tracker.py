@@ -14,6 +14,7 @@ import cv2
 
 # TODO add widget to chose assignment method
 # TODO add widget to chose accumulator method (useful when you want to actually do the tracking)
+# TODO add widget to show background subtracted image histogram 
 
 class Assignment(Protocol):
     pass
