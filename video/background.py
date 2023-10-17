@@ -196,7 +196,8 @@ class DynamicBackground(BackgroundSubtractor):
         self.background = None
 
     def compute_background(self):
-        self.background = mode(np.asarray(self.frame_collection))
+        frames = np.asarray(self.frame_collection).transpose((1,2,0))
+        self.background = mode(frames)
 
     def subtract_background(self, image: NDArray) -> NDArray: 
         if self.curr_image % self.sample_every_n_frames == 0:
@@ -283,7 +284,7 @@ class DynamicBackgroundMP(BackgroundSubtractor):
     ):
 
         while not stop_flag.is_set():
-            data = image_store.get_data()
+            data = image_store.get_data().transpose((1,2,0))
             if data is not None:
                 bckg_img = mode(data)
                 background[:] = bckg_img.flatten()
