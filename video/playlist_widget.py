@@ -120,8 +120,8 @@ class PlaylistWidget(QWidget):
 
     def frame_changed(self):
         frame = self.frame_slider.value()
-        # TODO maybe chheck that video reader is opened
-        self.video_reader.seek_to(frame)
+        if self.video_reader.is_open():
+            self.video_reader.seek_to(frame)
 
     def add_video(self):
         file_name = QFileDialog.getOpenFileName(self, 'Select file')
@@ -211,12 +211,13 @@ class PlaylistWidget(QWidget):
 
     def main(self):
         if self.playpause_button.isChecked():
-            ret, image = self.video_reader.next_frame()
-            frame_index = self.video_reader.get_current_frame_index()
-            self.frame_slider.setValue(frame_index)
-            self.frame_spinbox.setValue(frame_index)
-            if ret:
-                self.video_label.setPixmap(NDarray_to_QPixmap(image))
+            if self.video_reader.is_open():
+                ret, image = self.video_reader.next_frame()
+                frame_index = self.video_reader.get_current_frame_index()
+                self.frame_slider.setValue(frame_index)
+                self.frame_spinbox.setValue(frame_index)
+                if ret:
+                    self.video_label.setPixmap(NDarray_to_QPixmap(image))
 
 
     
