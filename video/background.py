@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.typing import NDArray
 from scipy import stats
-from typing import Protocol, Tuple
+from typing import Protocol, Tuple, Optional
 from collections import deque
 from image.imconvert import im2gray, im2single
 from multiprocessing import Process, Event, Pool, cpu_count
@@ -49,6 +49,10 @@ class BackgroundSubtractor(ABC):
     def subtract_background(self, image: NDArray) -> NDArray:
         pass
 
+    @abstractmethod
+    def get_background_image(self) -> Optional[NDArray]:
+        pass
+
     def is_initialized(self):
         return self.initialized
     
@@ -82,6 +86,9 @@ class NoBackgroundSub(BackgroundSubtractor):
     def initialize(self):
         self.initialized = True
 
+    def get_background_image(self) -> Optional[NDArray]:
+        return None
+
     def subtract_background(self, image: NDArray) -> NDArray:
         return image 
 
@@ -95,6 +102,12 @@ class BackroundImage(BackgroundSubtractor):
         image = cv2.imread(self.image_file_name)
         self.background = im2single(im2gray(image)) 
         self.initialized = True
+    
+    def get_background_image(self) -> Optional[NDArray]:
+        if self.initialized:
+            return self.background
+        else:
+            return None
 
     def subtract_background(self, image: NDArray) -> NDArray:
         return image - self.background
@@ -153,6 +166,12 @@ class StaticBackground(BackgroundSubtractor):
         print('...done')
         self.initialized = True
 
+    def get_background_image(self) -> Optional[NDArray]:
+        if self.initialized:
+            return self.background
+        else:
+            return None
+
     def subtract_background(self, image: NDArray) -> NDArray:
         return image - self.background 
 
@@ -188,6 +207,12 @@ class DynamicBackground(BackgroundSubtractor):
     
     def initialize(self) -> None:
         self.initialized = True
+
+    def get_background_image(self) -> Optional[NDArray]:
+        if self.initialized:
+            return self.background
+        else:
+            return None
 
 class BoundedQueue:
     def __init__(self, size, maxlen):
@@ -281,3 +306,10 @@ class DynamicBackgroundMP(BackgroundSubtractor):
     def initialize(self) -> None:
         self.start()
         self.initialized = True
+    
+    def get_background_image(self) -> Optional[NDArray]:
+        if self.initialized:
+            bckg = self.get_background()
+            return bckg
+        else:
+            return None

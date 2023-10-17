@@ -7,7 +7,10 @@ from video.background import BackgroundSubtractor, NoBackgroundSub, BackroundIma
 from video.video_reader import OpenCV_VideoReader
 from gui.custom_widgets.labeled_spinbox import LabeledSpinBox
 from gui.custom_widgets.labeled_editline_openfile import FileOpenLabeledEditButton
+from gui.helper.ndarray_to_qpixmap import NDarray_to_QPixmap
 import os
+import cv2
+import numpy as np
 
 # TODO show image of background
 # TODO add widget to save static background as an image
@@ -20,6 +23,11 @@ class BackgroundSubtractorWidget(QWidget):
         self.declare_components()
         self.layout_components()
         self.update_background_subtractor()
+
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.main)
+        self.timer.setInterval(16)
+        self.timer.start()
 
     def declare_components(self):
 
@@ -96,11 +104,22 @@ class BackgroundSubtractorWidget(QWidget):
         self.bckgsub_parameter_stack.addWidget(self.parameters_dynamic)
         self.bckgsub_parameter_stack.addWidget(self.parameters_dynamic_mp)
 
+
+        self.zoom = LabeledSpinBox(self)
+        self.zoom.setText('zoom (%)')
+        self.zoom.setRange(25,500)
+        self.zoom.setValue(50)
+        self.zoom.setSingleStep(25)
+
+        self.background_image = QLabel(self)
+
     def layout_components(self):
         main_layout = QVBoxLayout(self)
         main_layout.addWidget(self.bckgsub_method_combobox)
         main_layout.addWidget(self.bckgsub_parameter_stack)
         main_layout.addWidget(self.init_button)
+        main_layout.addWidget(self.zoom)
+        main_layout.addWidget(self.background_image)
 
         image_layout = QVBoxLayout(self.parameters_image)
         image_layout.addWidget(self.image_filename)
@@ -168,4 +187,13 @@ class BackgroundSubtractorWidget(QWidget):
 
     def get_background_subtractor(self):
         return self.background_subtractor
+    
+    def main(self):
+        if self.background_subtractor.is_initialized():
+            image = self.background_subtractor.get_background_image()
+            image = (255*image).astype(np.uint8)
+            if image is not None:
+                scale = self.zoom.value()/100
+                image = cv2.resize(image,None,None,scale,scale,cv2.INTER_NEAREST)
+                self.background_image.setPixmap(NDarray_to_QPixmap(image))
 
