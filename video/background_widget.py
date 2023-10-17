@@ -7,6 +7,7 @@ from video.background import BackgroundSubtractor, NoBackgroundSub, BackroundIma
 from video.video_reader import OpenCV_VideoReader
 from gui.custom_widgets.labeled_spinbox import LabeledSpinBox
 from gui.custom_widgets.labeled_editline_openfile import FileOpenLabeledEditButton
+import os
 
 # TODO define protocol or import ABC for BackgroundSubtractor
 
@@ -27,6 +28,7 @@ class BackgroundSubtractorWidget(QWidget):
         # image background
         self.parameters_image = QWidget()
         self.image_filename = FileOpenLabeledEditButton()
+        self.image_filename.textChanged.connect(self.update_background_subtractor)
 
         # static background
         self.parameters_static = QWidget()
@@ -130,18 +132,22 @@ class BackgroundSubtractorWidget(QWidget):
             self.background_subtractor = NoBackgroundSub()
 
         if method == 1:
-            self.background_subtractor = BackroundImage(
-                image_file_name = self.image_filename.value()
-            )
+            filepath = self.image_filename.text()
+            if os.path.exists(filepath):
+                self.background_subtractor = BackroundImage(
+                    image_file_name = filepath
+                )
         
         if method == 2:
-            video_reader = OpenCV_VideoReader()
-            video_reader.open_file(self.static_filename.text())
-            self.background_subtractor = StaticBackground(
-                video_reader = video_reader,
-                num_sample_frames = self.static_numsamples.value()
-            )
-        
+            filepath = self.static_filename.text()
+            if os.path.exists(filepath):
+                video_reader = OpenCV_VideoReader()
+                video_reader.open_file(filepath)
+                self.background_subtractor = StaticBackground(
+                    video_reader = video_reader,
+                    num_sample_frames = self.static_numsamples.value()
+                )
+            
         if method == 3:
             self.background_subtractor = DynamicBackground(
                 num_sample_frames = self.dynamic_numsamples.value(),
