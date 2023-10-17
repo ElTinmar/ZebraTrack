@@ -71,7 +71,7 @@ class ZebraTrackGUI(QMainWindow):
                 reader.reset_reader()
                 return
             image_gray = im2single(im2gray(image))
-            if background:
+            if background.is_initialized():
                 image_sub = background.subtract_background(image_gray)
                 for tracker in self.trackers:
                     tracking = tracker.tracker.track(image_sub)

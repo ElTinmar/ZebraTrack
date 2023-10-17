@@ -12,6 +12,10 @@ import cv2
 from abc import ABC, abstractmethod
 
 class BackgroundSubtractor(ABC):
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.initialized = False
     
     @abstractmethod
     def initialize(self) -> None:
@@ -20,6 +24,9 @@ class BackgroundSubtractor(ABC):
     @abstractmethod
     def subtract_background(self, image: NDArray) -> NDArray:
         pass
+
+    def is_initialized(self):
+        return self.initialized
     
 # TODO : stats.mode is single threaded, you can do better    
 class VideoReader(Protocol):
@@ -50,7 +57,7 @@ class VideoReader(Protocol):
         
 class NoBackgroundSub(BackgroundSubtractor):
     def initialize(self):
-        pass
+        self.initialized = True
 
     def subtract_background(self, image: NDArray) -> NDArray:
         return image 
@@ -64,6 +71,7 @@ class BackroundImage(BackgroundSubtractor):
     def initialize(self) -> None:
         image = cv2.imread(self.image_file_name)
         self.background = im2single(im2gray(image)) 
+        self.initialized = True
 
     def subtract_background(self, image: NDArray) -> NDArray:
         return image - self.background
@@ -78,6 +86,7 @@ class StaticBackground(BackgroundSubtractor):
             video_reader: VideoReader, 
             num_sample_frames: int = 500
         ) -> None:
+        super().__init__()
         self.video_reader = video_reader
         self.num_sample_frames = num_sample_frames
         self.background = None
@@ -119,6 +128,7 @@ class StaticBackground(BackgroundSubtractor):
         self.compute_background(frame_collection)
         self.video_reader.reset_reader()
         print('...done')
+        self.initialized = True
 
     def subtract_background(self, image: NDArray) -> NDArray:
         return image - self.background 
@@ -136,6 +146,7 @@ class DynamicBackground(BackgroundSubtractor):
         sample_every_n_frames: int
         ) -> None:
 
+        super().__init__()
         self.num_sample_frames = num_sample_frames
         self.sample_every_n_frames = sample_every_n_frames
         self.frame_collection = deque(maxlen=num_sample_frames)
@@ -156,7 +167,7 @@ class DynamicBackground(BackgroundSubtractor):
         return image - self.background
     
     def initialize(self) -> None:
-        pass
+        self.initialized = True
 
 class BoundedQueue:
     def __init__(self, size, maxlen):
@@ -196,6 +207,8 @@ class DynamicBackgroundMP(BackgroundSubtractor):
         every_n_image = 100,
     ) -> None:
 
+        super().__init__()
+        
         self.width = width
         self.height = height
         self.num_images = num_images
@@ -247,3 +260,4 @@ class DynamicBackgroundMP(BackgroundSubtractor):
 
     def initialize(self) -> None:
         self.start()
+        self.initialized = True
