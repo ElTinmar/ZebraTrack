@@ -12,7 +12,6 @@ import cv2
 from abc import ABC, abstractmethod
 from functools import partial
 
-# TODO : stats.mode is single threaded, try to multiprocess on blocks  
 
 def my_mode(x: NDArray) -> NDArray:
     return stats.mode(x, axis=2, keepdims=False).mode
