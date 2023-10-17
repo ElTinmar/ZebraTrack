@@ -4,6 +4,8 @@ from PyQt5.QtWidgets import QMainWindow, QSpinBox, QSlider, QListWidgetItem, QLi
 from video.video_reader import OpenCV_VideoReader
 from gui.helper.ndarray_to_qpixmap import NDarray_to_QPixmap
 from gui.custom_widgets.labeled_slider_spinbox import LabeledSliderSpinBox
+from gui.custom_widgets.labeled_spinbox import LabeledSpinBox
+import cv2
 
 class PlaylistWidget(QWidget):
 
@@ -21,11 +23,11 @@ class PlaylistWidget(QWidget):
     def declare_components(self):
 
         # add zoom crop controls
-        self.zoom = LabeledSliderSpinBox(self)
-        self.zoom.setText('zoom (%)')
-        self.zoom.setRange(10, 500)
-        self.zoom.setValue(50)
-        self.zoom.valueChanged.connect(self.on_crop_resize)
+        self.rescale = LabeledSliderSpinBox(self)
+        self.rescale.setText('rescale (%)')
+        self.rescale.setRange(10, 500)
+        self.rescale.setValue(100)
+        self.rescale.valueChanged.connect(self.on_crop_resize)
 
         self.left = LabeledSliderSpinBox(self)
         self.left.setText('left')
@@ -62,6 +64,12 @@ class PlaylistWidget(QWidget):
         self.next_button = QPushButton('next', self)
         self.next_button.clicked.connect(self.next_video)
 
+        self.zoom = LabeledSpinBox(self)
+        self.zoom.setText('zoom (%)')
+        self.zoom.setRange(25,500)
+        self.zoom.setValue(50)
+        self.zoom.setSingleStep(25)
+
         self.video_label = QLabel(self)
 
         self.playpause_button = QPushButton('play', self)
@@ -77,7 +85,7 @@ class PlaylistWidget(QWidget):
     def layout_components(self):
 
         crop_resize = QVBoxLayout()
-        crop_resize.addWidget(self.zoom)
+        crop_resize.addWidget(self.rescale)
         crop_resize.addWidget(self.left)
         crop_resize.addWidget(self.bottom)
         crop_resize.addWidget(self.width)
@@ -103,6 +111,7 @@ class PlaylistWidget(QWidget):
         video_controls.addWidget(self.frame_spinbox)
         
         video_display = QVBoxLayout()
+        video_display.addWidget(self.zoom)
         video_display.addWidget(self.video_label)
         video_display.addLayout(video_controls)
 
@@ -139,7 +148,7 @@ class PlaylistWidget(QWidget):
         if current_item:
             filename = current_item.text()
 
-            resize = self.zoom.value()/100.0
+            resize = self.rescale.value()/100.0
             left = self.left.value()
             bottom = self.bottom.value()
             width = self.width.value()
@@ -182,7 +191,7 @@ class PlaylistWidget(QWidget):
             self.height.setRange(1, height_max)
             self.width.setRange(1, width_max)
             
-            self.zoom.setValue(50)
+            self.rescale.setValue(100)
             self.left.setValue(0)
             self.bottom.setValue(0)
             self.width.setValue(height_max)
@@ -213,10 +222,13 @@ class PlaylistWidget(QWidget):
         if self.playpause_button.isChecked():
             if self.video_reader.is_open():
                 ret, image = self.video_reader.next_frame()
-                frame_index = self.video_reader.get_current_frame_index()
-                self.frame_slider.setValue(frame_index)
-                self.frame_spinbox.setValue(frame_index)
                 if ret:
+                    frame_index = self.video_reader.get_current_frame_index()
+                    self.frame_slider.setValue(frame_index)
+                    self.frame_spinbox.setValue(frame_index)
+
+                    scale = self.zoom.value()/100
+                    image = cv2.resize(image,None,None,scale,scale,cv2.INTER_NEAREST)
                     self.video_label.setPixmap(NDarray_to_QPixmap(image))
 
 
