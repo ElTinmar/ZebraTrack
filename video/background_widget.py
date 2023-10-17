@@ -188,8 +188,10 @@ class BackgroundSubtractorWidget(QWidget):
         return self.background_subtractor
     
     def main(self):
+        # this is relying on the fact that background is copied and updated outside, that doesn't seem to 
+        # to work for the multiprocessed dynamic background though
         if self.background_subtractor.is_initialized():
-            image = self.background_subtractor.get_background_image()
+            image = self.background_subtractor.get_background_image() 
             if image is not None:
                 image = (255*image).astype(np.uint8)
                 scale = self.zoom.value()/100
