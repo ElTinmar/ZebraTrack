@@ -17,6 +17,9 @@ def my_mode(x: NDArray) -> NDArray:
     return stats.mode(x, axis=2, keepdims=False).mode
 
 def mode(arr: NDArray, num_processes: int = cpu_count()):
+    '''
+    multiprocess computation of mode along 3rd axis
+    '''
     
     # create iterable
     chunk_size = int(arr.shape[0] / num_processes) 
@@ -28,7 +31,7 @@ def mode(arr: NDArray, num_processes: int = cpu_count()):
 
     # reshape result
     out = np.vstack(res)
-    out.reshape(arr.shape[:2])
+    out.reshape(arr.shape[:-1])
 
     return out
 
