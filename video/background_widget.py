@@ -182,6 +182,8 @@ class BackgroundSubtractorWidget(QWidget):
             )
 
     def initialize_background_subtractor(self):
+        # TODO launch this in a separate thread/process otherwise the GUI becomes 
+        # unresponsive
         self.background_subtractor.initialize()
 
     def get_background_subtractor(self):
