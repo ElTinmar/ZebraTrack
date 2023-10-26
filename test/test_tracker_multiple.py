@@ -2,16 +2,14 @@ import os
 import socket
 import pandas as pd
 import numpy as np
-from video.video_display import VideoDisplay
-from video.video_reader import OpenCV_VideoReader, Buffered_OpenCV_VideoReader
-from video.background import StaticBackground, DynamicBackground, DynamicBackgroundMP
+from video_tools import VideoDisplay, OpenCV_VideoReader, Buffered_OpenCV_VideoReader, StaticBackground, DynamicBackground, DynamicBackgroundMP
 from trackers.animal import AnimalTracker, AnimalTrackerParamTracking, AnimalTrackerParamOverlay
 from trackers.body import BodyTracker, BodyTrackerParamTracking, BodyTrackerParamOverlay
 from trackers.eyes import EyesTracker, EyesTrackerParamTracking, EyesTrackerParamOverlay
 from trackers.tail import TailTracker, TailTrackerParamTracking, TailTrackerParamOverlay
 from trackers.tracker import Tracker
 from trackers.assignment import LinearSumAssignment, GridAssignment
-from image.imconvert import im2gray, im2single
+from image_tools import im2gray, im2single
 from tqdm import tqdm
 
 # get base folder location on different computers
