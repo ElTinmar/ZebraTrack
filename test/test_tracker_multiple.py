@@ -2,13 +2,8 @@ import os
 import socket
 import pandas as pd
 import numpy as np
-from video_tools import VideoDisplay, OpenCV_VideoReader, Buffered_OpenCV_VideoReader, StaticBackground, DynamicBackground, DynamicBackgroundMP
-from trackers.animal import AnimalTracker, AnimalTrackerParamTracking, AnimalTrackerParamOverlay
-from trackers.body import BodyTracker, BodyTrackerParamTracking, BodyTrackerParamOverlay
-from trackers.eyes import EyesTracker, EyesTrackerParamTracking, EyesTrackerParamOverlay
-from trackers.tail import TailTracker, TailTrackerParamTracking, TailTrackerParamOverlay
-from trackers.tracker import Tracker
-from trackers.assignment import LinearSumAssignment, GridAssignment
+import video_tools 
+import trackers 
 from image_tools import im2gray, im2single
 from tqdm import tqdm
 
@@ -41,7 +36,7 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     print(f'Processing {fish}...')
 
     # video reader    
-    reader = OpenCV_VideoReader()
+    reader = video_tools.OpenCV_VideoReader()
     reader.open_file(video_file, safe=False)
     num_frames = reader.get_number_of_frame()
     height = reader.get_height()
@@ -49,12 +44,12 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
 
     # background subtraction
     
-    background = StaticBackground(
+    background = video_tools.StaticBackground(
         video_reader=reader
     )
     background.initialize()
 
-    reader = Buffered_OpenCV_VideoReader()
+    reader = video_tools.Buffered_OpenCV_VideoReader()
     reader.open_file(video_file, safe=False)
     reader.start()
 
@@ -71,15 +66,15 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     #LUT = np.zeros((600,600))
     lufile = os.path.join(BASEFOLDER,'results',f'lut_{fish}.npy')
     LUT = np.load(lufile)
-    assignment = GridAssignment(LUT)
+    assignment = trackers.GridAssignment(LUT)
     accumulator = None
 
-    display = VideoDisplay(fps=10)
+    display = video_tools.VideoDisplay(fps=10)
     display.start()
 
     # tracking 
-    animal_tracker = AnimalTracker(
-        AnimalTrackerParamTracking(
+    animal_tracker = trackers.AnimalTracker(
+        trackers.AnimalTrackerParamTracking(
             pix_per_mm=40,
             target_pix_per_mm=7.5,
             animal_intensity=0.07,
@@ -96,10 +91,10 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
             blur_sz_mm=1/7.5,
             median_filter_sz_mm=1/7.5,
         ),
-        AnimalTrackerParamOverlay()
+        trackers.AnimalTrackerParamOverlay()
     )
-    body_tracker = BodyTracker(
-        BodyTrackerParamTracking(
+    body_tracker = trackers.BodyTracker(
+        trackers.BodyTrackerParamTracking(
             pix_per_mm=40,
             target_pix_per_mm=7.5,
             body_intensity=0.25,
@@ -115,10 +110,10 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
             blur_sz_mm=1/7.5,
             median_filter_sz_mm=1/7.5,
         ),
-        BodyTrackerParamOverlay()
+        trackers.BodyTrackerParamOverlay()
     )
-    eyes_tracker = EyesTracker(
-        EyesTrackerParamTracking(
+    eyes_tracker = trackers.EyesTracker(
+        trackers.EyesTrackerParamTracking(
             pix_per_mm=40,
             target_pix_per_mm=40,
             eye_norm=0.3,
@@ -132,10 +127,10 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
             crop_dimension_mm=(1.0,1.5),
             crop_offset_mm=-0.30
         ),
-        EyesTrackerParamOverlay()
+        trackers.EyesTrackerParamOverlay()
     )
-    tail_tracker = TailTracker(
-        TailTrackerParamTracking(
+    tail_tracker = trackers.TailTracker(
+        trackers.TailTrackerParamTracking(
             pix_per_mm=40,
             target_pix_per_mm=20,
             arc_angle_deg=120,
@@ -152,10 +147,10 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
             crop_dimension_mm=(3.5,3.5),
             crop_offset_tail_mm=2.25
         ),
-        TailTrackerParamOverlay()
+        trackers.TailTrackerParamOverlay()
     )
 
-    tracker = Tracker(            
+    tracker = trackers.Tracker(            
         assignment,
         accumulator,
         animal_tracker,
