@@ -3,11 +3,8 @@
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QPushButton, QLineEdit, QComboBox, QStackedWidget, QLabel, QVBoxLayout, QHBoxLayout, QWidget
-from video.background import BackgroundSubtractor, NoBackgroundSub, BackroundImage, StaticBackground, DynamicBackground, DynamicBackgroundMP
-from video.video_reader import OpenCV_VideoReader
-from gui.custom_widgets.labeled_spinbox import LabeledSpinBox
-from gui.custom_widgets.labeled_editline_openfile import FileOpenLabeledEditButton
-from gui.helper.ndarray_to_qpixmap import NDarray_to_QPixmap
+from video_tools import BackgroundSubtractor, NoBackgroundSub, BackroundImage, StaticBackground, DynamicBackground, DynamicBackgroundMP, OpenCV_VideoReader
+from qt_widgets import LabeledSpinBox, FileOpenLabeledEditButton, NDarray_to_QPixmap
 import os
 import cv2
 import numpy as np

@@ -3,7 +3,8 @@ from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QTabWidget, QHBoxLayout
 from typing import List, Protocol
 from image_tools import im2gray, im2single
-from video_tools import BackgroundSubtractorWidget, PlaylistWidget
+from .background_widget import BackgroundSubtractorWidget
+from .playlist_widget import PlaylistWidget
 
 # TODO add the possibility to dynamically add trackers in a new tab
 # TODO remove parameters from init, load everything from the GUI
