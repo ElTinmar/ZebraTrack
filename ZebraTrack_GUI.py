@@ -1,6 +1,5 @@
 import numpy as np
 import sys
-import argparse
 from PyQt5.QtWidgets import QApplication
 from trackers.assignment import LinearSumAssignment, GridAssignment
 from gui.tracker import TrackerWidget
