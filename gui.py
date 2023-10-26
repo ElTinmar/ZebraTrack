@@ -1,4 +1,4 @@
-from tracker.widgets import TrackerWidget
+from tracker import TrackerWidget
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QTabWidget, QHBoxLayout
 from typing import List, Protocol
