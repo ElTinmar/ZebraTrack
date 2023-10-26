@@ -3,11 +3,11 @@ import sys
 import argparse
 from PyQt5.QtWidgets import QApplication
 from trackers.assignment import LinearSumAssignment, GridAssignment
-from gui.tracker import TrackerWidget
-from gui.animal_tracker import AnimalTrackerWidget
-from gui.body_tracker import BodyTrackerWidget
-from gui.eye_tracker import EyesTrackerWidget
-from gui.tail_tracker import TailTrackerWidget
+from gui.tracker_widget import TrackerWidget
+from gui.animal_widget import AnimalTrackerWidget
+from gui.body_widget import BodyTrackerWidget
+from gui.eye_widget import EyesTrackerWidget
+from gui.tail_widget import TailTrackerWidget
 from gui.gui import ZebraTrackGUI
 
 #assignment = LinearSumAssignment(distance_threshold=50)
