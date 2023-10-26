@@ -10,3 +10,6 @@
 [submodule "geometry"]
 	path = geometry
 	url = git@github.com:ElTinmar/geometry.git
+[submodule "tracker"]
+	path = tracker
+	url = git@github.com:ElTinmar/tracker.git
