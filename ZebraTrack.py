@@ -1,3 +1,5 @@
+# command line interface
+
 import numpy as np
 import sys
 import argparse
