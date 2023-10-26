@@ -3,7 +3,7 @@ import socket
 import pandas as pd
 import numpy as np
 import video_tools 
-import trackers 
+import tracker.trackers as trck
 from image_tools import im2gray, im2single
 from tqdm import tqdm
 
@@ -66,15 +66,15 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
     #LUT = np.zeros((600,600))
     lufile = os.path.join(BASEFOLDER,'results',f'lut_{fish}.npy')
     LUT = np.load(lufile)
-    assignment = trackers.GridAssignment(LUT)
+    assignment = trck.GridAssignment(LUT)
     accumulator = None
 
     display = video_tools.VideoDisplay(fps=10)
     display.start()
 
     # tracking 
-    animal_tracker = trackers.AnimalTracker(
-        trackers.AnimalTrackerParamTracking(
+    animal_tracker = trck.AnimalTracker(
+        trck.AnimalTrackerParamTracking(
             pix_per_mm=40,
             target_pix_per_mm=7.5,
             animal_intensity=0.07,
@@ -91,10 +91,10 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
             blur_sz_mm=1/7.5,
             median_filter_sz_mm=1/7.5,
         ),
-        trackers.AnimalTrackerParamOverlay()
+        trck.AnimalTrackerParamOverlay()
     )
-    body_tracker = trackers.BodyTracker(
-        trackers.BodyTrackerParamTracking(
+    body_tracker = trck.BodyTracker(
+        trck.BodyTrackerParamTracking(
             pix_per_mm=40,
             target_pix_per_mm=7.5,
             body_intensity=0.25,
@@ -110,10 +110,10 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
             blur_sz_mm=1/7.5,
             median_filter_sz_mm=1/7.5,
         ),
-        trackers.BodyTrackerParamOverlay()
+        trck.BodyTrackerParamOverlay()
     )
-    eyes_tracker = trackers.EyesTracker(
-        trackers.EyesTrackerParamTracking(
+    eyes_tracker = trck.EyesTracker(
+        trck.EyesTrackerParamTracking(
             pix_per_mm=40,
             target_pix_per_mm=40,
             eye_norm=0.3,
@@ -127,10 +127,10 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
             crop_dimension_mm=(1.0,1.5),
             crop_offset_mm=-0.30
         ),
-        trackers.EyesTrackerParamOverlay()
+        trck.EyesTrackerParamOverlay()
     )
-    tail_tracker = trackers.TailTracker(
-        trackers.TailTrackerParamTracking(
+    tail_tracker = trck.TailTracker(
+        trck.TailTrackerParamTracking(
             pix_per_mm=40,
             target_pix_per_mm=20,
             arc_angle_deg=120,
@@ -147,10 +147,10 @@ for _, experiment in fish_data.iloc[SELECT,:].iterrows():
             crop_dimension_mm=(3.5,3.5),
             crop_offset_tail_mm=2.25
         ),
-        trackers.TailTrackerParamOverlay()
+        trck.TailTrackerParamOverlay()
     )
 
-    tracker = trackers.Tracker(            
+    tracker = trck.Tracker(            
         assignment,
         accumulator,
         animal_tracker,
