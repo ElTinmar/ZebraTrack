@@ -3,13 +3,12 @@ from gui.body_tracker import BodyTrackerWidget
 from gui.eye_tracker import EyesTrackerWidget
 from gui.tail_tracker import TailTrackerWidget 
 from trackers.tracker import Tracker
-from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMainWindow, QTabWidget, QDockWidget, QLabel, QVBoxLayout, QHBoxLayout, QWidget
 from typing import Protocol, Optional
 from scipy.spatial.distance import cdist
 import numpy as np
-from .helper.ndarray_to_qpixmap import NDarray_to_QPixmap
-from .custom_widgets.labeled_spinbox import LabeledSpinBox
+from qt_widgets import NDarray_to_QPixmap, LabeledSpinBox
 import cv2
 
 # TODO add widget to chose assignment method

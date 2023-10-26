@@ -1,9 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QLabel, QHBoxLayout, QVBoxLayout
 from trackers.animal import AnimalTracker, AnimalTrackerParamOverlay, AnimalTrackerParamTracking
-from numpy.typing import NDArray
-from qt_widgets import NDarray_to_QPixmap
-from qt_widgets import LabeledDoubleSpinBox
-from qt_widgets import LabeledSpinBox
+from qt_widgets import NDarray_to_QPixmap, LabeledDoubleSpinBox, LabeledSpinBox
 import cv2
 
 # TODO maybe group settings into collapsable blocks

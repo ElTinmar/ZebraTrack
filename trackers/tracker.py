@@ -5,9 +5,7 @@ from .animal import AnimalTracker
 import numpy as np
 import cv2
 from typing import Protocol, Optional
-from image.imcontrast import imcontrast
-from image.crop import imrotate, rotation_matrix
-from geometry.rect import Rect
+from image_tools import imcontrast, imrotate, rotation_matrix
 
 class Accumulator(Protocol):
     def update(self):

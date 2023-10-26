@@ -4,11 +4,8 @@ from scipy.spatial.distance import pdist
 import numpy as np
 from numpy.typing import NDArray
 from typing import Optional, Tuple
-from image.morphology import bwareafilter_props, bwareafilter
-from image.crop import diagonal_crop, rotation_matrix
-from image.imcontrast import imcontrast
-from geometry.geometry import ellipse_direction, angle_between_vectors
-from geometry.rect import Rect
+from image_tools import bwareafilter_props, bwareafilter, imcontrast
+from geometry import ellipse_direction, angle_between_vectors, Rect
 
 @dataclass
 class EyesTrackerParamTracking:

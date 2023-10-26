@@ -1,5 +1,5 @@
-from image.morphology import bwareafilter_props
-from image.imcontrast import imcontrast
+from image_tools import bwareafilter_props
+from image_tools import imcontrast
 from sklearn.decomposition import PCA
 import numpy as np
 from numpy.typing import NDArray
