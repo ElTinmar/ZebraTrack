@@ -3,7 +3,7 @@
 import numpy as np
 import sys
 from PyQt5.QtWidgets import QApplication
-from tracker import LinearSumAssignment, GridAssignment, TrackerWidget, AnimalTrackerWidget, BodyTrackerWidget, EyesTrackerWidget,TailTrackerWidget
+from tracker import AssignmentWidget, TrackerWidget, AnimalTrackerWidget, BodyTrackerWidget, EyesTrackerWidget,TailTrackerWidget
 from gui import ZebraTrackGUI
 
 #assignment = LinearSumAssignment(distance_threshold=50)
@@ -14,7 +14,7 @@ LUT = X + 3*Y
 app = QApplication(sys.argv)
 
 fish_tracker = TrackerWidget(
-    GridAssignment(LUT), 
+    AssignmentWidget(), 
     AnimalTrackerWidget(),
     BodyTrackerWidget(),
     EyesTrackerWidget(),
@@ -22,7 +22,7 @@ fish_tracker = TrackerWidget(
 )
 
 paramecia_tracker = TrackerWidget(
-    LinearSumAssignment(distance_threshold=10), 
+    AssignmentWidget(), 
     AnimalTrackerWidget(),
     BodyTrackerWidget(),
     None,
