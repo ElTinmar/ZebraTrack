@@ -3,8 +3,7 @@
 import numpy as np
 import sys
 from PyQt5.QtWidgets import QApplication
-from tracker import LinearSumAssignment, GridAssignment 
-from tracker import TrackerWidget, AnimalTrackerWidget, BodyTrackerWidget, EyesTrackerWidget,TailTrackerWidget
+from tracker import LinearSumAssignment, GridAssignment, TrackerWidget, AnimalTrackerWidget, BodyTrackerWidget, EyesTrackerWidget,TailTrackerWidget
 from gui import ZebraTrackGUI
 
 #assignment = LinearSumAssignment(distance_threshold=50)

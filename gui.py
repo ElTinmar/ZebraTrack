@@ -2,6 +2,7 @@ from tracker import TrackerWidget
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QTabWidget, QHBoxLayout
 from typing import List, Protocol
+from tracker import LinearSumAssignment, GridAssignment, TrackerWidget, AnimalTrackerWidget, BodyTrackerWidget, EyesTrackerWidget,TailTrackerWidget
 from tracker.image_tools import im2gray, im2single
 from tracker.video_tools import BackgroundSubtractorWidget
 from tracker.video_tools import PlaylistWidget
@@ -47,15 +48,23 @@ class ZebraTrackGUI(QMainWindow):
         video_control.addWidget(self.playlist_widget)
         video_control.addWidget(self.background_widget)
 
-        tabs = QTabWidget() 
+        self.tabs = QTabWidget() 
+        self.tabs.setMovable(True)
+        self.tabs.setTabsClosable(True)
+        self.tabs.tabCloseRequested.connect(self.on_tab_close)
+
         for tracker in self.trackers:
-            tabs.addTab(tracker,'tracker')
+            self.tabs.addTab(tracker,'tracker')
 
         main_layout = QHBoxLayout(main_widget)
         main_layout.addLayout(video_control)
-        main_layout.addWidget(tabs)
+        main_layout.addWidget(self.tabs)
 
         self.setCentralWidget(main_widget)
+
+    def on_tab_close(self, index):
+        self.trackers.pop(index)
+        self.tabs.removeTab(index)
 
     def update_tracker(self):
         for tracker in self.trackers:
