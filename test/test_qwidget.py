@@ -15,7 +15,8 @@ image = np.random.randint(0,255,(1024,1024),dtype=np.uint8)
 # test dialog
 app = QApplication(sys.argv)
 window = ROISelectorDialog(image)
-if window.exec_():
-    print(window.ROIs)
+while not window.exec_():
+    pass
+print(window.ROIs)
     
 
