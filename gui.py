@@ -41,6 +41,9 @@ class ZebraTrackGUI(QMainWindow):
         self.playlist_widget = PlaylistWidget()
         self.background_widget = BackgroundSubtractorWidget()
 
+        # connect widgets
+        self.playlist_widget.video_selected_signal.connect(self.background_widget.set_video_file)
+
     def layout_components(self):
         main_widget = QWidget()
 
