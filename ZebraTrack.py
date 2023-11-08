@@ -7,3 +7,6 @@ from PyQt5.QtWidgets import QApplication
 from tracker import LinearSumAssignment, GridAssignment 
 from tracker import TrackerWidget, AnimalTrackerWidget, BodyTrackerWidget, EyesTrackerWidget,TailTrackerWidget
 
+# parse arguments 
+
+# Tracks
