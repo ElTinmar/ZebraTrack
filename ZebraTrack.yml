@@ -6,6 +6,9 @@ dependencies:
 - pip
 - pip:
   - PyQt5
+  - git+https://github.com/ElTinmar/tracker.git@main
+  - git+https://github.com/ElTinmar/image_tools.git@main
+  - git+https://github.com/ElTinmar/video_tools.git@main
 - pandas
 - numpy
 - opencv
