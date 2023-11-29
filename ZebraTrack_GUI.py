@@ -3,11 +3,12 @@
 import numpy as np
 import sys
 from PyQt5.QtWidgets import QApplication
-from tracker import AssignmentWidget, TrackerWidget, AnimalTrackerWidget, BodyTrackerWidget, EyesTrackerWidget,TailTrackerWidget
+from tracker import AssignmentWidget, TrackerWidget, AnimalTrackerWidget, AnimalTrackerParamTracking
 from gui import ZebraTrackGUI
 
 app = QApplication(sys.argv)
 
+'''
 fish_tracker = TrackerWidget(
     AssignmentWidget(), 
     AnimalTrackerWidget(),
@@ -15,14 +16,15 @@ fish_tracker = TrackerWidget(
     EyesTrackerWidget(),
     TailTrackerWidget()
 )
-
-paramecia_tracker = TrackerWidget(
+'''
+fish_tracker = TrackerWidget(
     AssignmentWidget(), 
     AnimalTrackerWidget(),
-    BodyTrackerWidget(),
     None,
     None,
+    None
 )
 
-window = ZebraTrackGUI([fish_tracker, paramecia_tracker])
+
+window = ZebraTrackGUI([fish_tracker])
 sys.exit(app.exec())
