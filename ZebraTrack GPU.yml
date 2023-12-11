@@ -1,0 +1,19 @@
+name: ZebraTrack
+channels:
+- conda-forge
+dependencies:
+- python == 3.8
+- pyqt
+- pip
+- pandas
+- numpy
+- matplotlib
+- ipython
+- scipy
+- scikit-image
+- scikit-learn
+- tqdm
+- pip:
+  - git+https://github.com/ElTinmar/tracker.git@main
+  - git+https://github.com/ElTinmar/image_tools.git@main
+  - git+https://github.com/ElTinmar/video_tools.git@main
