@@ -12,8 +12,7 @@ from tqdm import tqdm
 import numpy as np
 from multiprocessing import Queue
 
-#INPUT_VIDEO = 'toy_data/freely_swimming_param.avi'
-INPUT_VIDEO = 'toy_data/head_embedded_param.avi'
+INPUT_VIDEO = 'toy_data/embedded_noparam.avi'
 EXPORT_FPS = 100
 
 # display
@@ -34,7 +33,7 @@ background_reader.open_file(INPUT_VIDEO)
 background = InpaintBackground(
     video_reader = background_reader,
     polarity = Polarity.DARK_ON_BRIGHT,
-    frame_num = 5000
+    frame_num = 0
 )
 background.initialize()
 
@@ -58,7 +57,7 @@ accumulator = None
 # tracking 
 animal_tracker = AnimalTracker_CPU(
     AnimalTrackerParamTracking(
-        pix_per_mm=40,
+        pix_per_mm=100,
         target_pix_per_mm=7.5,
         animal_intensity=0.07,
         animal_brightness=0.0,
@@ -77,12 +76,12 @@ animal_tracker = AnimalTracker_CPU(
 )
 body_tracker = BodyTracker_CPU(
     BodyTrackerParamTracking(
-        pix_per_mm=40,
+        pix_per_mm=100,
         target_pix_per_mm=20,
-        body_intensity=0.20,
+        body_intensity=0.07,
         body_brightness=0.0,
         body_gamma=1.0,
-        body_contrast=3.0,
+        body_contrast=1.0,
         min_body_size_mm=0.0,
         max_body_size_mm=30.0,
         min_body_length_mm=0.0,
@@ -95,8 +94,8 @@ body_tracker = BodyTracker_CPU(
 )
 eyes_tracker = EyesTracker_CPU(
     EyesTrackerParamTracking(
-        pix_per_mm=40,
-        target_pix_per_mm=40,
+        pix_per_mm=100,
+        target_pix_per_mm=70,
         eye_brightness=0.0,
         eye_gamma=3.0,
         eye_dyntresh_res=20,
@@ -111,13 +110,13 @@ eyes_tracker = EyesTracker_CPU(
 )
 tail_tracker = TailTracker_CPU(
     TailTrackerParamTracking(
-        pix_per_mm=40,
-        target_pix_per_mm=40,
+        pix_per_mm=100,
+        target_pix_per_mm=70,
         arc_angle_deg=120,
         n_tail_points=10,
         n_pts_arc=20,
         n_pts_interp=40,
-        tail_length_mm=2.2,
+        tail_length_mm=3.2,
         dist_swim_bladder_mm=0.0,
         blur_sz_mm=0.06,
         median_filter_sz_mm=0.06,
@@ -142,7 +141,7 @@ tracker = MultiFishTracker_CPU(
 # overlay
 animal_overlay = AnimalOverlay_opencv(AnimalTrackerParamOverlay())
 body_overlay = BodyOverlay_opencv(BodyTrackerParamOverlay())
-eyes_overlay = EyesOverlay_opencv(EyesTrackerParamOverlay())
+eyes_overlay = EyesOverlay_opencv(EyesTrackerParamOverlay(eye_len_mm=0.4))
 tail_overlay = TailOverlay_opencv(TailTrackerParamOverlay())
 
 overlay = MultiFishOverlay_opencv(
@@ -157,7 +156,7 @@ video_writer = FFMPEG_VideoWriter(
     height=height,
     width=width,
     fps=EXPORT_FPS,
-    filename='19-40-44_tracking.avi',
+    filename='embedded_noparam_tracking.avi',
     codec = 'libx264',
     preset = 'medium'
 )
@@ -166,7 +165,7 @@ video_writer_eyes= FFMPEG_VideoWriter(
     height=eyes_tracker.tracking_param.crop_dimension_px[1],
     width=eyes_tracker.tracking_param.crop_dimension_px[0],
     fps=EXPORT_FPS,
-    filename='19-40-44_eyes_tracking.avi',
+    filename='embedded_noparam_tracking.avi',
     codec = 'libx264',
     preset = 'medium'
 )
@@ -175,7 +174,7 @@ video_writer_tail = FFMPEG_VideoWriter(
     height=tail_tracker.tracking_param.crop_dimension_px[1],
     width=tail_tracker.tracking_param.crop_dimension_px[0],
     fps=EXPORT_FPS,
-    filename='19-40-44_tail_tracking.avi',
+    filename='embedded_noparam_tracking.avi',
     codec = 'libx264',
     preset = 'medium'
 )
