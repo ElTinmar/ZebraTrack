@@ -58,7 +58,7 @@ accumulator = None
 animal_tracker = AnimalTracker_CPU(
     AnimalTrackerParamTracking(
         pix_per_mm=100,
-        target_pix_per_mm=7.5,
+        target_pix_per_mm=10,
         animal_intensity=0.07,
         animal_brightness=0.0,
         animal_gamma=1.0,
@@ -95,14 +95,14 @@ body_tracker = BodyTracker_CPU(
 eyes_tracker = EyesTracker_CPU(
     EyesTrackerParamTracking(
         pix_per_mm=100,
-        target_pix_per_mm=70,
+        target_pix_per_mm=60,
         eye_brightness=0.0,
         eye_gamma=3.0,
         eye_dyntresh_res=20,
         eye_contrast=5.0,
         eye_size_lo_mm=0.8,
         eye_size_hi_mm=10.0,
-        blur_sz_mm=0.06,
+        blur_sz_mm=0.2,
         median_filter_sz_mm=0.06,
         crop_dimension_mm=(1.0,1.5),
         crop_offset_mm=-0.75
@@ -111,14 +111,14 @@ eyes_tracker = EyesTracker_CPU(
 tail_tracker = TailTracker_CPU(
     TailTrackerParamTracking(
         pix_per_mm=100,
-        target_pix_per_mm=70,
+        target_pix_per_mm=40,
         arc_angle_deg=120,
         n_tail_points=10,
         n_pts_arc=20,
         n_pts_interp=40,
-        tail_length_mm=3.2,
+        tail_length_mm=3.0,
         dist_swim_bladder_mm=0.0,
-        blur_sz_mm=0.06,
+        blur_sz_mm=0.25,
         median_filter_sz_mm=0.06,
         tail_brightness=0.0,
         tail_contrast=3.0,
@@ -141,7 +141,7 @@ tracker = MultiFishTracker_CPU(
 # overlay
 animal_overlay = AnimalOverlay_opencv(AnimalTrackerParamOverlay())
 body_overlay = BodyOverlay_opencv(BodyTrackerParamOverlay())
-eyes_overlay = EyesOverlay_opencv(EyesTrackerParamOverlay(eye_len_mm=0.4))
+eyes_overlay = EyesOverlay_opencv(EyesTrackerParamOverlay(eye_len_mm=0.5))
 tail_overlay = TailOverlay_opencv(TailTrackerParamOverlay())
 
 overlay = MultiFishOverlay_opencv(
@@ -165,7 +165,7 @@ video_writer_eyes= FFMPEG_VideoWriter(
     height=eyes_tracker.tracking_param.crop_dimension_px[1],
     width=eyes_tracker.tracking_param.crop_dimension_px[0],
     fps=EXPORT_FPS,
-    filename='embedded_noparam_tracking.avi',
+    filename='embedded_noparam_eye_tracking.avi',
     codec = 'libx264',
     preset = 'medium'
 )
@@ -174,7 +174,7 @@ video_writer_tail = FFMPEG_VideoWriter(
     height=tail_tracker.tracking_param.crop_dimension_px[1],
     width=tail_tracker.tracking_param.crop_dimension_px[0],
     fps=EXPORT_FPS,
-    filename='embedded_noparam_tracking.avi',
+    filename='embedded_noparam_tail_tracking.avi',
     codec = 'libx264',
     preset = 'medium'
 )
