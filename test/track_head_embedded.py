@@ -244,3 +244,17 @@ video_writer_eyes.close()
 video_writer_tail.close()
 
 
+# extract specific frame 
+# NOTE safe = True is necessary here
+
+import cv2
+
+frame = 2529
+
+reader = OpenCV_VideoReader()
+reader.open_file('embedded_noparam_tracking.avi', safe=True)
+reader.seek_to(frame)
+ret, img = reader.next_frame()
+cv2.imshow('tracking', img)
+cv2.waitKey(0)
+cv2.imwrite(f'tracking_{frame}.png', img)
