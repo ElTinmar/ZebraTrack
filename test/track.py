@@ -12,18 +12,27 @@ from tqdm import tqdm
 import numpy as np
 from multiprocessing import Queue
 
-INPUT_VIDEO = 'toy_data/freely_swimming_param.avi'
+INPUT_VIDEO = 'toy_data/head_embedded_param.avi'
 EXPORT_FPS = 100
 
 # compute background
 background_reader = OpenCV_VideoReader()
 background_reader.open_file(INPUT_VIDEO)
+'''
 background = InpaintBackground(
     video_reader = background_reader,
     polarity = Polarity.DARK_ON_BRIGHT,
     frame_num = 10000
 )
+'''
+background = StaticBackground(
+    video_reader = background_reader,
+    polarity = Polarity.DARK_ON_BRIGHT,
+    num_sample_frames = 100
+)
+
 background.initialize()
+
 
 # buffered video reader
 video_reader = Buffered_OpenCV_VideoReader()
@@ -36,7 +45,7 @@ fps = video_reader.get_fps()
 num_frames = video_reader.get_number_of_frame()
 
 # Fish ID Assignment
-LUT = np.zeros((width, height))
+LUT = np.zeros((height, width))
 assignment = GridAssignment(LUT)
 
 # Data accumulator
@@ -199,7 +208,10 @@ try:
         display.queue_image(oly)
 
         # save video
-        video_writer.write_frame(oly[:,:,[2,1,0]])
+        if oly is not None:
+            video_writer.write_frame(oly[:,:,[2,1,0]])
+        else:
+            video_writer.write_frame(np.zeros((height,width), dtype=np.uint8))
         
         # display eyes 
         if tracking.eyes is not None and tracking.eyes[0] is not None:
