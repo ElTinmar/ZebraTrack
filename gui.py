@@ -1,7 +1,7 @@
-from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QTabWidget, QHBoxLayout
 from typing import List, Protocol
-from tracker import LinearSumAssignment, GridAssignment, TrackerWidget, AnimalTrackerWidget, BodyTrackerWidget, EyesTrackerWidget,TailTrackerWidget
+from tracker import TrackerWidget
 from image_tools import im2gray, im2single
 from video_tools import BackgroundSubtractorWidget, PlaylistWidget
 
