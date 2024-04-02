@@ -13,8 +13,7 @@ app = QApplication(sys.argv)
 
 
 fish_tracker = TrackerWidget(
-    AssignmentWidget(), 
-    AnimalTrackerWidget(),
+    AnimalTrackerWidget(assignment_widget=AssignmentWidget()),
     BodyTrackerWidget(),
     EyesTrackerWidget(),
     TailTrackerWidget()

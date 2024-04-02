@@ -42,7 +42,7 @@ class ZebraTrackGUI(QMainWindow):
         # connect widgets
         self.playlist_widget.video_selected_signal.connect(self.background_widget.set_video_file)
         for tracker in self.trackers:
-            self.background_widget.background_initialized.connect(tracker.assignment_widget.set_background_image)
+            self.background_widget.background_initialized.connect(tracker.animal_tracker_widget.assignment_widget.set_background_image)
         
     def layout_components(self):
         main_widget = QWidget()
