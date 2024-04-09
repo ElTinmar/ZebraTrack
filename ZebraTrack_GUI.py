@@ -26,5 +26,6 @@ fish_tracker = TrackerWidget(
 )
 '''
 
+# TODO on Windows, initializing background causes a cascade of windows to open. WTF?
 window = ZebraTrackGUI([fish_tracker])
 sys.exit(app.exec())
