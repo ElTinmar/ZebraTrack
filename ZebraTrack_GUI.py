@@ -18,8 +18,7 @@ fish_tracker = TrackerWidget(
 )
 '''
 fish_tracker = TrackerWidget(
-    AssignmentWidget(), 
-    AnimalTrackerWidget(),
+    AnimalTrackerWidget(assignment_widget=AssignmentWidget()),
     None,
     None,
     None
