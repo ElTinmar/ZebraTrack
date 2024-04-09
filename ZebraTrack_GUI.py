@@ -1,6 +1,5 @@
 # tracker gui
 
-import numpy as np
 import sys
 from PyQt5.QtWidgets import QApplication
 from tracker import (
@@ -10,7 +9,6 @@ from tracker import (
 from gui import ZebraTrackGUI
 
 app = QApplication(sys.argv)
-
 
 fish_tracker = TrackerWidget(
     AnimalTrackerWidget(assignment_widget=AssignmentWidget()),
